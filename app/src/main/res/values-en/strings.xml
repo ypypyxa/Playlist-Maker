@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_button">Serach</string>
+    <string name="media_button">Media library</string>
+    <string name="settings_button">Settings</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="share">Share the app</string>
+    <string name="support">Write to support</string>
+    <string name="user_agreement">User agreement</string>
+</resources>
