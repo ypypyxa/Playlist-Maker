@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:textColor="@color/YP_White"
-            android:textSize="@dimen/primary_text_size"
+            android:textSize="@dimen/primary_button_text_size"
             android:layout_marginTop="10dp"/>
 
     </FrameLayout>
@@ -34,7 +34,7 @@
         android:backgroundTint="@color/YP_White"
         android:text="@string/search"
         android:textColor="@color/YP_Black"
-        android:textSize="@dimen/primary_text_size"
+        android:textSize="@dimen/primary_button_text_size"
         app:cornerRadius="@dimen/button_corner_radius"
         app:icon="@drawable/ic_search_24x24"
         app:iconGravity="textStart"
@@ -49,7 +49,7 @@
         android:backgroundTint="@color/YP_White"
         android:text="@string/media"
         android:textColor="@color/YP_Black"
-        android:textSize="@dimen/primary_text_size"
+        android:textSize="@dimen/primary_button_text_size"
         app:cornerRadius="@dimen/button_corner_radius"
         app:icon="@drawable/ic_media_24x24"
         app:iconGravity="textStart"
@@ -64,7 +64,7 @@
         android:backgroundTint="@color/YP_White"
         android:text="@string/settings"
         android:textColor="@color/YP_Black"
-        android:textSize="@dimen/primary_text_size"
+        android:textSize="@dimen/primary_button_text_size"
         app:cornerRadius="@dimen/button_corner_radius"
         app:icon="@drawable/ic_settings_24x24"
         app:iconGravity="textStart"
