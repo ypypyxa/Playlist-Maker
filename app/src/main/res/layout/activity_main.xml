@@ -27,6 +27,7 @@
     </FrameLayout>
 
     <Button
+        android:id="@+id/search_button"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
@@ -35,6 +36,7 @@
         android:text="@string/search"
         android:textColor="@color/YP_Black"
         android:textSize="@dimen/primary_button_text_size"
+        android:foreground="?attr/selectableItemBackground"
         app:cornerRadius="@dimen/button_corner_radius"
         app:icon="@drawable/ic_search_24x24"
         app:iconGravity="textStart"
@@ -42,6 +44,7 @@
         app:iconTint="@color/YP_Black" />
 
     <Button
+        android:id="@+id/media_button"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
@@ -50,6 +53,7 @@
         android:text="@string/media"
         android:textColor="@color/YP_Black"
         android:textSize="@dimen/primary_button_text_size"
+        android:foreground="?attr/selectableItemBackground"
         app:cornerRadius="@dimen/button_corner_radius"
         app:icon="@drawable/ic_media_24x24"
         app:iconGravity="textStart"
@@ -57,6 +61,7 @@
         app:iconTint="@color/YP_Black" />
 
     <Button
+        android:id="@+id/settings_button"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
@@ -65,6 +70,7 @@
         android:text="@string/settings"
         android:textColor="@color/YP_Black"
         android:textSize="@dimen/primary_button_text_size"
+        android:foreground="?attr/selectableItemBackground"
         app:cornerRadius="@dimen/button_corner_radius"
         app:icon="@drawable/ic_settings_24x24"
         app:iconGravity="textStart"
