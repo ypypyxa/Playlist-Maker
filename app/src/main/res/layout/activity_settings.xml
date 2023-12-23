@@ -105,10 +105,12 @@
             android:gravity="start"/>
 
         <ImageButton
+            android:id="@+id/mail_to_support"
             android:layout_width="@dimen/min_button_size"
             android:layout_height="@dimen/min_button_size"
             android:backgroundTint="@color/YP_White"
             android:src="@drawable/ic_support_24x24"
+            android:foreground="?attr/selectableItemBackground"
             android:layout_gravity="end"
             android:layout_marginTop="@dimen/primary_settings_icon_margin_top"
             android:contentDescription="@string/support"/>
