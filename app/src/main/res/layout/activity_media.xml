@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/YP_White"
+    android:orientation="vertical"
+    >
+    <!-- ШАПКА -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:paddingStart="4dp"
+        android:paddingBottom="4dp">
+
+        <ImageButton
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/YP_White"
+            android:src="@drawable/ic_back_24x24"
+            android:layout_gravity="start"
+            android:padding="12dp"
+            android:contentDescription="@string/back"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/media"
+            android:textColor="@color/YP_Black"
+            android:textSize="@dimen/primary_button_text_size"
+            android:layout_marginStart="12dp"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+</LinearLayout>

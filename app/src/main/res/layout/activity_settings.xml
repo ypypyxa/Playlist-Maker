@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     android:background="@color/YP_White"
     android:orientation="vertical"
->
-<!-- ШАПКА -->
+    >
+    <!-- ШАПКА -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,6 +17,7 @@
         android:paddingBottom="4dp">
 
         <ImageButton
+            android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/YP_White"
@@ -31,13 +32,12 @@
             android:text="@string/settings"
             android:textColor="@color/YP_Black"
             android:textSize="@dimen/primary_button_text_size"
-            android:layout_marginTop="7dp"
             android:layout_marginStart="12dp"
-            android:layout_gravity=""/>
+            android:layout_gravity="center"/>
 
     </LinearLayout>
 
-<!-- НОЧНАЯ ТЕМА -->
+    <!-- НОЧНАЯ ТЕМА -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -54,14 +54,14 @@
             android:gravity="start"/>
 
         <Switch
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/min_button_size"
             android:layout_height="@dimen/min_button_size"
             android:layout_marginTop="@dimen/primary_settings_icon_margin_top"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="5dp"
             android:layout_gravity="end"/>
     </FrameLayout>
 
-<!-- ПОДЕЛИТЬСЯ ПРИЛОЖЕНИЕМ -->
+    <!-- ПОДЕЛИТЬСЯ ПРИЛОЖЕНИЕМ -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
             android:contentDescription="@string/share"/>
     </FrameLayout>
 
-<!-- НАПИСАТЬ В ПОДДЕРЖКУ -->
+    <!-- НАПИСАТЬ В ПОДДЕРЖКУ -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -114,7 +114,7 @@
             android:contentDescription="@string/support"/>
     </FrameLayout>
 
-<!-- Пользовательское соглашение -->
+    <!-- Пользовательское соглашение -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
