@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/YP_White"
+    android:background="@color/yp_white"
     android:orientation="vertical"
     >
     <!-- ШАПКА -->
@@ -12,15 +12,14 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:orientation="horizontal"
-        android:paddingTop="4dp"
         android:paddingStart="4dp"
-        android:paddingBottom="4dp">
+        android:paddingVertical="@dimen/head_vertical_padding">
 
         <ImageButton
             android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/YP_White"
+            android:backgroundTint="@color/yp_white"
             android:src="@drawable/ic_back_24x24"
             android:layout_gravity="start"
             android:padding="12dp"
@@ -30,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/settings"
-            android:textColor="@color/YP_Black"
+            android:textColor="@color/yp_black"
             android:textSize="@dimen/primary_button_text_size"
             android:layout_marginStart="12dp"
             android:layout_gravity="center"/>
@@ -40,105 +39,93 @@
     <!-- НОЧНАЯ ТЕМА -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/prinary_settings_string_height">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dark_theme"
-            android:textColor="@color/YP_Black"
+            android:textColor="@color/yp_black"
             android:textSize="@dimen/primary_settings_text_size"
-            android:layout_marginTop="@dimen/primary_settings_string_margin_top"
-            android:layout_marginBottom="@dimen/primary_settings_string_margin_bot"
             android:layout_marginStart="@dimen/primary_side_padding"
-            android:gravity="start"/>
+            android:layout_gravity="start||center_vertical"/>
 
         <Switch
             android:layout_width="@dimen/min_button_size"
             android:layout_height="@dimen/min_button_size"
-            android:layout_marginTop="@dimen/primary_settings_icon_margin_top"
             android:layout_marginEnd="5dp"
-            android:layout_gravity="end"/>
+            android:layout_gravity="end||center_vertical"/>
     </FrameLayout>
 
     <!-- ПОДЕЛИТЬСЯ ПРИЛОЖЕНИЕМ -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/prinary_settings_string_height"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/share"
-            android:textColor="@color/YP_Black"
+            android:textColor="@color/yp_black"
             android:textSize="@dimen/primary_settings_text_size"
-            android:layout_marginTop="@dimen/primary_settings_string_margin_top"
-            android:layout_marginBottom="@dimen/primary_settings_string_margin_bot"
             android:layout_marginStart="@dimen/primary_side_padding"
-            android:gravity="start"/>
+            android:layout_gravity="start||center_vertical"/>
 
         <ImageButton
             android:layout_width="@dimen/min_button_size"
             android:layout_height="@dimen/min_button_size"
-            android:backgroundTint="@color/YP_White"
+            android:backgroundTint="@color/yp_white"
             android:src="@drawable/ic_share_24x24"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/primary_settings_icon_margin_top"
+            android:layout_gravity="end||center_vertical"
             android:contentDescription="@string/share"/>
     </FrameLayout>
 
     <!-- НАПИСАТЬ В ПОДДЕРЖКУ -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/prinary_settings_string_height">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/support"
-            android:textColor="@color/YP_Black"
+            android:textColor="@color/yp_black"
             android:textSize="@dimen/primary_settings_text_size"
-            android:layout_marginTop="@dimen/primary_settings_string_margin_top"
-            android:layout_marginBottom="@dimen/primary_settings_string_margin_bot"
             android:layout_marginStart="@dimen/primary_side_padding"
-            android:gravity="start"/>
+            android:layout_gravity="start||center_vertical"/>
 
         <ImageButton
             android:id="@+id/mail_to_support"
             android:layout_width="@dimen/min_button_size"
             android:layout_height="@dimen/min_button_size"
-            android:backgroundTint="@color/YP_White"
+            android:backgroundTint="@color/yp_white"
             android:src="@drawable/ic_support_24x24"
             android:foreground="?attr/selectableItemBackground"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/primary_settings_icon_margin_top"
+            android:layout_gravity="end||center_vertical"
             android:contentDescription="@string/support"/>
     </FrameLayout>
 
     <!-- Пользовательское соглашение -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/prinary_settings_string_height">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/user_agreement"
-            android:textColor="@color/YP_Black"
+            android:textColor="@color/yp_black"
             android:textSize="@dimen/primary_settings_text_size"
-            android:layout_marginTop="@dimen/primary_settings_string_margin_top"
-            android:layout_marginBottom="@dimen/primary_settings_string_margin_bot"
             android:layout_marginStart="@dimen/primary_side_padding"
-            android:gravity="start"/>
+            android:layout_gravity="start||center_vertical"/>
 
         <ImageButton
             android:layout_width="@dimen/min_button_size"
             android:layout_height="@dimen/min_button_size"
-            android:backgroundTint="@color/YP_White"
+            android:backgroundTint="@color/yp_white"
             android:src="@drawable/ic_next_24x24"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/primary_settings_icon_margin_top"
+            android:layout_gravity="end||center_vertical"
             android:contentDescription="@string/next"/>
     </FrameLayout>
 

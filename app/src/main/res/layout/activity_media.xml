@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/YP_White"
+    android:background="@color/yp_white"
     android:orientation="vertical"
     >
     <!-- ШАПКА -->
@@ -12,15 +12,14 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:orientation="horizontal"
-        android:paddingTop="4dp"
         android:paddingStart="4dp"
-        android:paddingBottom="4dp">
+        android:paddingVertical="@dimen/head_vertical_padding">
 
         <ImageButton
             android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/YP_White"
+            android:backgroundTint="@color/yp_white"
             android:src="@drawable/ic_back_24x24"
             android:layout_gravity="start"
             android:padding="12dp"
@@ -30,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/media"
-            android:textColor="@color/YP_Black"
+            android:textColor="@color/yp_black"
             android:textSize="@dimen/primary_button_text_size"
             android:layout_marginStart="12dp"
             android:layout_gravity="center"/>

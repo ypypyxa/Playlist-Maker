@@ -22,10 +22,14 @@ class SettingsActivity : AppCompatActivity() {
 
         mailToSupButton.setOnClickListener {
             val mailToSupIntent = Intent(Intent.ACTION_SENDTO).apply {
+                val supportEmail = "axypypy@yandex.ru"
+                val messageSubject = "Проблема с приложением Playlist Maker"
+                val message = "Помогите разобраться с проблемой"
+
                 data = Uri.parse("mailto:")
-                putExtra(Intent.EXTRA_EMAIL, arrayOf("axypypy@yandex.ru"))
-                putExtra(Intent.EXTRA_SUBJECT, "Проблема с приложением Playlist Maker")
-                putExtra(Intent.EXTRA_TEXT, "Помогите разобраться с проблемой")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(supportEmail))
+                putExtra(Intent.EXTRA_SUBJECT, messageSubject)
+                putExtra(Intent.EXTRA_TEXT, message)
             }
             startActivity(mailToSupIntent)
         }
