@@ -17,18 +17,14 @@
     </LinearLayout>
 
     <!-- НОЧНАЯ ТЕМА -->
-    <FrameLayout
-        style="@style/SettingsMenuItemStyle">
+    <FrameLayout style="@style/SettingsMenuItemStyle">
 
         <TextView
             android:text="@string/dark_theme"
             style="@style/SettingsMenuTextStyle"/>
 
         <Switch
-            android:layout_width="@dimen/min_button_size"
-            android:layout_height="@dimen/min_button_size"
-            android:layout_marginEnd="5dp"
-            android:layout_gravity="end||center_vertical"/>
+            style="@style/SettingsMenuSwitchStyle"/>
     </FrameLayout>
 
     <!-- ПОДЕЛИТЬСЯ ПРИЛОЖЕНИЕМ -->
@@ -73,5 +69,4 @@
             android:contentDescription="@string/next"
             style="@style/SettingsMenuButtonStyle"/>
     </FrameLayout>
-
 </LinearLayout>
