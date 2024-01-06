@@ -1,72 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/ActivityStyle">
 
     <!-- ШАПКА -->
-    <LinearLayout
-        style="@style/HeadStyle">
+    <LinearLayout style="@style/HeadStyle">
 
-        <ImageButton
+        <ImageButton style="@style/BackButtonStyle"
             android:id="@+id/back"
-            style="@style/BackButtonStyle"/>
+            android:contentDescription="@string/back"/>
 
-        <TextView
-            android:text="@string/settings"
-            style="@style/HeadTextStyle"/>
+        <TextView style="@style/HeadTextStyle"
+            android:text="@string/settings"/>
 
     </LinearLayout>
 
     <!-- НОЧНАЯ ТЕМА -->
     <FrameLayout style="@style/SettingsMenuItemStyle">
 
-        <TextView
-            android:text="@string/dark_theme"
-            style="@style/SettingsMenuTextStyle"/>
+        <TextView style="@style/SettingsMenuTextStyle"
+            android:text="@string/dark_theme"/>
 
-        <Switch
-            style="@style/SettingsMenuSwitchStyle"/>
+        <Switch style="@style/SettingsMenuSwitchStyle"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
     </FrameLayout>
 
     <!-- ПОДЕЛИТЬСЯ ПРИЛОЖЕНИЕМ -->
-    <FrameLayout
-        style="@style/SettingsMenuItemStyle">
+    <FrameLayout style="@style/SettingsMenuItemStyle">
 
-        <TextView
-            android:text="@string/share"
-            style="@style/SettingsMenuTextStyle"/>
+        <TextView style="@style/SettingsMenuTextStyle"
+            android:text="@string/share"/>
 
-        <ImageButton
-            android:src="@drawable/ic_share_24x24"
+        <ImageButton style="@style/SettingsMenuButtonStyle"
+            tools:ignore="DuplicateSpeakableTextCheck"
             android:contentDescription="@string/share"
-            style="@style/SettingsMenuButtonStyle"/>
+            android:src="@drawable/ic_share_24x24"/>
     </FrameLayout>
 
     <!-- НАПИСАТЬ В ПОДДЕРЖКУ -->
-    <FrameLayout
-        style="@style/SettingsMenuItemStyle">
+    <FrameLayout style="@style/SettingsMenuItemStyle">
 
-        <TextView
-            android:text="@string/support"
-            style="@style/SettingsMenuTextStyle"/>
+        <TextView style="@style/SettingsMenuTextStyle"
+            android:text="@string/support"/>
 
-        <ImageButton
+        <ImageButton style="@style/SettingsMenuButtonStyle"
+            tools:ignore="DuplicateSpeakableTextCheck"
             android:id="@+id/mail_to_support"
-            android:src="@drawable/ic_support_24x24"
             android:contentDescription="@string/support"
-            style="@style/SettingsMenuButtonStyle"/>
+            android:src="@drawable/ic_support_24x24"/>
     </FrameLayout>
 
     <!-- Пользовательское соглашение -->
-    <FrameLayout
-        style="@style/SettingsMenuItemStyle">
+    <FrameLayout style="@style/SettingsMenuItemStyle">
 
-        <TextView
-            android:text="@string/user_agreement"
-            style="@style/SettingsMenuTextStyle"/>
+        <TextView style="@style/SettingsMenuTextStyle"
+            android:text="@string/user_agreement"/>
 
-        <ImageButton
+        <ImageButton style="@style/SettingsMenuButtonStyle"
             android:src="@drawable/ic_next_24x24"
-            android:contentDescription="@string/next"
-            style="@style/SettingsMenuButtonStyle"/>
+            android:contentDescription="@string/next"/>
     </FrameLayout>
 </LinearLayout>

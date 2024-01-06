@@ -3,16 +3,14 @@
     style="@style/ActivityStyle">
 
     <!-- ШАПКА -->
-    <LinearLayout
-        style="@style/HeadStyle">
+    <LinearLayout style="@style/HeadStyle">
 
-        <ImageButton
+        <ImageButton style="@style/BackButtonStyle"
             android:id="@+id/back"
-            style="@style/BackButtonStyle"/>
+            android:contentDescription="@string/back"/>
 
-        <TextView
-            android:text="@string/search"
-            style="@style/HeadTextStyle"/>
+        <TextView style="@style/HeadTextStyle"
+            android:text="@string/search"/>
 
     </LinearLayout>
 

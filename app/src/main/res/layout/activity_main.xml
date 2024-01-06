@@ -26,22 +26,19 @@
 
     </FrameLayout>
 
-    <Button
+    <Button style="@style/ButtonStyle"
         android:id="@+id/search_button"
         android:text="@string/search"
-        app:icon="@drawable/ic_search_24x24"
-        style="@style/ButtonStyle"/>
+        app:icon="@drawable/ic_search_24x24"/>
 
-    <Button
+    <Button style="@style/ButtonStyle"
         android:id="@+id/media_button"
         android:text="@string/media"
-        app:icon="@drawable/ic_media_24x24"
-        style="@style/ButtonStyle"/>
+        app:icon="@drawable/ic_media_24x24"/>
 
-    <Button
+    <Button style="@style/ButtonStyle"
         android:id="@+id/settings_button"
         android:text="@string/settings"
-        app:icon="@drawable/ic_settings_24x24"
-        style="@style/ButtonStyle"/>
+        app:icon="@drawable/ic_settings_24x24"/>
 
 </LinearLayout>
