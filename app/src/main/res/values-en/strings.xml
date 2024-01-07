@@ -9,4 +9,7 @@
     <string name="user_agreement">User agreement</string>
     <string name="back">Back</string>
     <string name="next">Next</string>
+    <string name="share_title">Share to</string>
+    <string name="message_to_support">Thanks for the cool app!</string>
+    <string name="message_subject_to_support">Message to the developers of the Playlist Maker app</string>
 </resources>

@@ -23,9 +23,10 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         shareButton.setOnClickListener {
-            val title = "Выберите приложение"
-            val url = "https://practicum.yandex.ru/android-developer/"
+            val title = getString(R.string.share_title)
+            val url = getString(R.string.yp_url)
             val shareIntent = Intent(Intent.ACTION_SEND)
+
             shareIntent.putExtra(Intent.EXTRA_TEXT, url)
             shareIntent.type = "aplication/octet-stream"
             startActivity(Intent.createChooser(shareIntent, title))
@@ -33,9 +34,9 @@ class SettingsActivity : AppCompatActivity() {
 
         mailToSupButton.setOnClickListener {
             val mailToSupIntent = Intent(Intent.ACTION_SENDTO).apply {
-                val supportEmail = "axypypy@yandex.ru"
-                val messageSubject = "Сообщение разработчикам и разработчицам приложения Playlist Maker"
-                val message = "Спасибо за крутое приложение!"
+                val supportEmail = getString(R.string.support_email)
+                val messageSubject = getString(R.string.message_subject_to_support)
+                val message = getString(R.string.message_to_support)
 
                 data = Uri.parse("mailto:")
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(supportEmail))
@@ -46,7 +47,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         agreementButton.setOnClickListener {
-            val url = Uri.parse("https://yandex.ru/legal/practicum_offer/")
+            val url = Uri.parse(getString(R.string.offer_url))
             val agreementIntent = Intent(Intent.ACTION_VIEW, url)
 
             startActivity(agreementIntent)
