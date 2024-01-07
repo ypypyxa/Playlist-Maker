@@ -33,6 +33,7 @@
 
         <ImageButton style="@style/SettingsMenuButtonStyle"
             tools:ignore="DuplicateSpeakableTextCheck"
+            android:id="@+id/share"
             android:contentDescription="@string/share"
             android:src="@drawable/ic_share_24x24"/>
     </FrameLayout>
@@ -58,6 +59,7 @@
 
         <ImageButton style="@style/SettingsMenuButtonStyle"
             android:src="@drawable/ic_next_24x24"
+            android:id="@+id/user_agreement"
             android:contentDescription="@string/next"/>
     </FrameLayout>
 </LinearLayout>
