@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/ActivityStyle"
-    android:background="@color/yp_blue"
+    android:background="?attr/colorPrimaryVariant"
     android:paddingLeft="@dimen/primary_side_padding"
     android:paddingRight="@dimen/primary_side_padding"
     android:paddingBottom="12dp">
