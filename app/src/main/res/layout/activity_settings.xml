@@ -4,7 +4,8 @@
     style="@style/ActivityStyle">
 
     <!-- ШАПКА -->
-    <LinearLayout style="@style/HeadStyle">
+    <LinearLayout style="@style/HeadStyle"
+        android:layout_marginBottom="24dp">
 
         <ImageButton style="@style/BackButtonStyle"
             android:id="@+id/back"

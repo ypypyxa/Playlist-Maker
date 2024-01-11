@@ -31,7 +31,6 @@
     <style name="HeadStyle" parent="Widget.AppCompat.TextView">>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">24dp</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:paddingStart">4dp</item>
         <item name="android:paddingVertical">@dimen/head_vertical_padding</item>
@@ -63,7 +62,7 @@
     <!-- Общий стиль строки меню на странице настроек -->
     <style name="SettingsMenuItemStyle">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/prinary_settings_string_height</item>
+        <item name="android:layout_height">@dimen/primary_settings_string_height</item>
     </style>
 
     <!-- Общий стиль текста в строке меню на странице настроек -->
