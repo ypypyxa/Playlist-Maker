@@ -18,7 +18,7 @@ class SearchActivity : AppCompatActivity() {
 
         val backButton = findViewById<ImageButton>(R.id.back)
         val editText = findViewById<EditText>(R.id.editText)
-        val clearButton = findViewById<FrameLayout>(R.id.clearButton)
+        val clearButton = findViewById<ImageView>(R.id.clearButton)
 
         backButton.setOnClickListener {
             finish()
