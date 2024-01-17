@@ -98,4 +98,19 @@
         <item name="android:layout_marginEnd">5dp</item>
     </style>
 
+    <!-- Общий стиль полей ввода текста -->
+    <style name="EditTextStile" parent="@style/Widget.Material3.TextInputEditText.OutlinedBox.Dense">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/min_button_size</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:drawablePadding">@dimen/edit_text_padding</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:hint">@string/search</item>
+        <item name="android:inputType">text</item>
+        <item name="android:lines">1</item>
+        <item name="android:paddingHorizontal">12dp</item>
+        <item name="android:textColor">?attr/colorOnPrimaryFixed</item>
+        <item name="android:textColorHint">?attr/colorOnTertiary</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>

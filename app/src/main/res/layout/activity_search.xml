@@ -20,24 +20,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:background="@color/yp_light_gray"
+        android:background="@drawable/rounded_edittext_background"
         android:orientation="horizontal">
 
-        <EditText
+        <EditText style="@style/EditTextStile"
             android:id="@+id/editText"
-            android:hint="@string/search"
-            android:drawableStart="@drawable/ic_search_16x16"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/min_button_size"
-            android:layout_weight="1"
-            android:background="@color/yp_light_gray"
-            android:drawablePadding="@dimen/edit_text_padding"
-            android:inputType="text"
-            android:lines="1"
-            android:paddingHorizontal="12dp"
-            android:textColor="@color/yp_black"
-            android:textColorHint="@color/yp_black"
-            android:textSize="16sp"/>
+            android:drawableStart="@drawable/ic_search_16x16"/>
 
         <ImageView
             android:id="@+id/clearButton"
@@ -45,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingEnd="@dimen/edit_text_padding"
+            android:paddingHorizontal="@dimen/edit_text_padding"
             android:visibility="gone"/>
     </LinearLayout>
 </LinearLayout>

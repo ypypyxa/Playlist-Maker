@@ -12,6 +12,9 @@
         <item name="colorSecondary">@color/yp_blue</item>
         <item name="colorSecondaryVariant">@color/white</item>
         <item name="colorOnSecondary">@color/yp_text_gray</item>
+        <!-- Tertiary brand color. -->
+        <item name="colorTertiary">@color/yp_light_gray</item>
+        <item name="colorOnTertiary">@color/yp_text_gray</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
     </style>
