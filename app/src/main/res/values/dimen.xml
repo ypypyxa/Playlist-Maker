@@ -9,5 +9,5 @@
     <dimen name="primary_settings_string_height">56dp</dimen>
     <dimen name="min_button_size">48dp</dimen>
     <dimen name="head_vertical_padding">4dp</dimen>
-    <dimen name="edit_text_padding">8dp</dimen>
+    <dimen name="edit_text_padding">12dp</dimen>
 </resources>
