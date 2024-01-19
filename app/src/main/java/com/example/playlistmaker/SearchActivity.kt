@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import androidx.core.view.isVisible
 
 class SearchActivity : AppCompatActivity() {
     private var textValue: String = TEXT
@@ -21,7 +22,7 @@ class SearchActivity : AppCompatActivity() {
         val clearButton = findViewById<ImageView>(R.id.clearButton)
         val editText = findViewById<EditText>(R.id.editText)
 
-        if (savedInstanceState != null) {
+        savedInstanceState?.let {
             textValue = savedInstanceState.getString(EDITED_TEXT, TEXT)
         }
         editText.setText(textValue)
@@ -41,7 +42,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = clearButtonVisibility(s)
+                clearButton.isVisible = !s.isNullOrEmpty()
                 textValue = s.toString()
             }
 
@@ -50,14 +51,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         editText.addTextChangedListener(simpleTextWatcher)
-    }
-
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
     }
 
     private fun hideKeyboard() {
@@ -77,7 +70,7 @@ class SearchActivity : AppCompatActivity() {
 
     }
     companion object {
-        const val EDITED_TEXT = "EDITED_TEXT"
-        const val TEXT = ""
+        private const val EDITED_TEXT = "EDITED_TEXT"
+        private const val TEXT = ""
     }
 }

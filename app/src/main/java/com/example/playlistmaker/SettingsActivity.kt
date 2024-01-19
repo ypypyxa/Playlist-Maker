@@ -31,7 +31,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         mailToSupButton.setOnClickListener {
-            val mailToSupIntent = Intent(Intent.ACTION_SENDTO).apply {
+            Intent(Intent.ACTION_SENDTO).apply {
                 val supportEmail = getString(R.string.support_email)
                 val messageSubject = getString(R.string.message_subject_to_support)
                 val message = getString(R.string.message_to_support)
@@ -40,8 +40,8 @@ class SettingsActivity : AppCompatActivity() {
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(supportEmail))
                 putExtra(Intent.EXTRA_SUBJECT, messageSubject)
                 putExtra(Intent.EXTRA_TEXT, message)
+                startActivity(this)
             }
-            startActivity(mailToSupIntent)
         }
 
         agreementButton.setOnClickListener {

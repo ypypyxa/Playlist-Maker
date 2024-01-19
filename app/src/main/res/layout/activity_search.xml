@@ -13,6 +13,7 @@
         <TextView
             style="@style/HeadTextStyle"
             android:text="@string/search" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -28,11 +29,13 @@
 
         <ImageView
             android:id="@+id/clearButton"
-            android:src="@drawable/ic_close_cancel_24x24"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingHorizontal="@dimen/edit_text_padding"
+            android:src="@drawable/ic_close_cancel_24x24"
             android:visibility="gone"/>
+
     </LinearLayout>
+
 </LinearLayout>
