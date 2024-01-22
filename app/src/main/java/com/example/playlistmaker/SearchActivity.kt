@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 
 class SearchActivity : AppCompatActivity() {
     private var textValue: String = TEXT
+    private lateinit var editText : EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,12 +21,7 @@ class SearchActivity : AppCompatActivity() {
 
         val backButton = findViewById<ImageButton>(R.id.back)
         val clearButton = findViewById<ImageView>(R.id.clearButton)
-        val editText = findViewById<EditText>(R.id.editText)
-
-        savedInstanceState?.let {
-            textValue = savedInstanceState.getString(EDITED_TEXT, TEXT)
-        }
-        editText.setText(textValue)
+        editText = findViewById<EditText>(R.id.editText)
 
         backButton.setOnClickListener {
             finish()
@@ -67,7 +63,7 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         // Вторым параметром мы передаём значение по умолчанию
         textValue = savedInstanceState.getString(EDITED_TEXT, TEXT)
-
+        editText.setText(textValue)
     }
     companion object {
         private const val EDITED_TEXT = "EDITED_TEXT"
