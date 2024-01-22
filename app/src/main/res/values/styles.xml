@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Общий стиль страницы -->
+    <style name="ActivityStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <!-- Общий стиль кнопок -->
+    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginBottom">@dimen/primary_button_margin_bot</item>
+        <item name="android:backgroundTint">?attr/colorPrimaryFixed</item>
+        <item name="android:textColor">?attr/colorOnPrimaryFixed</item>
+        <item name="android:textSize">@dimen/primary_button_text_size</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/button_icon_padding</item>
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="iconTint">?attr/colorOnPrimaryFixed</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+
+    <!-- Общий стиль шапки -->
+    <style name="HeadStyle" parent="Widget.AppCompat.TextView">>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingVertical">@dimen/head_vertical_padding</item>
+    </style>
+
+    <!-- Общий стиль кнопки "Назад" -->
+    <style name="BackButtonStyle" parent="Widget.AppCompat.ImageButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
+        <item name="android:src">@drawable/ic_back_24x24</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:contentDescription">@string/back</item>
+    </style>
+
+    <!-- Общий стиль текста в шапке -->
+    <style name="HeadTextStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textSize">@dimen/primary_button_text_size</item>
+        <item name="android:layout_marginStart">12dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+
+    <!-- Общий стиль строки меню на странице настроек -->
+    <style name="SettingsMenuItemStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/primary_settings_string_height</item>
+    </style>
+
+    <!-- Общий стиль текста в строке меню на странице настроек -->
+    <style name="SettingsMenuTextStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textSize">@dimen/primary_settings_text_size</item>
+        <item name="android:layout_marginStart">@dimen/primary_side_padding</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <!-- Общий стиль кнопок в меню настроек -->
+    <style name="SettingsMenuButtonStyle" parent="Widget.AppCompat.ImageButton">
+        <item name="android:layout_width">@dimen/min_button_size</item>
+        <item name="android:layout_height">@dimen/min_button_size</item>
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+
+    </style>
+
+    <!-- Общий стиль переключателей в меню настроек -->
+    <style name="SettingsMenuSwitchStyle">
+        <item name="android:layout_width">@dimen/min_button_size</item>
+        <item name="android:layout_height">@dimen/min_button_size</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+    </style>
+
+    <!-- Общий стиль полей ввода текста -->
+    <style name="EditTextStile" parent="@style/Widget.Material3.TextInputEditText.OutlinedBox.Dense">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/min_button_size</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:drawablePadding">@dimen/edit_text_padding</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:hint">@string/search</item>
+        <item name="android:inputType">text</item>
+        <item name="android:lines">1</item>
+        <item name="android:paddingHorizontal">12dp</item>
+        <item name="android:textColor">?attr/colorOnPrimaryFixed</item>
+        <item name="android:textColorHint">?attr/colorOnTertiary</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+</resources>

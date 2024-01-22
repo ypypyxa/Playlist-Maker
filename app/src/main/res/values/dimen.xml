@@ -4,8 +4,10 @@
     <dimen name="button_icon_padding">8dp</dimen>
     <dimen name="primary_side_padding">16dp</dimen>
     <dimen name="primary_button_text_size">24sp</dimen>
+    <dimen name="primary_button_margin_bot">16dp</dimen>
     <dimen name="primary_settings_text_size">16sp</dimen>
-    <dimen name="prinary_settings_string_height">56dp</dimen>
+    <dimen name="primary_settings_string_height">56dp</dimen>
     <dimen name="min_button_size">48dp</dimen>
     <dimen name="head_vertical_padding">4dp</dimen>
+    <dimen name="edit_text_padding">12dp</dimen>
 </resources>

@@ -9,4 +9,10 @@
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="back">Назад</string>
     <string name="next">Далее</string>
+    <string name="share_title">Выберите приложение</string>
+    <string name="yp_url" translatable="false">https://practicum.yandex.ru/android-developer/</string>
+    <string name="support_email" translatable="false">axypypy@yandex.ru</string>
+    <string name="message_subject_to_support">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="message_to_support">Спасибо за крутое приложение!</string>
+    <string name="offer_url" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
 </resources>
