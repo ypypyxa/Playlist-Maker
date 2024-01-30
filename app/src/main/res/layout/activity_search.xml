@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/ActivityStyle">
 
     <!-- ШАПКА -->
@@ -23,9 +25,11 @@
         android:background="@drawable/rounded_edittext_background"
         android:orientation="horizontal">
 
-        <EditText style="@style/EditTextStile"
+        <EditText
             android:id="@+id/editText"
-            android:drawableStart="@drawable/ic_search_16x16"/>
+            style="@style/EditTextStile"
+            android:drawableStart="@drawable/ic_search_16x16"
+            tools:ignore="TextContrastCheck" />
 
         <ImageView
             android:id="@+id/clearButton"
@@ -34,8 +38,19 @@
             android:layout_gravity="center"
             android:paddingHorizontal="@dimen/edit_text_padding"
             android:src="@drawable/ic_close_cancel_24x24"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:contentDescription="@string/clear" />
 
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_track_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        tools:listitem="@layout/track_item"
+        tools:itemCount="5"
+        />
 
 </LinearLayout>
