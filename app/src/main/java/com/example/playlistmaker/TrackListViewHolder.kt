@@ -1,5 +1,7 @@
 package com.example.playlistmaker
 
+import android.content.Context
+import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -14,15 +16,21 @@ class TrackListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     private val trackTime: TextView = itemView.findViewById(R.id.track_time)
     private val trackImage: ImageView = itemView.findViewById(R.id.track_image)
 
-        fun bind(model: Track) {
-            trackName.text = model.trackName
-            artistName.text = model.artistName
-            trackTime.text = model.trackTime
-            Glide.with(itemView)
-                .load(model.artworkUrl100)
-                .placeholder(R.drawable.ic_placeholder_45x45)
-                .fitCenter()
-                .transform(RoundedCorners(2))
-                .into(trackImage)
+    fun bind(model: Track) {
+        trackName.text = model.trackName
+        artistName.text = model.artistName
+        trackTime.text = model.trackTime
+        Glide.with(itemView)
+            .load(model.artworkUrl100)
+            .placeholder(R.drawable.ic_placeholder_45x45)
+            .fitCenter()
+            .transform(RoundedCorners(dpToPx(2.0F, itemView.context)))
+            .into(trackImage)
         }
+    fun dpToPx(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics).toInt()
+    }
 }
