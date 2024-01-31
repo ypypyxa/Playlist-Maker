@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 
 class SearchActivity : AppCompatActivity() {
     private var textValue: String = TEXT
@@ -48,6 +49,10 @@ class SearchActivity : AppCompatActivity() {
         val backButton = findViewById<ImageButton>(R.id.back)
         val clearButton = findViewById<ImageView>(R.id.clearButton)
         editText = findViewById(R.id.editText)
+        val trackListAdapter = TrackListAdapter(trackList)
+        val trackListView = findViewById<RecyclerView>(R.id.search_track_list)
+
+        trackListView.adapter = trackListAdapter
 
         backButton.setOnClickListener {
             finish()
