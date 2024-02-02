@@ -12,4 +12,10 @@
     <string name="share_title">Share to</string>
     <string name="message_to_support">Thanks for the cool app!</string>
     <string name="message_subject_to_support">Message to the developers of the Playlist Maker app</string>
+    <string name="track_name">Track name</string>
+    <string name="artist_name">Artist</string>
+    <string name="track_time">Track time</string>
+    <string name="separator">Separator</string>
+    <string name="placeholder">Placeholder</string>
+    <string name="clear">Clear</string>
 </resources>

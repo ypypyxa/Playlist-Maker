@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/rootLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="13dp"
+    android:layout_marginEnd="12dp">
+
+    <ImageView
+        android:id="@+id/iv_track_image"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_placeholder_45x45"
+        tools:ignore="ImageContrastCheck"
+        android:contentDescription="@string/placeholder" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingVertical="14dp"
+        android:paddingHorizontal="8dp">
+
+        <TextView style="@style/tvTrackPrimaryStyle"
+            android:id="@+id/tv_track_name"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textColor="?attr/colorOnPrimary"
+            tools:text="@string/track_name"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView style="@style/tvTrackSecondaryStyle"
+                android:id="@+id/tv_artist_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:ignore="TextContrastCheck"
+                tools:text="@string/artist_name" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/separator"
+                android:src="@drawable/ic_separator_13x13"
+                tools:ignore="ImageContrastCheck" />
+
+            <TextView style="@style/tvTrackSecondaryStyle"
+                android:id="@+id/tv_track_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="TextContrastCheck"
+                tools:text="@string/track_time" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/ib_next_screen"
+        android:layout_width="@dimen/min_button_size"
+        android:layout_height="@dimen/min_button_size"
+        android:layout_gravity="center"
+        android:backgroundTint="?attr/colorPrimary"
+        android:contentDescription="@string/next"
+        android:src="@drawable/ic_next_24x24"
+        tools:ignore="ImageContrastCheck" />
+
+</LinearLayout>

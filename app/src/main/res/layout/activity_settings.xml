@@ -8,7 +8,7 @@
         android:layout_marginBottom="24dp">
 
         <ImageButton style="@style/BackButtonStyle"
-            android:id="@+id/back"
+            android:id="@+id/ib_back"
             android:contentDescription="@string/back"/>
 
         <TextView style="@style/HeadTextStyle"
@@ -34,7 +34,7 @@
 
         <ImageButton style="@style/SettingsMenuButtonStyle"
             tools:ignore="DuplicateSpeakableTextCheck"
-            android:id="@+id/share"
+            android:id="@+id/ib_share"
             android:contentDescription="@string/share"
             android:src="@drawable/ic_share_24x24"/>
     </FrameLayout>
@@ -47,7 +47,7 @@
 
         <ImageButton style="@style/SettingsMenuButtonStyle"
             tools:ignore="DuplicateSpeakableTextCheck"
-            android:id="@+id/mail_to_support"
+            android:id="@+id/ib_mail_to_support"
             android:contentDescription="@string/support"
             android:src="@drawable/ic_support_24x24"/>
     </FrameLayout>
@@ -60,7 +60,7 @@
 
         <ImageButton style="@style/SettingsMenuButtonStyle"
             android:src="@drawable/ic_next_24x24"
-            android:id="@+id/user_agreement"
+            android:id="@+id/ib_user_agreement"
             android:contentDescription="@string/next"/>
     </FrameLayout>
 </LinearLayout>

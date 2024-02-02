@@ -11,10 +11,10 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val backButton = findViewById<ImageButton>(R.id.back)
-        val mailToSupButton = findViewById<ImageButton>(R.id.mail_to_support)
-        val shareButton = findViewById<ImageButton>(R.id.share)
-        val agreementButton = findViewById<ImageButton>(R.id.user_agreement)
+        val backButton = findViewById<ImageButton>(R.id.ib_back)
+        val mailToSupButton = findViewById<ImageButton>(R.id.ib_mail_to_support)
+        val shareButton = findViewById<ImageButton>(R.id.ib_share)
+        val agreementButton = findViewById<ImageButton>(R.id.ib_user_agreement)
 
         backButton.setOnClickListener {
             finish()
