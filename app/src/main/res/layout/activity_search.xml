@@ -8,7 +8,7 @@
     <LinearLayout style="@style/HeadStyle">
 
         <ImageButton
-            android:id="@+id/back"
+            android:id="@+id/ib_back"
             style="@style/BackButtonStyle"
             android:contentDescription="@string/back" />
 
@@ -26,13 +26,13 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/et_search"
             style="@style/EditTextStile"
             android:drawableStart="@drawable/ic_search_16x16"
             tools:ignore="TextContrastCheck" />
 
         <ImageView
-            android:id="@+id/clearButton"
+            android:id="@+id/iv_clear_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -44,7 +44,7 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_track_list"
+        android:id="@+id/rv_search_track_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

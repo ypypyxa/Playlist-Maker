@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class SearchActivity : AppCompatActivity() {
     private var textValue: String = TEXT
-    private lateinit var editText : EditText
+    private var etSearch : EditText? = null
     private val trackList = listOf(
         Track(
             "Smells Like Teen Spirit",
@@ -46,11 +46,11 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val backButton = findViewById<ImageButton>(R.id.back)
-        val clearButton = findViewById<ImageView>(R.id.clearButton)
-        editText = findViewById(R.id.editText)
+        val backButton = findViewById<ImageButton>(R.id.ib_back)
+        val clearButton = findViewById<ImageView>(R.id.iv_clear_button)
+        etSearch = findViewById(R.id.et_search)
         val trackListAdapter = TrackListAdapter(trackList)
-        val trackListView = findViewById<RecyclerView>(R.id.search_track_list)
+        val trackListView = findViewById<RecyclerView>(R.id.rv_search_track_list)
 
         trackListView.adapter = trackListAdapter
 
@@ -59,7 +59,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearButton.setOnClickListener {
-            editText.setText("")
+            etSearch?.setText("")
             hideKeyboard()
         }
 
@@ -77,7 +77,7 @@ class SearchActivity : AppCompatActivity() {
                 //empty
             }
         }
-        editText.addTextChangedListener(simpleTextWatcher)
+        etSearch?.addTextChangedListener(simpleTextWatcher)
     }
 
     private fun hideKeyboard() {
@@ -94,7 +94,7 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         // Вторым параметром мы передаём значение по умолчанию
         textValue = savedInstanceState.getString(EDITED_TEXT, TEXT)
-        editText.setText(textValue)
+        etSearch?.setText(textValue)
     }
     companion object {
         private const val EDITED_TEXT = "EDITED_TEXT"

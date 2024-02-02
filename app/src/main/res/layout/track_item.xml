@@ -9,7 +9,7 @@
     android:layout_marginEnd="12dp">
 
     <ImageView
-        android:id="@+id/track_image"
+        android:id="@+id/iv_track_image"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_gravity="center"
@@ -25,33 +25,22 @@
         android:paddingVertical="14dp"
         android:paddingHorizontal="8dp">
 
-        <TextView
-            android:id="@+id/track_name"
+        <TextView style="@style/tvTrackPrimaryStyle"
+            android:id="@+id/tv_track_name"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:textColor="?attr/colorOnPrimary"
-            android:fontFamily="@font/ys_display_regular"
-            android:textSize="16sp"
-            android:textFontWeight="400"
-            android:maxLines="1"
-            android:ellipsize="marquee"
             tools:text="@string/track_name"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/artist_name"
+            <TextView style="@style/tvTrackSecondaryStyle"
+                android:id="@+id/tv_artist_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/ys_display_regular"
-                android:textColor="?attr/colorOnSecondary"
-                android:textFontWeight="400"
-                android:textSize="11sp"
-                android:maxLines="1"
-                android:ellipsize="marquee"
                 tools:ignore="TextContrastCheck"
                 tools:text="@string/artist_name" />
 
@@ -63,23 +52,17 @@
                 android:src="@drawable/ic_separator_13x13"
                 tools:ignore="ImageContrastCheck" />
 
-            <TextView
-                android:id="@+id/track_time"
+            <TextView style="@style/tvTrackSecondaryStyle"
+                android:id="@+id/tv_track_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/ys_display_regular"
-                android:textColor="?attr/colorOnSecondary"
-                android:textFontWeight="400"
-                android:textSize="11sp"
-                android:maxLines="1"
-                android:ellipsize="marquee"
                 tools:ignore="TextContrastCheck"
                 tools:text="@string/track_time" />
         </LinearLayout>
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/user_agreement"
+        android:id="@+id/ib_next_screen"
         android:layout_width="@dimen/min_button_size"
         android:layout_height="@dimen/min_button_size"
         android:layout_gravity="center"
