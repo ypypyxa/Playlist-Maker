@@ -29,6 +29,8 @@
             android:id="@+id/et_search"
             style="@style/EditTextStile"
             android:drawableStart="@drawable/ic_search_16x16"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
             tools:ignore="TextContrastCheck" />
 
         <ImageView
@@ -52,5 +54,14 @@
         tools:listitem="@layout/track_item"
         tools:itemCount="5"
         />
+
+    <TextView android:id="@+id/placeholderMessage"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"/>
 
 </LinearLayout>

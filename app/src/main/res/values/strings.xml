@@ -21,4 +21,6 @@
     <string name="separator">Разделитель</string>
     <string name="placeholder">Заглушка</string>
     <string name="clear">Очистить</string>
+    <string name="nothing_found">Ни чего не найдено</string>
+    <string name="something_went_wrong">Что-то пошло не так</string>
 </resources>
