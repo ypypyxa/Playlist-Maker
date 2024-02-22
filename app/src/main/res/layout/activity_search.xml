@@ -52,16 +52,47 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"
         tools:listitem="@layout/track_item"
-        tools:itemCount="5"
-        />
+        tools:itemCount="5"/>
 
-    <TextView android:id="@+id/placeholderMessage"
-        android:layout_width="300dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textAlignment="center"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"/>
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="102dp"
+        android:layout_marginHorizontal="24dp">
 
+        <ImageView android:id="@+id/iv_placeholder_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_something_went_wrong_placeholder"
+            android:visibility="gone"/>
+
+        <TextView android:id="@+id/tv_placeholder_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_marginTop="16dp"
+            android:text="@string/placeholder"
+            android:textSize="19sp"
+            android:fontFamily="@font/ys_display_medium"
+            android:textColor="?attr/colorOnPrimary"
+            android:visibility="gone"/>
+
+        <Button android:id="@+id/btn_placeholder_button"
+            style="Widget.MaterialComponents.Button.UnelevatedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="?attr/colorOnPrimary"
+            android:text="@string/refresh"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="14sp"
+            android:textAllCaps="false"
+            android:foreground="?attr/selectableItemBackground"
+            android:fontFamily="@font/ys_display_medium"
+            android:textFontWeight="500"
+            app:cornerRadius="56dp"
+            android:visibility="gone"/>
+    </LinearLayout>
 </LinearLayout>
