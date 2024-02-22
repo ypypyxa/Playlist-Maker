@@ -179,6 +179,7 @@ class SearchActivity : AppCompatActivity() {
         placeholderMessage.text = getString(R.string.nothing_found)
         placeholderMessage.visibility = View.VISIBLE
         placeholderImage.visibility = View.VISIBLE
+        placeholderButton.visibility = View.GONE
     }
 
     private fun hideKeyboard() {
