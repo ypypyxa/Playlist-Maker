@@ -192,7 +192,7 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(EDITED_TEXT, textValue)
 
         // Сохранение списка песен
-        outState.putParcelableArrayList(TRACK_LIST, trackList)
+        outState.putSerializable(TRACK_LIST, trackList)
 
         // Сохраняем состояние экрана
         outState.putSerializable(ACTIVITY_STATE, activityState)
@@ -204,12 +204,11 @@ class SearchActivity : AppCompatActivity() {
         textValue = savedInstanceState.getString(EDITED_TEXT, TEXT)
         etSearch.setText(textValue)
 
-
         //Восстановление состояния экрана
         activityState = savedInstanceState.getSerializable(ACTIVITY_STATE) as ActivityState
         when (activityState) {
             ActivityState.SHOW_LIST -> {
-                trackList = savedInstanceState.getParcelableArrayList(TRACK_LIST)!!
+                trackList = savedInstanceState.getSerializable(TRACK_LIST) as ArrayList<Track>
                 trackListAdapter.trackList = trackList
             }
             ActivityState.FAILURE -> showFailureMessage()
