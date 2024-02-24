@@ -29,6 +29,8 @@
             android:id="@+id/et_search"
             style="@style/EditTextStile"
             android:drawableStart="@drawable/ic_search_16x16"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
             android:imeOptions="actionDone"
             android:singleLine="true"
             tools:ignore="TextContrastCheck" />
@@ -38,7 +40,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingHorizontal="@dimen/edit_text_padding"
             android:src="@drawable/ic_close_cancel_24x24"
             android:visibility="gone"
             android:contentDescription="@string/clear" />
