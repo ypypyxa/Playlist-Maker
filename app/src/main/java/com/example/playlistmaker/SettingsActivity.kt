@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,6 +16,13 @@ class SettingsActivity : AppCompatActivity() {
         val mailToSupButton = findViewById<ImageButton>(R.id.ib_mail_to_support)
         val shareButton = findViewById<ImageButton>(R.id.ib_share)
         val agreementButton = findViewById<ImageButton>(R.id.ib_user_agreement)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.sw_theme)
+
+        themeSwitcher.isChecked = (applicationContext as App).darkTheme
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+        }
 
         backButton.setOnClickListener {
             finish()

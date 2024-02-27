@@ -22,7 +22,9 @@
         <TextView style="@style/SettingsMenuTextStyle"
             android:text="@string/dark_theme"/>
 
-        <Switch style="@style/SettingsMenuSwitchStyle"
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            style="@style/SettingsMenuSwitchStyle"
+            android:id="@+id/sw_theme"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
     </FrameLayout>
 
