@@ -113,7 +113,16 @@ class SearchActivity : AppCompatActivity() {
         val onTrackItemClickListener = object : OnItemClickListener {
 //Нажатие на трэк
             override fun onItemClick(item: Track) {
-                historyTrackList.add(item)
+                if (historyTrackList.none { it.trackId == item.trackId }) {
+                    historyTrackList.add(0, item)
+                } else {
+                    historyTrackList.remove(item)
+                    historyTrackList.add(0, item)
+                }
+//                historyTrackList.add(0, item)
+                if (historyTrackList.size > 10) {
+                    historyTrackList.removeAt(10)
+                }
                 saveTrackList(historyTrackList)
             }
         }
@@ -158,9 +167,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                historyHint.visibility = if (etSearch.hasFocus() && etSearch.text.isEmpty()) View.VISIBLE else View.GONE
-                historyClearButton.visibility = if (etSearch.hasFocus() && etSearch.text.isEmpty()) View.VISIBLE else View.GONE
-                trackListView.visibility = if (etSearch.hasFocus() && etSearch.text.isEmpty()) View.VISIBLE else View.GONE
+                if (etSearch.text.isEmpty() && historyTrackList.size > 0) showHistoryView() else hideHistoryView()
                 etSearchClearButton.isVisible = !s.isNullOrEmpty()
                 textValue = s.toString()
             }
@@ -173,10 +180,7 @@ class SearchActivity : AppCompatActivity() {
 
 //Проверка находится ли поле поиска в фокусе
         etSearch.setOnFocusChangeListener { view, hasFocus ->
-            trackListView.visibility = if (hasFocus && etSearch.text.isEmpty()) View.VISIBLE else View.GONE
-            historyHint.visibility = if (hasFocus && etSearch.text.isEmpty()) View.VISIBLE else View.GONE
-            historyClearButton.visibility = if (hasFocus && etSearch.text.isEmpty()) View.VISIBLE else View.GONE
-            activityState = if (hasFocus && etSearch.text.isEmpty()) ActivityState.SHOW_HISTORY_LIST else ActivityState.SHOW_SEARCH_LIST
+            if (hasFocus && etSearch.text.isEmpty() && historyTrackList.size > 0) showHistoryView() else hideHistoryView()
             trackListAdapter.trackList = historyTrackList
         }
 
@@ -194,15 +198,20 @@ class SearchActivity : AppCompatActivity() {
             etSearch.setText("")
             hideKeyboard()
             searchTrackList.clear()
-//            trackListView.visibility = View.GONE
-            placeholderImage.visibility = View.GONE
-            placeholderMessage.visibility = View.GONE
-            placeholderButton.visibility = View.GONE
-
+            hidePlaceholderView()
             historyTrackList = loadTrackList()
             trackListAdapter.trackList = historyTrackList
             trackListAdapter.notifyDataSetChanged()
             activityState = ActivityState.SHOW_HISTORY_LIST
+        }
+
+//Кнопка "Очистить историю поиска"
+        historyClearButton.setOnClickListener {
+            historyTrackList.clear()
+            trackListAdapter.trackList = historyTrackList
+            trackListAdapter.notifyDataSetChanged()
+            saveTrackList(historyTrackList)
+            hideHistoryView()
         }
 
 //Кнопка "Обновить"
@@ -226,7 +235,6 @@ class SearchActivity : AppCompatActivity() {
 // Функция для загрузки trackList из SharedPreferences/history
     private fun loadTrackList(): ArrayList<Track> {
         val type = object : TypeToken<ArrayList<Track>>() {}.type
-
         return historyGson.fromJson(history.getString(HISTORY_TRACKS, ""), type) ?: ArrayList()
     }
 
@@ -253,9 +261,7 @@ class SearchActivity : AppCompatActivity() {
                         } else {
                             activityState = ActivityState.SHOW_SEARCH_LIST
                             trackListView.visibility = View.VISIBLE
-                            placeholderImage.visibility = View.GONE
-                            placeholderMessage.visibility = View.GONE
-                            placeholderButton.visibility = View.GONE
+                            hidePlaceholderView()
                         }
                     } else {
                         showFailureMessage()
@@ -273,6 +279,26 @@ class SearchActivity : AppCompatActivity() {
                 }
             })
         }
+    }
+
+    private fun showHistoryView() {
+        historyHint.visibility = View.VISIBLE
+        historyClearButton.visibility = View.VISIBLE
+        trackListView.visibility = View.VISIBLE
+        activityState = ActivityState.SHOW_HISTORY_LIST
+    }
+
+    private fun hideHistoryView() {
+        historyHint.visibility = View.GONE
+        historyClearButton.visibility = View.GONE
+        trackListView.visibility = View.GONE
+        activityState = ActivityState.SHOW_SEARCH_LIST
+    }
+
+    private fun hidePlaceholderView() {
+        placeholderImage.visibility = View.GONE
+        placeholderMessage.visibility = View.GONE
+        placeholderButton.visibility = View.GONE
     }
 
     private fun showMessage(text: String, additionalMessage: String) {
