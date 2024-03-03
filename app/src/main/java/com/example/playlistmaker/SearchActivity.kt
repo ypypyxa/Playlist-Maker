@@ -166,8 +166,23 @@ class SearchActivity : AppCompatActivity() {
                 // empty
             }
 
+//Изменение текста
+//Если текстовое поле пустое и
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (etSearch.text.isEmpty() && historyTrackList.size > 0) showHistoryView() else hideHistoryView()
+                if (etSearch.text.isEmpty() && historyTrackList.size != 0) {
+                    showHistoryView()
+                    trackListAdapter.trackList = historyTrackList
+                    trackListAdapter.notifyDataSetChanged()
+                    searchTrackList.clear()
+                } else if (etSearch.text.isEmpty() && historyTrackList.size == 0) { //если поле и история пустые - скрываются подсказки и список песен
+                    hideHistoryView()
+                    searchTrackList.clear()
+                    trackListAdapter.trackList = searchTrackList
+                } else { //пока поле не пустое показывается результат предыдущего поиска
+                    hideHistoryView()
+                    trackListAdapter.trackList = searchTrackList
+                    trackListView.visibility = View.VISIBLE
+                }
                 etSearchClearButton.isVisible = !s.isNullOrEmpty()
                 textValue = s.toString()
             }
