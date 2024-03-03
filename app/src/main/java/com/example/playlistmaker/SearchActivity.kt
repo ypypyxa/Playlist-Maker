@@ -24,12 +24,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-const val HISTORY = "history"
-const val HISTORY_TRACKS = "history_tracks"
-
 class SearchActivity : AppCompatActivity() {
 
-//    private lateinit var activityState: ActivityState
     private lateinit var backButton: ImageButton
     private lateinit var etSearch: EditText
     private lateinit var etSearchClearButton: ImageView
@@ -86,13 +82,15 @@ class SearchActivity : AppCompatActivity() {
             ActivityState.SHOW_HISTORY_LIST -> {
                 historyTrackList = loadTrackList()
                 trackListAdapter.trackList = historyTrackList
+                trackListView.visibility = View.VISIBLE
             }
             ActivityState.FAILURE -> showFailureMessage()
             ActivityState.NOTHING_FOUND -> showNothingFoundMessage()
-            null -> TODO()
+            else -> {}
         }
 
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -109,36 +107,18 @@ class SearchActivity : AppCompatActivity() {
 
         history = getSharedPreferences(HISTORY, MODE_PRIVATE)
 
-//Слушатель нажатия на трек в листе поиска
-        val onTrackItemClickListener = object : OnItemClickListener {
-//Нажатие на трэк
-            override fun onItemClick(item: Track) {
-                if (historyTrackList.none { it.trackId == item.trackId }) {
-                    historyTrackList.add(0, item)
-                } else {
-                    historyTrackList.remove(item)
-                    historyTrackList.add(0, item)
-                }
-//                historyTrackList.add(0, item)
-                if (historyTrackList.size > 10) {
-                    historyTrackList.removeAt(10)
-                }
-                saveTrackList(historyTrackList)
+        trackListAdapter = TrackListAdapter {item ->
+            if (historyTrackList.none { it.trackId == item.trackId }) {
+                historyTrackList.add(0, item)
+            } else {
+                historyTrackList.remove(item)
+                historyTrackList.add(0, item)
             }
-        }
-/*
-//Слушатель нажатия на трек в листе истории
-        val onHistoryItemClickListener = object : OnItemClickListener {
-            override fun onItemClick(item: Track) {
-                val position = trackList.indexOf(item)
-                trackList.remove(item)
-                searchListAdapter.notifyItemRemoved(position)
-                searchListAdapter.notifyItemRangeChanged(position, trackList.size)
+            if (historyTrackList.size > HISTORY_MAX_SIZE) {
+                historyTrackList.removeAt(HISTORY_MAX_SIZE)
             }
+            saveTrackList(historyTrackList)
         }
-*/
-
-        trackListAdapter = TrackListAdapter(onTrackItemClickListener)
 
 //Проверяем был ли это первый запуск или поворот экрана
         if (savedInstanceState == null) {
@@ -167,14 +147,14 @@ class SearchActivity : AppCompatActivity() {
             }
 
 //Изменение текста
-//Если текстовое поле пустое и
+//Если текстовое поле пустое, а история нет, то отображается подсказка и история поиска
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (etSearch.text.isEmpty() && historyTrackList.size != 0) {
+                if (etSearch.text.isEmpty() && historyTrackList.size != HISTORY_MIN_SIZE) {
                     showHistoryView()
                     trackListAdapter.trackList = historyTrackList
                     trackListAdapter.notifyDataSetChanged()
                     searchTrackList.clear()
-                } else if (etSearch.text.isEmpty() && historyTrackList.size == 0) { //если поле и история пустые - скрываются подсказки и список песен
+                } else if (etSearch.text.isEmpty() && historyTrackList.size == HISTORY_MIN_SIZE) { //если поле и история пустые - скрываются подсказки и список песен
                     hideHistoryView()
                     searchTrackList.clear()
                     trackListAdapter.trackList = searchTrackList
@@ -195,8 +175,9 @@ class SearchActivity : AppCompatActivity() {
 
 //Проверка находится ли поле поиска в фокусе
         etSearch.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus && etSearch.text.isEmpty() && historyTrackList.size > 0) showHistoryView() else hideHistoryView()
+            if (hasFocus && etSearch.text.isEmpty() && historyTrackList.size > HISTORY_MIN_SIZE) showHistoryView() else hideHistoryView()
             trackListAdapter.trackList = historyTrackList
+            trackListAdapter.notifyDataSetChanged()
         }
 
 //Нажатие на клавиатуре кнопки Done
@@ -215,9 +196,14 @@ class SearchActivity : AppCompatActivity() {
             searchTrackList.clear()
             hidePlaceholderView()
             historyTrackList = loadTrackList()
-            trackListAdapter.trackList = historyTrackList
-            trackListAdapter.notifyDataSetChanged()
-            activityState = ActivityState.SHOW_HISTORY_LIST
+            if (historyTrackList.size > HISTORY_MIN_SIZE) {
+                trackListAdapter.trackList = historyTrackList
+                trackListAdapter.notifyDataSetChanged()
+                activityState = ActivityState.SHOW_HISTORY_LIST
+                showHistoryView()
+            } else {
+                hideHistoryView()
+            }
         }
 
 //Кнопка "Очистить историю поиска"
@@ -352,9 +338,13 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
+        private const val ACTIVITY_STATE = "ACTIVITY_STATE"
+        private const val HISTORY = "history"
+        private const val HISTORY_TRACKS = "history_tracks"
+        private const val HISTORY_MIN_SIZE = 0
+        private const val HISTORY_MAX_SIZE = 10
         private const val EDITED_TEXT = "EDITED_TEXT"
         private const val TEXT = ""
         private const val TRACK_LIST = "TRACK_LIST"
-        private const val ACTIVITY_STATE = "ACTIVITY_STATE"
     }
 }

@@ -4,13 +4,13 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
-const val SETTINGS = "settings"
-const val DARK_THEME = "dark_theme"
+private const val SETTINGS = "settings"
+private const val DARK_THEME = "dark_theme"
 
 class App : Application() {
 
     var darkTheme = false
-    lateinit var settings: SharedPreferences
+    private lateinit var settings: SharedPreferences
 
     override fun onCreate() {
         super.onCreate()
