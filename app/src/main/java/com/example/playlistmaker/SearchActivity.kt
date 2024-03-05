@@ -16,8 +16,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,6 +29,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var etSearchClearButton: ImageView
     private lateinit var history: SharedPreferences
     private lateinit var historyHint: TextView
+    private lateinit var historyManger: HistoryManager
     private lateinit var historyClearButton: Button
     private lateinit var placeholderImage: ImageView
     private lateinit var placeholderMessage: TextView
@@ -38,12 +37,11 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackListAdapter: TrackListAdapter
     private lateinit var trackListView: RecyclerView
 
+    private var activityState: ActivityState? = null
     private var searchTrackList = ArrayList<Track>()
     private var historyTrackList = ArrayList<Track>()
-    private val historyGson = Gson()
     private var textValue: String = TEXT
     private val itunesBaseUrl = "https://itunes.apple.com"
-    private var activityState: ActivityState? = null
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(itunesBaseUrl)
@@ -80,7 +78,7 @@ class SearchActivity : AppCompatActivity() {
                 trackListView.visibility = View.VISIBLE
             }
             ActivityState.SHOW_HISTORY_LIST -> {
-                historyTrackList = loadTrackList()
+                historyTrackList = historyManger.loadTrackList()
                 trackListAdapter.trackList = historyTrackList
                 trackListView.visibility = View.VISIBLE
             }
@@ -106,7 +104,9 @@ class SearchActivity : AppCompatActivity() {
         trackListView = findViewById(R.id.rv_search_track_list)
 
         history = getSharedPreferences(HISTORY, MODE_PRIVATE)
+        historyManger = HistoryManager(history)
 
+//Инициализируем адаптер
         trackListAdapter = TrackListAdapter {item ->
             if (historyTrackList.none { it.trackId == item.trackId }) {
                 historyTrackList.add(0, item)
@@ -117,13 +117,13 @@ class SearchActivity : AppCompatActivity() {
             if (historyTrackList.size > HISTORY_MAX_SIZE) {
                 historyTrackList.removeAt(HISTORY_MAX_SIZE)
             }
-            saveTrackList(historyTrackList)
+            historyManger.saveTrackList(historyTrackList)
         }
 
 //Проверяем был ли это первый запуск или поворот экрана
         if (savedInstanceState == null) {
             if (history != null) {
-                historyTrackList = loadTrackList()
+                historyTrackList = historyManger.loadTrackList()
                 activityState = ActivityState.SHOW_HISTORY_LIST
             } else {
                 trackListAdapter.trackList = searchTrackList
@@ -195,7 +195,7 @@ class SearchActivity : AppCompatActivity() {
             hideKeyboard()
             searchTrackList.clear()
             hidePlaceholderView()
-            historyTrackList = loadTrackList()
+            historyTrackList = historyManger.loadTrackList()
             if (historyTrackList.size > HISTORY_MIN_SIZE) {
                 trackListAdapter.trackList = historyTrackList
                 trackListAdapter.notifyDataSetChanged()
@@ -206,12 +206,12 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-//Кнопка "Очистить историю поиска"
+//Кнопка "Очистить историю поиска"///////////////////////////////////////////////////////////////////////////////////////////////////////////
         historyClearButton.setOnClickListener {
             historyTrackList.clear()
             trackListAdapter.trackList = historyTrackList
             trackListAdapter.notifyDataSetChanged()
-            saveTrackList(historyTrackList)
+            historyManger.clearTrackList()
             hideHistoryView()
         }
 
@@ -224,19 +224,6 @@ class SearchActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             finish()
         }
-    }
-
-// Функция для сохранения trackList в SharedPreferences/history
-    private fun saveTrackList(trackList: ArrayList<Track>) {
-        history.edit()
-            .putString(HISTORY_TRACKS, historyGson.toJson(trackList))
-            .apply()
-    }
-
-// Функция для загрузки trackList из SharedPreferences/history
-    private fun loadTrackList(): ArrayList<Track> {
-        val type = object : TypeToken<ArrayList<Track>>() {}.type
-        return historyGson.fromJson(history.getString(HISTORY_TRACKS, ""), type) ?: ArrayList()
     }
 
     private fun searchTrack() {
@@ -340,7 +327,6 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         private const val ACTIVITY_STATE = "ACTIVITY_STATE"
         private const val HISTORY = "history"
-        private const val HISTORY_TRACKS = "history_tracks"
         private const val HISTORY_MIN_SIZE = 0
         private const val HISTORY_MAX_SIZE = 10
         private const val EDITED_TEXT = "EDITED_TEXT"
