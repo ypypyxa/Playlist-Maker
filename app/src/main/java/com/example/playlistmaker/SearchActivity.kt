@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -21,20 +22,24 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
 class SearchActivity : AppCompatActivity() {
 
+    private lateinit var backButton: ImageButton
+    private lateinit var etSearch: EditText
+    private lateinit var etSearchClearButton: ImageView
+    private lateinit var history: SharedPreferences
+    private lateinit var historyHint: TextView
+    private lateinit var historyManger: HistoryManager
+    private lateinit var historyClearButton: Button
     private lateinit var placeholderImage: ImageView
     private lateinit var placeholderMessage: TextView
     private lateinit var placeholderButton: Button
-    private lateinit var backButton: ImageButton
-    private lateinit var clearButton: ImageView
-    private lateinit var trackListView: RecyclerView
     private lateinit var trackListAdapter: TrackListAdapter
-    private lateinit var etSearch: EditText
-    private lateinit var activityState: ActivityState
+    private lateinit var trackListView: RecyclerView
 
-    private var trackList = ArrayList<Track>()
+    private var activityState: ActivityState? = null
+    private var searchTrackList = ArrayList<Track>()
+    private var historyTrackList = ArrayList<Track>()
     private var textValue: String = TEXT
     private val itunesBaseUrl = "https://itunes.apple.com"
 
@@ -45,49 +50,120 @@ class SearchActivity : AppCompatActivity() {
 
     private val musicService = retrofit.create(MusicApi::class.java)
 
+//Сохраняем состояние бандла
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(EDITED_TEXT, textValue)
+
+        // Сохранение списка песен
+        outState.putSerializable(TRACK_LIST, trackListAdapter.trackList)
+
+        // Сохраняем состояние экрана
+        outState.putSerializable(ACTIVITY_STATE, activityState)
+    }
+
+//Восстанавливаем предыдущее состояние бандла
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        // Восстанавливаем текст в поле поиска
+        textValue = savedInstanceState.getString(EDITED_TEXT, TEXT)
+        etSearch.setText(textValue)
+
+        //Восстановление состояния экрана
+        activityState = savedInstanceState.getSerializable(ACTIVITY_STATE) as ActivityState
+        when (activityState) {
+            ActivityState.SHOW_SEARCH_LIST -> {
+                searchTrackList = savedInstanceState.getSerializable(TRACK_LIST) as ArrayList<Track>
+                trackListAdapter.trackList = searchTrackList
+                trackListView.visibility = View.VISIBLE
+            }
+            ActivityState.SHOW_HISTORY_LIST -> {
+                historyTrackList = historyManger.loadTrackList()
+                trackListAdapter.trackList = historyTrackList
+                trackListView.visibility = View.VISIBLE
+            }
+            ActivityState.FAILURE -> showFailureMessage()
+            ActivityState.NOTHING_FOUND -> showNothingFoundMessage()
+            else -> {}
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        backButton = findViewById(R.id.ib_back)
+        etSearchClearButton = findViewById(R.id.iv_clear_button)
+        etSearch = findViewById(R.id.et_search)
+        historyHint = findViewById(R.id.tv_history_hint)
+        historyClearButton = findViewById(R.id.btn_history_clear)
         placeholderImage = findViewById(R.id.iv_placeholder_image)
         placeholderMessage = findViewById(R.id.tv_placeholder_message)
         placeholderButton = findViewById(R.id.btn_placeholder_button)
-        backButton = findViewById(R.id.ib_back)
-        clearButton = findViewById(R.id.iv_clear_button)
-        etSearch = findViewById(R.id.et_search)
-        trackListAdapter = TrackListAdapter()
         trackListView = findViewById(R.id.rv_search_track_list)
 
-        trackListAdapter.trackList = trackList
+        history = getSharedPreferences(HISTORY, MODE_PRIVATE)
+        historyManger = HistoryManager(history)
+
+//Инициализируем адаптер
+        trackListAdapter = TrackListAdapter {item ->
+            if (historyTrackList.none { it.trackId == item.trackId }) {
+                historyTrackList.add(0, item)
+            } else {
+                historyTrackList.remove(item)
+                historyTrackList.add(0, item)
+            }
+            if (historyTrackList.size > HISTORY_MAX_SIZE) {
+                historyTrackList.removeAt(HISTORY_MAX_SIZE)
+            }
+            historyManger.saveTrackList(historyTrackList)
+        }
+
+//Проверяем был ли это первый запуск или поворот экрана
+        if (savedInstanceState == null) {
+            if (history != null) {
+                historyTrackList = historyManger.loadTrackList()
+                activityState = ActivityState.SHOW_HISTORY_LIST
+            } else {
+                trackListAdapter.trackList = searchTrackList
+                activityState = ActivityState.SHOW_SEARCH_LIST
+            }
+        } else {
+            if (activityState == ActivityState.SHOW_HISTORY_LIST) {
+                trackListAdapter.trackList = historyTrackList
+            } else {
+                trackListAdapter.trackList = searchTrackList
+                activityState = ActivityState.SHOW_SEARCH_LIST
+            }
+        }
+
         trackListView.adapter = trackListAdapter
 
-        activityState = ActivityState.SHOW_LIST
-
-        backButton.setOnClickListener {
-            finish()
-        }
-
-        clearButton.setOnClickListener {
-            etSearch.setText("")
-            hideKeyboard()
-            trackList.clear()
-            trackListView.visibility = View.GONE
-            placeholderImage.visibility = View.GONE
-            placeholderMessage.visibility = View.GONE
-            placeholderButton.visibility = View.GONE
-        }
-
-        placeholderButton.setOnClickListener {
-            searchTrack()
-        }
-
-        val simpleTextWatcher = object : TextWatcher {
+//Наблюдатель событий набора текста
+        val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // empty
             }
 
+//Изменение текста
+//Если текстовое поле пустое, а история нет, то отображается подсказка и история поиска
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.isVisible = !s.isNullOrEmpty()
+                if (etSearch.text.isEmpty() && historyTrackList.size != HISTORY_MIN_SIZE) {
+                    showHistoryView()
+                    trackListAdapter.trackList = historyTrackList
+                    trackListAdapter.notifyDataSetChanged()
+                    searchTrackList.clear()
+                } else if (etSearch.text.isEmpty() && historyTrackList.size == HISTORY_MIN_SIZE) { //если поле и история пустые - скрываются подсказки и список песен
+                    hideHistoryView()
+                    searchTrackList.clear()
+                    trackListAdapter.trackList = searchTrackList
+                } else { //пока поле не пустое показывается результат предыдущего поиска
+                    hideHistoryView()
+                    trackListAdapter.trackList = searchTrackList
+                    trackListView.visibility = View.VISIBLE
+                }
+                etSearchClearButton.isVisible = !s.isNullOrEmpty()
                 textValue = s.toString()
             }
 
@@ -95,8 +171,16 @@ class SearchActivity : AppCompatActivity() {
                 //empty
             }
         }
-        etSearch.addTextChangedListener(simpleTextWatcher)
+        etSearch.addTextChangedListener(textWatcher)
 
+//Проверка находится ли поле поиска в фокусе
+        etSearch.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus && etSearch.text.isEmpty() && historyTrackList.size > HISTORY_MIN_SIZE) showHistoryView() else hideHistoryView()
+            trackListAdapter.trackList = historyTrackList
+            trackListAdapter.notifyDataSetChanged()
+        }
+
+//Нажатие на клавиатуре кнопки Done
         etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 searchTrack()
@@ -104,9 +188,46 @@ class SearchActivity : AppCompatActivity() {
             }
             false
         }
+
+//Кнопка очистки поля поиска
+        etSearchClearButton.setOnClickListener {
+            etSearch.setText("")
+            hideKeyboard()
+            searchTrackList.clear()
+            hidePlaceholderView()
+            historyTrackList = historyManger.loadTrackList()
+            if (historyTrackList.size > HISTORY_MIN_SIZE) {
+                trackListAdapter.trackList = historyTrackList
+                trackListAdapter.notifyDataSetChanged()
+                activityState = ActivityState.SHOW_HISTORY_LIST
+                showHistoryView()
+            } else {
+                hideHistoryView()
+            }
+        }
+
+//Кнопка "Очистить историю поиска"///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        historyClearButton.setOnClickListener {
+            historyTrackList.clear()
+            trackListAdapter.trackList = historyTrackList
+            trackListAdapter.notifyDataSetChanged()
+            historyManger.clearTrackList()
+            hideHistoryView()
+        }
+
+//Кнопка "Обновить"
+        placeholderButton.setOnClickListener {
+            searchTrack()
+        }
+
+//Кнопка назад
+        backButton.setOnClickListener {
+            finish()
+        }
     }
 
     private fun searchTrack() {
+        trackListAdapter.trackList = searchTrackList
         if (etSearch.text.isNotEmpty()) {
             musicService.findTrack(etSearch.text.toString()).enqueue(object :
                 Callback<SongsResponse> {
@@ -115,24 +236,20 @@ class SearchActivity : AppCompatActivity() {
                     response: Response<SongsResponse>
                 ) {
                     if (response.code() == 200) {
-                        trackList.clear()
+                        searchTrackList.clear()
                         if (response.body()?.results?.isNotEmpty() == true) {
-                            trackList.addAll(response.body()?.results!!)
+                            searchTrackList.addAll(response.body()?.results!!)
                             trackListAdapter.notifyDataSetChanged()
-                            activityState = ActivityState.SHOW_LIST
+                            activityState = ActivityState.SHOW_SEARCH_LIST
                         }
-                        if (trackList.isEmpty()) {
-//                            showMessage(getString(R.string.nothing_found), "")
-                            trackList.clear()
+                        if (searchTrackList.isEmpty()) {
+                            searchTrackList.clear()
                             activityState = ActivityState.NOTHING_FOUND
                             showNothingFoundMessage()
                         } else {
-//                            showMessage("", "")
-                            activityState = ActivityState.SHOW_LIST
+                            activityState = ActivityState.SHOW_SEARCH_LIST
                             trackListView.visibility = View.VISIBLE
-                            placeholderImage.visibility = View.GONE
-                            placeholderMessage.visibility = View.GONE
-                            placeholderButton.visibility = View.GONE
+                            hidePlaceholderView()
                         }
                     } else {
                         showFailureMessage()
@@ -144,13 +261,32 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<SongsResponse>, t: Throwable) {
-//                    showMessage(getString(R.string.something_went_wrong), t.message.toString())
-                    trackList.clear()
+                    searchTrackList.clear()
                     activityState = ActivityState.FAILURE
                     showFailureMessage()
                 }
             })
         }
+    }
+
+    private fun showHistoryView() {
+        historyHint.visibility = View.VISIBLE
+        historyClearButton.visibility = View.VISIBLE
+        trackListView.visibility = View.VISIBLE
+        activityState = ActivityState.SHOW_HISTORY_LIST
+    }
+
+    private fun hideHistoryView() {
+        historyHint.visibility = View.GONE
+        historyClearButton.visibility = View.GONE
+        trackListView.visibility = View.GONE
+        activityState = ActivityState.SHOW_SEARCH_LIST
+    }
+
+    private fun hidePlaceholderView() {
+        placeholderImage.visibility = View.GONE
+        placeholderMessage.visibility = View.GONE
+        placeholderButton.visibility = View.GONE
     }
 
     private fun showMessage(text: String, additionalMessage: String) {
@@ -188,39 +324,13 @@ class SearchActivity : AppCompatActivity() {
         method.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(EDITED_TEXT, textValue)
-
-        // Сохранение списка песен
-        outState.putSerializable(TRACK_LIST, trackList)
-
-        // Сохраняем состояние экрана
-        outState.putSerializable(ACTIVITY_STATE, activityState)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        // Вторым параметром мы передаём значение по умолчанию
-        textValue = savedInstanceState.getString(EDITED_TEXT, TEXT)
-        etSearch.setText(textValue)
-
-        //Восстановление состояния экрана
-        activityState = savedInstanceState.getSerializable(ACTIVITY_STATE) as ActivityState
-        when (activityState) {
-            ActivityState.SHOW_LIST -> {
-                trackList = savedInstanceState.getSerializable(TRACK_LIST) as ArrayList<Track>
-                trackListAdapter.trackList = trackList
-            }
-            ActivityState.FAILURE -> showFailureMessage()
-            ActivityState.NOTHING_FOUND -> showNothingFoundMessage()
-        }
-
-    }
     companion object {
+        private const val ACTIVITY_STATE = "ACTIVITY_STATE"
+        private const val HISTORY = "history"
+        private const val HISTORY_MIN_SIZE = 0
+        private const val HISTORY_MAX_SIZE = 10
         private const val EDITED_TEXT = "EDITED_TEXT"
         private const val TEXT = ""
         private const val TRACK_LIST = "TRACK_LIST"
-        private const val ACTIVITY_STATE = "ACTIVITY_STATE"
     }
 }
