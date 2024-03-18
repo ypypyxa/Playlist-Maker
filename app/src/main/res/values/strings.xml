@@ -19,7 +19,7 @@
     <string name="artist_name">Исполнитель</string>
     <string name="track_time">Длительность</string>
     <string name="album">Альбом</string>
-    <string name="release">Год выпуска</string>
+    <string name="release">Год выхода</string>
     <string name="genre">Жанр</string>
     <string name="country">Страна</string>
     <string name="separator">Разделитель</string>

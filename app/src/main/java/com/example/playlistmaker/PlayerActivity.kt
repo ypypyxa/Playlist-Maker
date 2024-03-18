@@ -2,12 +2,13 @@ package com.example.playlistmaker
 
 import android.content.Context
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Im
 import android.util.TypedValue
+import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.text.SimpleDateFormat
@@ -23,7 +24,11 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var tvReleaseDate: TextView
     private lateinit var tvGenre: TextView
     private lateinit var tvCountry: TextView
-
+    private lateinit var albumGroup: Group
+    private lateinit var countryGroup: Group
+    private lateinit var genreGroup: Group
+    private lateinit var releaseGroup: Group
+    private lateinit var trackTimeGroup: Group
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +43,25 @@ class PlayerActivity : AppCompatActivity() {
         tvReleaseDate = findViewById(R.id.tvRelease)
         tvGenre = findViewById(R.id.tvGenre)
         tvCountry = findViewById(R.id.tvCountry)
+        albumGroup = findViewById(R.id.albumGroup)
+        countryGroup = findViewById(R.id.countryGroup)
+        genreGroup = findViewById(R.id.genreGroup)
+        releaseGroup = findViewById(R.id.releaseGroup)
+        trackTimeGroup = findViewById(R.id.trackTimeGroup)
 
         val track: Track = intent.getSerializableExtra("TRACK") as Track
-        val artworkUrl512 = changeImageSize(track.artworkUrl100)
+        val artworkUrl512 = track.artworkUrl100.replaceAfterLast('/', BIG_SIZE+".jpg")
+
+        when {
+            track.collectionName == "" -> albumGroup.visibility = View.GONE
+            track.collectionName != "" -> albumGroup.visibility = View.VISIBLE
+            track.releaseDate == "" -> releaseGroup.visibility = View.GONE
+            track.releaseDate != "" -> releaseGroup.visibility = View.VISIBLE
+            track.primaryGenreName == "" -> genreGroup.visibility = View.GONE
+            track.primaryGenreName != "" -> genreGroup.visibility = View.VISIBLE
+            track.country == "" -> countryGroup.visibility = View.GONE
+            track.country != "" -> countryGroup.visibility = View.VISIBLE
+        }
 
         tvAlbum.text = track.collectionName
         tvArtistName.text = track.artistName
@@ -55,18 +76,13 @@ class PlayerActivity : AppCompatActivity() {
             .load(artworkUrl512)
             .placeholder(R.drawable.ic_placeholder_45x45)
             .fitCenter()
-            .transform(RoundedCorners(dpToPx(2.0F, tvTrackImage.context)))
+            .transform(RoundedCorners(dpToPx(8.0F, tvTrackImage.context)))
             .into(tvTrackImage)
 
 //Кнопка назад
         btnBack.setOnClickListener {
             finish()
         }
-    }
-
-    fun changeImageSize(originalUrl: String): String {
-        val regex = Regex("""/\d+x\d""")
-        return originalUrl.replace(regex, "/$NEW_SIZE")
     }
 
     fun dpToPx(dp: Float, context: Context): Int {
@@ -76,6 +92,6 @@ class PlayerActivity : AppCompatActivity() {
             context.resources.displayMetrics).toInt()
     }
     companion object {
-        private const val NEW_SIZE = "512x512"
+        private const val BIG_SIZE = "512x512"
     }
 }

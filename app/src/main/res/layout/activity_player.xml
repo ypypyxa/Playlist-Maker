@@ -7,13 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".PlayerActivity">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/trackInfoTopBorder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.8" />
-
+<!-- Левый отступ -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftBorder"
         android:layout_width="wrap_content"
@@ -21,6 +15,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_begin="24dp" />
 
+<!-- Правый отступ -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/rightBorder"
         android:layout_width="wrap_content"
@@ -28,6 +23,15 @@
         android:orientation="vertical"
         app:layout_constraintGuide_end="24dp" />
 
+<!-- Верхний отступ информации о треке -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/trackInfoTopBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
+
+<!-- Левый отступ информации о треке -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/trackInfoLeftBorder"
         android:layout_width="wrap_content"
@@ -35,6 +39,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_begin="16dp" />
 
+<!-- Правый отступ информации о треке -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/trackInfoRightBorder"
         android:layout_width="wrap_content"
@@ -42,6 +47,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_end="16dp" />
 
+<!-- Кнопка назад -->
     <ImageButton
         android:id="@+id/btnBack"
         style="@style/Widget.AppCompat.Button.Borderless"
@@ -51,6 +57,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_back_24x24" />
 
+<!-- Обожка трека -->
     <ImageView
         android:id="@+id/ivTrackImage"
         android:layout_width="0dp"
@@ -61,8 +68,9 @@
         app:layout_constraintTop_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintBottom_toTopOf="@id/tvTrackName"/>
+        app:layout_constraintBottom_toTopOf="@id/tvTrackName" />
 
+<!-- Название трека -->
     <TextView
         android:id="@+id/tvTrackName"
         android:layout_width="wrap_content"
@@ -75,8 +83,9 @@
         android:gravity="start|center"
         app:layout_constraintTop_toBottomOf="@id/ivTrackImage"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
-        app:layout_constraintBottom_toTopOf="@id/tvArtistName"/>
+        app:layout_constraintBottom_toTopOf="@id/tvArtistName" />
 
+<!-- Исполнитель -->
     <TextView
         android:id="@+id/tvArtistName"
         android:layout_width="wrap_content"
@@ -89,26 +98,17 @@
         android:gravity="start|center"
         app:layout_constraintTop_toBottomOf="@id/tvTrackName"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
-        app:layout_constraintBottom_toTopOf="@id/ibPlay"/>
+        app:layout_constraintBottom_toTopOf="@id/ibPlay" />
 
+<!-- Группа кнопок плеера (не знаю зачем, но пусть будет, если это не влияет на производительность) -->
     <androidx.constraintlayout.widget.Group
         android:id="@+id/buttonGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="ibAddToPlaylist,ibPlay,ibAddToFavorite" />
+        app:constraint_referenced_ids="ibAddToPlaylist,ibPlay,ibAddToFavorite, tvPlayTime" />
 
-    <ImageButton
-        android:id="@+id/ibAddToPlaylist"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="51dp"
-        android:layout_height="51dp"
-        android:src="@drawable/ic_button_add_to_playlist"
-        android:background="@drawable/round_button"
-        app:layout_constraintTop_toTopOf="@id/ibPlay"
-        app:layout_constraintStart_toStartOf="@id/leftBorder"
-        app:layout_constraintBottom_toBottomOf="@id/ibPlay"/>
-
+<!-- Кнопка "Воспроизвести" -->
     <ImageButton
         android:id="@+id/ibPlay"
         style="@style/Widget.AppCompat.Button.Borderless"
@@ -121,8 +121,21 @@
         app:layout_constraintTop_toBottomOf="@id/tvArtistName"
         app:layout_constraintStart_toEndOf="@id/ibAddToPlaylist"
         app:layout_constraintEnd_toStartOf="@id/ibAddToFavorite"
-        app:layout_constraintBottom_toTopOf="@id/trackInfoTopBorder"/>
+        app:layout_constraintBottom_toTopOf="@id/trackInfoTopBorder" />
 
+<!-- Кнопка "Добавить в плэйлист" -->
+    <ImageButton
+        android:id="@+id/ibAddToPlaylist"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="51dp"
+        android:layout_height="51dp"
+        android:src="@drawable/ic_button_add_to_playlist"
+        android:background="@drawable/round_button"
+        app:layout_constraintTop_toTopOf="@id/ibPlay"
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintBottom_toBottomOf="@id/ibPlay" />
+
+<!-- Кнопка "Добавить в избранное" -->
     <ImageButton
         android:id="@+id/ibAddToFavorite"
         style="@style/Widget.AppCompat.Button.Borderless"
@@ -133,8 +146,9 @@
         android:background="@drawable/round_button"
         app:layout_constraintTop_toTopOf="@id/ibPlay"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintBottom_toBottomOf="@id/ibPlay"/>
+        app:layout_constraintBottom_toBottomOf="@id/ibPlay" />
 
+<!-- Время воспроизведения -->
     <TextView
         android:id="@+id/tvPlayTime"
         android:layout_width="wrap_content"
@@ -148,9 +162,17 @@
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/ibPlay"
         app:layout_constraintStart_toStartOf="@id/ibPlay"
-        app:layout_constraintEnd_toEndOf="@+id/ibPlay"
-/>
+        app:layout_constraintEnd_toEndOf="@+id/ibPlay" />
 
+<!-- Группа "Длительность трека" -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/trackTimeGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="tvHeaderTrackTime,tvTrackTime" />
+
+<!-- Заголовок длительности трека -->
     <TextView style="@style/tvHeaderTrackInfoPrimaryStyle"
         android:id="@+id/tvHeaderTrackTime"
         android:layout_width="wrap_content"
@@ -158,45 +180,9 @@
         android:hint="@string/track_time"
         app:layout_constraintTop_toBottomOf="@id/trackInfoTopBorder"
         app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
-        app:layout_constraintBottom_toTopOf="@id/tvHeaderAlbum"/>
+        app:layout_constraintBottom_toTopOf="@id/tvHeaderAlbum" />
 
-    <TextView style="@style/tvHeaderTrackInfoPrimaryStyle"
-        android:id="@+id/tvHeaderAlbum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/album"
-        app:layout_constraintTop_toBottomOf="@id/tvHeaderTrackTime"
-        app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
-        app:layout_constraintBottom_toTopOf="@id/tvHeaderRelease"/>
-
-    <TextView style="@style/tvHeaderTrackInfoPrimaryStyle"
-        android:id="@+id/tvHeaderRelease"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/release"
-        app:layout_constraintTop_toBottomOf="@id/tvHeaderAlbum"
-        app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
-        app:layout_constraintBottom_toTopOf="@id/tvHeaderGenre"/>
-
-    <TextView style="@style/tvHeaderTrackInfoPrimaryStyle"
-        android:id="@+id/tvHeaderGenre"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/genre"
-        app:layout_constraintTop_toBottomOf="@id/tvHeaderRelease"
-        app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
-        app:layout_constraintBottom_toTopOf="@id/tvHeaderCountry"/>
-
-    <TextView style="@style/tvHeaderTrackInfoPrimaryStyle"
-        android:id="@+id/tvHeaderCountry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:hint="@string/country"
-        app:layout_constraintTop_toBottomOf="@id/tvHeaderGenre"
-        app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
+<!-- Длительность трека -->
     <TextView style="@style/tvTrackInfoPrimaryStyle"
         android:id="@+id/tvTrackTime"
         android:layout_width="0dp"
@@ -206,8 +192,27 @@
         app:layout_constraintTop_toBottomOf="@id/trackInfoTopBorder"
         app:layout_constraintStart_toEndOf="@id/tvHeaderTrackTime"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"
-        app:layout_constraintBottom_toTopOf="@id/tvAlbum"/>
+        app:layout_constraintBottom_toTopOf="@id/tvAlbum" />
 
+<!-- Группа "Альбом" -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/albumGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="tvHeaderAlbum,tvAlbum" />
+
+<!-- Заголовок "Альбом" -->
+    <TextView style="@style/tvHeaderTrackInfoPrimaryStyle"
+        android:id="@+id/tvHeaderAlbum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/album"
+        app:layout_constraintTop_toBottomOf="@id/tvHeaderTrackTime"
+        app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
+        app:layout_constraintBottom_toTopOf="@id/tvHeaderRelease" />
+
+<!-- Название альбома -->
     <TextView style="@style/tvTrackInfoPrimaryStyle"
         android:id="@+id/tvAlbum"
         android:layout_width="0dp"
@@ -217,8 +222,27 @@
         app:layout_constraintTop_toBottomOf="@id/tvTrackTime"
         app:layout_constraintStart_toEndOf="@id/tvHeaderAlbum"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"
-        app:layout_constraintBottom_toTopOf="@id/tvRelease"/>
+        app:layout_constraintBottom_toTopOf="@id/tvRelease" />
 
+<!-- Группа "Год выхода"-->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/releaseGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="tvHeaderRelease,tvRelease" />
+
+<!-- Заголовок "Год выхода" -->
+    <TextView style="@style/tvHeaderTrackInfoPrimaryStyle"
+        android:id="@+id/tvHeaderRelease"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/release"
+        app:layout_constraintTop_toBottomOf="@id/tvHeaderAlbum"
+        app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
+        app:layout_constraintBottom_toTopOf="@id/tvHeaderGenre" />
+
+<!-- Год выхода -->
     <TextView style="@style/tvTrackInfoPrimaryStyle"
         android:id="@+id/tvRelease"
         android:layout_width="0dp"
@@ -228,8 +252,27 @@
         app:layout_constraintTop_toBottomOf="@id/tvAlbum"
         app:layout_constraintStart_toEndOf="@id/tvHeaderRelease"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"
-        app:layout_constraintBottom_toTopOf="@id/tvGenre"/>
+        app:layout_constraintBottom_toTopOf="@id/tvGenre" />
 
+<!-- Группа "Жанр" -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/genreGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="tvHeaderGenre,tvGenre" />
+
+<!-- Заголовок "Жанр" -->
+    <TextView style="@style/tvHeaderTrackInfoPrimaryStyle"
+        android:id="@+id/tvHeaderGenre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/genre"
+        app:layout_constraintTop_toBottomOf="@id/tvHeaderRelease"
+        app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
+        app:layout_constraintBottom_toTopOf="@id/tvHeaderCountry" />
+
+<!-- Жанр -->
     <TextView style="@style/tvTrackInfoPrimaryStyle"
         android:id="@+id/tvGenre"
         android:layout_width="0dp"
@@ -239,8 +282,28 @@
         app:layout_constraintTop_toBottomOf="@id/tvRelease"
         app:layout_constraintStart_toEndOf="@id/tvHeaderGenre"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"
-        app:layout_constraintBottom_toTopOf="@id/tvCountry"/>
+        app:layout_constraintBottom_toTopOf="@id/tvCountry" />
 
+<!-- Группа "Страна" -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/countryGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="tvHeaderCountry,tvCountry" />
+
+<!-- Заголовк "Страна" -->
+    <TextView style="@style/tvHeaderTrackInfoPrimaryStyle"
+        android:id="@+id/tvHeaderCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:hint="@string/country"
+        app:layout_constraintTop_toBottomOf="@id/tvHeaderGenre"
+        app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+<!-- Страна -->
     <TextView style="@style/tvTrackInfoPrimaryStyle"
         android:id="@+id/tvCountry"
         android:layout_width="0dp"
@@ -251,5 +314,5 @@
         app:layout_constraintTop_toBottomOf="@id/tvGenre"
         app:layout_constraintStart_toEndOf="@id/tvHeaderCountry"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
