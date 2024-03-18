@@ -115,13 +115,11 @@ class SearchActivity : AppCompatActivity() {
 //Нажатие на итем
             if (historyTrackList.none { it.trackId == item.trackId }) {
                 historyTrackList.add(0, item)
-//                trackListAdapter.notifyDataSetChanged()
                 playerIntent.putExtra(TRACK, item)
                 startActivity(playerIntent)
             } else {
                 historyTrackList.remove(item)
                 historyTrackList.add(0, item)
-//                trackListAdapter.notifyDataSetChanged()
                 playerIntent.putExtra(TRACK, item)
                 startActivity(playerIntent)
             }
