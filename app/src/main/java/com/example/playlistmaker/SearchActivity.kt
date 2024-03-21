@@ -65,7 +65,7 @@ class SearchActivity : AppCompatActivity() {
         outState.putSerializable(ACTIVITY_STATE, activityState)
 
         // Сохраняем текущее положение каретки
-        outState.putInt("cursorPosition", etSearch.selectionStart)
+        outState.putInt(CURSOR_POSITION, etSearch.selectionStart)
     }
 
 //Восстанавливаем предыдущее состояние бандла
@@ -76,7 +76,7 @@ class SearchActivity : AppCompatActivity() {
         etSearch.setText(textValue)
 
         // Восстанавливаем положение каретки
-        cursorPosition = savedInstanceState.getInt("cursorPosition")
+        cursorPosition = savedInstanceState.getInt(CURSOR_POSITION)
         etSearch.setSelection(cursorPosition)
     }
 
@@ -338,6 +338,7 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         private const val ACTIVITY_STATE = "ACTIVITY_STATE"
+        private const val CURSOR_POSITION = "cursorPosition"
         private const val HISTORY = "history"
         private const val HISTORY_MIN_SIZE = 0
         private const val HISTORY_MAX_SIZE = 10
