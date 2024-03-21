@@ -176,7 +176,7 @@ class SearchActivity : AppCompatActivity() {
 
 //Проверка находится ли поле поиска в фокусе
         etSearch.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && etSearch.text.isEmpty()) showHistoryView() else hideHistoryView()
+            if (hasFocus && etSearch.text.isEmpty() && historyTrackList.size != HISTORY_MIN_SIZE) showHistoryView() else hideHistoryView()
             historyTrackList = historyManger.loadTrackList()
             trackListAdapter.trackList = historyTrackList
             trackListAdapter.notifyDataSetChanged()
