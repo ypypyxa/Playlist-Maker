@@ -71,24 +71,6 @@ class SearchActivity : AppCompatActivity() {
         textValue = savedInstanceState.getString(EDITED_TEXT, TEXT)
         etSearch.setText(textValue)
 
-        //Восстановление состояния экрана
-        activityState = savedInstanceState.getSerializable(ACTIVITY_STATE) as ActivityState
-        when (activityState) {
-            ActivityState.SHOW_SEARCH_LIST -> {
-                searchTrackList = savedInstanceState.getSerializable(TRACK_LIST) as ArrayList<Track>
-                trackListAdapter.trackList = searchTrackList
-                trackListView.visibility = View.VISIBLE
-            }
-            ActivityState.SHOW_HISTORY_LIST -> {
-                historyTrackList = historyManger.loadTrackList()
-                trackListAdapter.trackList = historyTrackList
-                trackListView.visibility = View.VISIBLE
-            }
-            ActivityState.FAILURE -> showFailureMessage()
-            ActivityState.NOTHING_FOUND -> showNothingFoundMessage()
-            else -> {}
-        }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -132,19 +114,25 @@ class SearchActivity : AppCompatActivity() {
 
 //Проверяем был ли это первый запуск или поворот экрана
         if (savedInstanceState == null) {
-            if (history != null) {
-                historyTrackList = historyManger.loadTrackList()
-                activityState = ActivityState.SHOW_HISTORY_LIST
-            } else {
-                trackListAdapter.trackList = searchTrackList
-                activityState = ActivityState.SHOW_SEARCH_LIST
-            }
+            historyTrackList = historyManger.loadTrackList()
+            activityState = ActivityState.SHOW_NOTHING
         } else {
-            if (activityState == ActivityState.SHOW_HISTORY_LIST) {
-                trackListAdapter.trackList = historyTrackList
-            } else {
-                trackListAdapter.trackList = searchTrackList
-                activityState = ActivityState.SHOW_SEARCH_LIST
+            activityState = savedInstanceState.getSerializable(ACTIVITY_STATE) as ActivityState
+            when (activityState) {
+                ActivityState.SHOW_SEARCH_LIST -> {
+                    searchTrackList = savedInstanceState.getSerializable(TRACK_LIST) as ArrayList<Track>
+                    trackListAdapter.trackList = searchTrackList
+                    trackListView.visibility = View.VISIBLE
+                }
+                ActivityState.SHOW_HISTORY_LIST -> {
+                    historyTrackList = historyManger.loadTrackList()
+                    trackListAdapter.trackList = historyTrackList
+                    showHistoryView()
+                }
+                ActivityState.FAILURE -> showFailureMessage()
+                ActivityState.NOTHING_FOUND -> showNothingFoundMessage()
+                ActivityState.SHOW_NOTHING -> hideHistoryView()
+                else -> {}
             }
         }
 
@@ -160,17 +148,20 @@ class SearchActivity : AppCompatActivity() {
 //Если текстовое поле пустое, а история нет, то отображается подсказка и история поиска
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (etSearch.text.isEmpty() && historyTrackList.size != HISTORY_MIN_SIZE) {
-                    showHistoryView()
+                    activityState = ActivityState.SHOW_HISTORY_LIST
                     trackListAdapter.trackList = historyTrackList
                     trackListAdapter.notifyDataSetChanged()
                     searchTrackList.clear()
+                    showHistoryView()
                 } else if (etSearch.text.isEmpty() && historyTrackList.size == HISTORY_MIN_SIZE) { //если поле и история пустые - скрываются подсказки и список песен
                     hideHistoryView()
+                    activityState = ActivityState.SHOW_NOTHING
                     searchTrackList.clear()
                     trackListAdapter.trackList = searchTrackList
                 } else { //пока поле не пустое показывается результат предыдущего поиска
                     hideHistoryView()
                     trackListAdapter.trackList = searchTrackList
+                    trackListAdapter.notifyDataSetChanged()
                     trackListView.visibility = View.VISIBLE
                 }
                 etSearchClearButton.isVisible = !s.isNullOrEmpty()
@@ -184,8 +175,9 @@ class SearchActivity : AppCompatActivity() {
         etSearch.addTextChangedListener(textWatcher)
 
 //Проверка находится ли поле поиска в фокусе
-        etSearch.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus && etSearch.text.isEmpty() && historyTrackList.size > HISTORY_MIN_SIZE) showHistoryView() else hideHistoryView()
+        etSearch.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && etSearch.text.isEmpty()) showHistoryView() else hideHistoryView()
+            historyTrackList = historyManger.loadTrackList()
             trackListAdapter.trackList = historyTrackList
             trackListAdapter.notifyDataSetChanged()
         }
@@ -194,7 +186,6 @@ class SearchActivity : AppCompatActivity() {
         etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 searchTrack()
-                true
             }
             false
         }
@@ -237,7 +228,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchTrack() {
-        trackListAdapter.trackList = searchTrackList
         if (etSearch.text.isNotEmpty()) {
             musicService.findTrack(etSearch.text.toString()).enqueue(object :
                 Callback<SongsResponse> {
@@ -290,7 +280,6 @@ class SearchActivity : AppCompatActivity() {
         historyHint.visibility = View.GONE
         historyClearButton.visibility = View.GONE
         trackListView.visibility = View.GONE
-        activityState = ActivityState.SHOW_SEARCH_LIST
     }
 
     private fun hidePlaceholderView() {
