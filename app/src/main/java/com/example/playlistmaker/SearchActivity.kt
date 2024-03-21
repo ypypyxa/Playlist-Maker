@@ -40,6 +40,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackListView: RecyclerView
 
     private var activityState: ActivityState? = null
+    private var cursorPosition: Int = 0
     private var searchTrackList = ArrayList<Track>()
     private var historyTrackList = ArrayList<Track>()
     private var textValue: String = TEXT
@@ -62,6 +63,9 @@ class SearchActivity : AppCompatActivity() {
 
         // Сохраняем состояние экрана
         outState.putSerializable(ACTIVITY_STATE, activityState)
+
+        // Сохраняем текущее положение каретки
+        outState.putInt("cursorPosition", etSearch.selectionStart)
     }
 
 //Восстанавливаем предыдущее состояние бандла
@@ -71,6 +75,9 @@ class SearchActivity : AppCompatActivity() {
         textValue = savedInstanceState.getString(EDITED_TEXT, TEXT)
         etSearch.setText(textValue)
 
+        // Восстанавливаем положение каретки
+        cursorPosition = savedInstanceState.getInt("cursorPosition")
+        etSearch.setSelection(cursorPosition)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -169,6 +176,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
+                searchTrack()
                 //empty
             }
         }
@@ -176,10 +184,15 @@ class SearchActivity : AppCompatActivity() {
 
 //Проверка находится ли поле поиска в фокусе
         etSearch.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && etSearch.text.isEmpty()) showHistoryView() else hideHistoryView()
             historyTrackList = historyManger.loadTrackList()
-            trackListAdapter.trackList = historyTrackList
-            trackListAdapter.notifyDataSetChanged()
+            if ( hasFocus && etSearch.text.isEmpty() && historyTrackList.size != HISTORY_MIN_SIZE) {
+                showHistoryView()
+                trackListAdapter.trackList = historyTrackList
+                trackListAdapter.notifyDataSetChanged()
+            } else {
+                hideHistoryView()
+            }
+
         }
 
 //Нажатие на клавиатуре кнопки Done
