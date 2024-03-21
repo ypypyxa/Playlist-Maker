@@ -22,17 +22,17 @@
         android:gravity="center_vertical"/>
 
     <Button style="@style/ButtonStyle"
-        android:id="@+id/btn_search"
+        android:id="@+id/btnSearch"
         android:text="@string/search"
         app:icon="@drawable/ic_search_24x24"/>
 
     <Button style="@style/ButtonStyle"
-        android:id="@+id/btn_media"
+        android:id="@+id/btnMedia"
         android:text="@string/media"
         app:icon="@drawable/ic_media_24x24"/>
 
     <Button style="@style/ButtonStyle"
-        android:id="@+id/btn_settings"
+        android:id="@+id/btnSettings"
         android:text="@string/settings"
         app:icon="@drawable/ic_settings_24x24"/>
 

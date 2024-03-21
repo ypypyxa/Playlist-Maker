@@ -14,7 +14,7 @@
     <string name="message_subject_to_support">Message to the developers of the Playlist Maker app</string>
     <string name="track_name">Track name</string>
     <string name="artist_name">Artist</string>
-    <string name="track_time">Track time</string>
+    <string name="track_time">Time</string>
     <string name="separator">Separator</string>
     <string name="placeholder">Placeholder</string>
     <string name="clear">Clear</string>
@@ -23,4 +23,8 @@
     <string name="refresh">Refresh</string>
     <string name="searchHint">You were looking for</string>
     <string name="clear_history">Clear history</string>
+    <string name="album">Album</string>
+    <string name="release">Release date</string>
+    <string name="genre">Genre</string>
+    <string name="country">Country</string>
 </resources>

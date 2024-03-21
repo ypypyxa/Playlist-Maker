@@ -9,7 +9,7 @@ class MediaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_media)
 
-        val backButton = findViewById<ImageButton>(R.id.ib_back)
+        val backButton = findViewById<ImageButton>(R.id.ibBack)
 
         backButton.setOnClickListener {
             finish()

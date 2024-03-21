@@ -130,4 +130,22 @@
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">marquee</item>
     </style>
+
+    <style name="tvHeaderTrackInfoPrimaryStyle">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textColor">@color/yp_text_gray</item>
+        <item name="android:gravity">start|center</item>
+    </style>
+
+    <style name="tvTrackInfoPrimaryStyle">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:gravity">end|center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
 </resources>

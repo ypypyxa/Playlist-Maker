@@ -12,15 +12,15 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val backButton = findViewById<ImageButton>(R.id.ib_back)
-        val mailToSupButton = findViewById<ImageButton>(R.id.ib_mail_to_support)
-        val shareButton = findViewById<ImageButton>(R.id.ib_share)
-        val agreementButton = findViewById<ImageButton>(R.id.ib_user_agreement)
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.sw_theme)
+        val backButton = findViewById<ImageButton>(R.id.ibBack)
+        val mailToSupButton = findViewById<ImageButton>(R.id.ibMailToSupport)
+        val shareButton = findViewById<ImageButton>(R.id.ibShare)
+        val agreementButton = findViewById<ImageButton>(R.id.ibUserAgreement)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.swTheme)
 
         themeSwitcher.isChecked = (applicationContext as App).darkTheme
 
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
             (applicationContext as App).switchTheme(checked)
         }
 

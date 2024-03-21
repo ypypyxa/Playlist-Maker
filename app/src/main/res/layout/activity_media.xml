@@ -6,7 +6,7 @@
     <LinearLayout style="@style/HeadStyle">
 
         <ImageButton style="@style/BackButtonStyle"
-            android:id="@+id/ib_back"
+            android:id="@+id/ibBack"
             android:contentDescription="@string/back"/>
 
         <TextView style="@style/HeadTextStyle"

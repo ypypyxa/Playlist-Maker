@@ -17,7 +17,11 @@
     <string name="offer_url" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
     <string name="track_name">Название трека</string>
     <string name="artist_name">Исполнитель</string>
-    <string name="track_time">Длительность трека</string>
+    <string name="track_time">Длительность</string>
+    <string name="album">Альбом</string>
+    <string name="release">Год выхода</string>
+    <string name="genre">Жанр</string>
+    <string name="country">Страна</string>
     <string name="separator">Разделитель</string>
     <string name="placeholder">Заглушка</string>
     <string name="clear">Очистить</string>
