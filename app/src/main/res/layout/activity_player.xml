@@ -100,14 +100,6 @@
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintBottom_toTopOf="@id/ibPlay" />
 
-<!-- Группа кнопок плеера (не знаю зачем, но пусть будет, если это не влияет на производительность) -->
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/buttonGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:constraint_referenced_ids="ibAddToPlaylist,ibPlay,ibAddToFavorite, tvPlayTime" />
-
 <!-- Кнопка "Воспроизвести" -->
     <ImageButton
         android:id="@+id/ibPlay"
@@ -154,16 +146,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:hint="0:30"
+        android:text="0:30"
         android:fontFamily="@font/ys_display_medium"
         android:textSize="14sp"
         android:textFontWeight="500"
-        android:textColor="@color/yp_black"
+        android:textColor="?attr/colorOnPrimary"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/ibPlay"
         app:layout_constraintStart_toStartOf="@id/ibPlay"
         app:layout_constraintEnd_toEndOf="@+id/ibPlay" />
-
 <!-- Группа "Длительность трека" -->
     <androidx.constraintlayout.widget.Group
         android:id="@+id/trackTimeGroup"
@@ -177,7 +168,7 @@
         android:id="@+id/tvHeaderTrackTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/track_time"
+        android:text="@string/track_time"
         app:layout_constraintTop_toBottomOf="@id/trackInfoTopBorder"
         app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
         app:layout_constraintBottom_toTopOf="@id/tvHeaderAlbum" />
@@ -188,7 +179,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:hint="5:32"
+        tools:text="5:32"
         app:layout_constraintTop_toBottomOf="@id/trackInfoTopBorder"
         app:layout_constraintStart_toEndOf="@id/tvHeaderTrackTime"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"
@@ -207,7 +198,7 @@
         android:id="@+id/tvHeaderAlbum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/album"
+        android:text="@string/album"
         app:layout_constraintTop_toBottomOf="@id/tvHeaderTrackTime"
         app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
         app:layout_constraintBottom_toTopOf="@id/tvHeaderRelease" />
@@ -218,7 +209,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:hint="Ну какой то альбом"
+        tools:text="Ну какой то альбом"
         app:layout_constraintTop_toBottomOf="@id/tvTrackTime"
         app:layout_constraintStart_toEndOf="@id/tvHeaderAlbum"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"
@@ -237,7 +228,7 @@
         android:id="@+id/tvHeaderRelease"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/release"
+        android:text="@string/release"
         app:layout_constraintTop_toBottomOf="@id/tvHeaderAlbum"
         app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
         app:layout_constraintBottom_toTopOf="@id/tvHeaderGenre" />
@@ -248,7 +239,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:hint="1988"
+        tools:text="1988"
         app:layout_constraintTop_toBottomOf="@id/tvAlbum"
         app:layout_constraintStart_toEndOf="@id/tvHeaderRelease"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"
@@ -267,7 +258,7 @@
         android:id="@+id/tvHeaderGenre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/genre"
+        android:text="@string/genre"
         app:layout_constraintTop_toBottomOf="@id/tvHeaderRelease"
         app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
         app:layout_constraintBottom_toTopOf="@id/tvHeaderCountry" />
@@ -278,7 +269,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:hint="Ну какой то жанр"
+        tools:text="Ну какой то жанр"
         app:layout_constraintTop_toBottomOf="@id/tvRelease"
         app:layout_constraintStart_toEndOf="@id/tvHeaderGenre"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"
@@ -298,7 +289,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:hint="@string/country"
+        android:text="@string/country"
         app:layout_constraintTop_toBottomOf="@id/tvHeaderGenre"
         app:layout_constraintStart_toStartOf="@id/trackInfoLeftBorder"
         app:layout_constraintBottom_toBottomOf="parent" />
@@ -310,7 +301,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginBottom="15dp"
-        android:hint="Эфиопия"
+        tools:text="Эфиопия"
         app:layout_constraintTop_toBottomOf="@id/tvGenre"
         app:layout_constraintStart_toEndOf="@id/tvHeaderCountry"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"

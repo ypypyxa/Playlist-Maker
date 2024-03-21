@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.Group
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
@@ -49,34 +50,44 @@ class PlayerActivity : AppCompatActivity() {
         releaseGroup = findViewById(R.id.releaseGroup)
         trackTimeGroup = findViewById(R.id.trackTimeGroup)
 
-        val track: Track = intent.getSerializableExtra("TRACK") as Track
-        val artworkUrl512 = track.artworkUrl100.replaceAfterLast('/', BIG_SIZE+".jpg")
+        val track: Track = intent.getSerializableExtra(TRACK) as Track
+        val artworkUrl512 = track.artworkUrl100.replaceAfterLast(DELIMITER, "$BIG_SIZE.jpg")
 
-        when {
-            track.collectionName == "" -> albumGroup.visibility = View.GONE
-            track.collectionName != "" -> albumGroup.visibility = View.VISIBLE
-            track.releaseDate == "" -> releaseGroup.visibility = View.GONE
-            track.releaseDate != "" -> releaseGroup.visibility = View.VISIBLE
-            track.primaryGenreName == "" -> genreGroup.visibility = View.GONE
-            track.primaryGenreName != "" -> genreGroup.visibility = View.VISIBLE
-            track.country == "" -> countryGroup.visibility = View.GONE
-            track.country != "" -> countryGroup.visibility = View.VISIBLE
+        tvTrackName.text = track.trackName
+        tvArtistName.text = track.artistName
+        tvTrackTime.text = SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
+            .format(track.trackTimeMillis.toLong())
+        if (track.collectionName.isNotEmpty()) {
+            tvAlbum.text = track.collectionName
+            albumGroup.visibility = View.VISIBLE
+        } else {
+            albumGroup.visibility = View.GONE
+        }
+        if (track.releaseDate.isNotEmpty()) {
+            tvReleaseDate.text = getYear(track.releaseDate)
+            releaseGroup.visibility = View.VISIBLE
+        } else {
+            releaseGroup.visibility = View.GONE
+        }
+        if (track.primaryGenreName.isNotEmpty()) {
+            tvGenre.text = track.primaryGenreName
+            genreGroup.visibility = View.VISIBLE
+        } else {
+            genreGroup.visibility = View.GONE
+        }
+        if (track.country.isNotEmpty()) {
+            tvCountry.text = track.country
+            countryGroup.visibility = View.VISIBLE
+        } else {
+            countryGroup.visibility = View.GONE
         }
 
-        tvAlbum.text = track.collectionName
-        tvArtistName.text = track.artistName
-        tvTrackName.text = track.trackName
-        tvTrackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis.toLong())
-        tvReleaseDate.text = track.releaseDate
-        tvReleaseDate.text = SimpleDateFormat("yyyy", Locale.getDefault()).format(SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(track.releaseDate))
-        tvGenre.text = track.primaryGenreName
-        tvCountry.text = track.country
 
         Glide.with(tvTrackImage)
             .load(artworkUrl512)
             .placeholder(R.drawable.ic_placeholder_45x45)
             .fitCenter()
-            .transform(RoundedCorners(dpToPx(8.0F, tvTrackImage.context)))
+            .transform(RoundedCorners(dpToPx(tvTrackImage.context)))
             .into(tvTrackImage)
 
 //Кнопка назад
@@ -85,13 +96,24 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    fun dpToPx(dp: Float, context: Context): Int {
+    private fun dpToPx(context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
-            dp,
+            CORNERS_ANGLE,
             context.resources.displayMetrics).toInt()
+    }
+
+    private fun getYear(date: String) : String {
+        val calendar = Calendar.getInstance()
+        calendar.time = SimpleDateFormat(DATE_FORMAT,Locale.getDefault()).parse(date)!!
+        return calendar.get(Calendar.YEAR).toString()
     }
     companion object {
         private const val BIG_SIZE = "512x512"
+        private const val CORNERS_ANGLE = 8.0F
+        private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        private const val DELIMITER = '/'
+        private const val TRACK = "TRACK"
+        private const val TIME_FORMAT = "mm:ss"
     }
 }
