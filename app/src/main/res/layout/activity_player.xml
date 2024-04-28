@@ -146,7 +146,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="0:30"
+        android:text="@string/default_time"
         android:fontFamily="@font/ys_display_medium"
         android:textSize="14sp"
         android:textFontWeight="500"

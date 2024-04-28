@@ -108,7 +108,7 @@ class SearchActivity : AppCompatActivity() {
         historyManger = HistoryManager(history)
 
 //Инициализируем адаптер
-        trackListAdapter = TrackListAdapter {item ->
+        trackListAdapter = TrackListAdapter { item ->
 //Нажатие на итем
             if (clickDebounce()) {
                 if (historyTrackList.none { it.trackId == item.trackId }) {
