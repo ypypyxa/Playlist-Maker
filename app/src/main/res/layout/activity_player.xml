@@ -49,7 +49,7 @@
 
 <!-- Кнопка назад -->
     <ImageButton
-        android:id="@+id/btnBack"
+        android:id="@+id/ibBack"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="56dp"
         android:layout_height="56dp"
@@ -65,7 +65,7 @@
         android:scaleType="centerCrop"
         app:srcCompat="@drawable/ic_placeholder_45x45"
         app:layout_constraintDimensionRatio="h,1:1"
-        app:layout_constraintTop_toBottomOf="@id/btnBack"
+        app:layout_constraintTop_toBottomOf="@id/ibBack"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
         app:layout_constraintBottom_toTopOf="@id/tvTrackName" />
@@ -146,7 +146,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="0:30"
+        android:text="@string/default_time"
         android:fontFamily="@font/ys_display_medium"
         android:textSize="14sp"
         android:textFontWeight="500"

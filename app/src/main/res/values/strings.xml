@@ -25,9 +25,10 @@
     <string name="separator">Разделитель</string>
     <string name="placeholder">Заглушка</string>
     <string name="clear">Очистить</string>
-    <string name="nothing_found">Ни чего не найдено</string>
+    <string name="nothing_found">Ничего не найдено</string>
     <string name="something_went_wrong">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="refresh">Обновить</string>
     <string name="searchHint">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
+    <string name="default_time" translatable="false">0:00</string>
 </resources>

@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -13,6 +15,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -36,11 +39,15 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderMessage: TextView
     private lateinit var placeholderButton: Button
     private lateinit var playerIntent: Intent
+    private lateinit var progressBar: ProgressBar
     private lateinit var trackListAdapter: TrackListAdapter
     private lateinit var trackListView: RecyclerView
 
     private var activityState: ActivityState? = null
     private var cursorPosition: Int = 0
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { searchTrack() }
     private var searchTrackList = ArrayList<Track>()
     private var historyTrackList = ArrayList<Track>()
     private var textValue: String = TEXT
@@ -65,7 +72,7 @@ class SearchActivity : AppCompatActivity() {
         outState.putSerializable(ACTIVITY_STATE, activityState)
 
         // Сохраняем текущее положение каретки
-        outState.putInt("cursorPosition", etSearch.selectionStart)
+        outState.putInt(CURSOR_POSITION, etSearch.selectionStart)
     }
 
 //Восстанавливаем предыдущее состояние бандла
@@ -76,7 +83,7 @@ class SearchActivity : AppCompatActivity() {
         etSearch.setText(textValue)
 
         // Восстанавливаем положение каретки
-        cursorPosition = savedInstanceState.getInt("cursorPosition")
+        cursorPosition = savedInstanceState.getInt(CURSOR_POSITION)
         etSearch.setSelection(cursorPosition)
     }
 
@@ -92,6 +99,7 @@ class SearchActivity : AppCompatActivity() {
         placeholderImage = findViewById(R.id.ivPlaceholderImage)
         placeholderMessage = findViewById(R.id.tvPlaceholderMessage)
         placeholderButton = findViewById(R.id.btnPlaceholderButton)
+        progressBar = findViewById(R.id.progressBar)
         trackListView = findViewById(R.id.rvSearchTrackList)
 
         playerIntent = Intent(this, PlayerActivity::class.java)
@@ -100,23 +108,25 @@ class SearchActivity : AppCompatActivity() {
         historyManger = HistoryManager(history)
 
 //Инициализируем адаптер
-        trackListAdapter = TrackListAdapter {item ->
+        trackListAdapter = TrackListAdapter { item ->
 //Нажатие на итем
-            if (historyTrackList.none { it.trackId == item.trackId }) {
-                historyTrackList.add(0, item)
-                playerIntent.putExtra(TRACK, item)
-                startActivity(playerIntent)
-            } else {
-                historyTrackList.remove(item)
-                historyTrackList.add(0, item)
-                playerIntent.putExtra(TRACK, item)
-                startActivity(playerIntent)
+            if (clickDebounce()) {
+                if (historyTrackList.none { it.trackId == item.trackId }) {
+                    historyTrackList.add(0, item)
+                    playerIntent.putExtra(TRACK, item)
+                    startActivity(playerIntent)
+                } else {
+                    historyTrackList.remove(item)
+                    historyTrackList.add(0, item)
+                    playerIntent.putExtra(TRACK, item)
+                    startActivity(playerIntent)
+                }
+                if (historyTrackList.size > HISTORY_MAX_SIZE) {
+                    historyTrackList.removeAt(HISTORY_MAX_SIZE)
+                }
+                historyManger.saveTrackList(historyTrackList)
+                trackListAdapter.notifyDataSetChanged()
             }
-            if (historyTrackList.size > HISTORY_MAX_SIZE) {
-                historyTrackList.removeAt(HISTORY_MAX_SIZE)
-            }
-            historyManger.saveTrackList(historyTrackList)
-            trackListAdapter.notifyDataSetChanged()
         }
 
 //Проверяем был ли это первый запуск или поворот экрана
@@ -159,6 +169,7 @@ class SearchActivity : AppCompatActivity() {
                     trackListAdapter.trackList = historyTrackList
                     trackListAdapter.notifyDataSetChanged()
                     searchTrackList.clear()
+                    hidePlaceholderView()
                     showHistoryView()
                 } else if (etSearch.text.isEmpty() && historyTrackList.size == HISTORY_MIN_SIZE) { //если поле и история пустые - скрываются подсказки и список песен
                     hideHistoryView()
@@ -167,6 +178,7 @@ class SearchActivity : AppCompatActivity() {
                     trackListAdapter.trackList = searchTrackList
                 } else { //пока поле не пустое показывается результат предыдущего поиска
                     hideHistoryView()
+                    searchDebounce()
                     trackListAdapter.trackList = searchTrackList
                     trackListAdapter.notifyDataSetChanged()
                     trackListView.visibility = View.VISIBLE
@@ -176,7 +188,6 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                searchTrack()
                 //empty
             }
         }
@@ -241,6 +252,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchTrack() {
+        progressBar.visibility = View.VISIBLE
         if (etSearch.text.isNotEmpty()) {
             musicService.findTrack(etSearch.text.toString()).enqueue(object :
                 Callback<SongsResponse> {
@@ -271,15 +283,30 @@ class SearchActivity : AppCompatActivity() {
                             response.code().toString()
                         )
                     }
+                    progressBar.visibility = View.GONE
                 }
 
                 override fun onFailure(call: Call<SongsResponse>, t: Throwable) {
                     searchTrackList.clear()
                     activityState = ActivityState.FAILURE
                     showFailureMessage()
+                    progressBar.visibility = View.GONE
                 }
             })
         }
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
     private fun showHistoryView() {
@@ -338,6 +365,9 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         private const val ACTIVITY_STATE = "ACTIVITY_STATE"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CURSOR_POSITION = "cursorPosition"
         private const val HISTORY = "history"
         private const val HISTORY_MIN_SIZE = 0
         private const val HISTORY_MAX_SIZE = 10
