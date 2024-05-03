@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.tracks
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -20,11 +20,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.playlistmaker.ActivityState
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.HistoryManager
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.api.TrackInteractor
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.player.PlayerActivity
 
 class SearchActivity : AppCompatActivity() {
 
@@ -51,14 +53,8 @@ class SearchActivity : AppCompatActivity() {
     private var searchTrackList = ArrayList<Track>()
     private var historyTrackList = ArrayList<Track>()
     private var textValue: String = TEXT
-    private val itunesBaseUrl = "https://itunes.apple.com"
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(itunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val musicService = retrofit.create(MusicApi::class.java)
+    private val trackInteractor = Creator.provideTrackInteractor()
 
 //Сохраняем состояние бандла
     override fun onSaveInstanceState(outState: Bundle) {
@@ -254,43 +250,19 @@ class SearchActivity : AppCompatActivity() {
     private fun searchTrack() {
         progressBar.visibility = View.VISIBLE
         if (etSearch.text.isNotEmpty()) {
-            musicService.findTrack(etSearch.text.toString()).enqueue(object :
-                Callback<SongsResponse> {
-                override fun onResponse(
-                    call: Call<SongsResponse>,
-                    response: Response<SongsResponse>
-                ) {
-                    if (response.code() == 200) {
+            trackInteractor.searchTracks(etSearch.text.toString(), object : TrackInteractor.TracksConsumer {
+                override fun consume(foundTracks: List<Track>) {
+                    handler.post {
+                        progressBar.visibility = View.GONE
                         searchTrackList.clear()
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            searchTrackList.addAll(response.body()?.results!!)
-                            trackListAdapter.notifyDataSetChanged()
-                            activityState = ActivityState.SHOW_SEARCH_LIST
-                        }
+                        searchTrackList.addAll(foundTracks)
+                        trackListAdapter.notifyDataSetChanged()
                         if (searchTrackList.isEmpty()) {
-                            searchTrackList.clear()
-                            activityState = ActivityState.NOTHING_FOUND
                             showNothingFoundMessage()
                         } else {
-                            activityState = ActivityState.SHOW_SEARCH_LIST
-                            trackListView.visibility = View.VISIBLE
-                            hidePlaceholderView()
-                        }
-                    } else {
-                        showFailureMessage()
-                        showMessage(
-                            getString(R.string.something_went_wrong),
-                            response.code().toString()
-                        )
-                    }
-                    progressBar.visibility = View.GONE
-                }
 
-                override fun onFailure(call: Call<SongsResponse>, t: Throwable) {
-                    searchTrackList.clear()
-                    activityState = ActivityState.FAILURE
-                    showFailureMessage()
-                    progressBar.visibility = View.GONE
+                        }
+                    }
                 }
             })
         }
