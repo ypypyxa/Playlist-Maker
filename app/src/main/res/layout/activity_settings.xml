@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/ActivityStyle">
+    style="@style/ActivityStyle"
+    android:layout_weight="0">
 
     <!-- ШАПКА -->
     <LinearLayout style="@style/HeadStyle"
@@ -65,4 +66,12 @@
             android:id="@+id/ibUserAgreement"
             android:contentDescription="@string/next"/>
     </FrameLayout>
+    <TextView
+        android:id="@+id/version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="bottom"
+        android:text="@string/version"/>
 </LinearLayout>

@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.api.MediaPlayerManager
+import com.example.playlistmaker.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.domain.models.PlayerState
 import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
@@ -41,15 +41,15 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var releaseGroup: Group
     private lateinit var trackTimeGroup: Group
 
-    private lateinit var mediaPlayerManager: MediaPlayerManager
+    private lateinit var mediaPlayer: MediaPlayerInteractor
     private lateinit var track: Track
 
     // Объявление перменных для таймера воспроизведения
     private lateinit var handler: Handler
     private val updateTime = object : Runnable {
         override fun run() {
-            tvPlayTime.text = mediaPlayerManager.getCurentPosition()
-            playerState = mediaPlayerManager.getPlayerState()
+            tvPlayTime.text = mediaPlayer.getCurrentPosition()
+            playerState = mediaPlayer.getPlayerState()
             if (playerState == PlayerState.STATE_COMPLETE) {
                 btnPlayPause.setImageResource(R.drawable.ic_button_play)
                 playerState = PlayerState.STATE_PREPARED
@@ -89,7 +89,7 @@ class PlayerActivity : AppCompatActivity() {
         track = intent.getSerializableExtra(TRACK) as Track
         val artworkUrl512 = track.artworkUrl100.replaceAfterLast(DELIMITER, "$BIG_SIZE.jpg")
 
-        mediaPlayerManager = Creator.provideMediaPlayerManager()
+        mediaPlayer = Creator.provideMediaPlayer()
 
         tvTrackName.text = track.trackName
         tvArtistName.text = track.artistName
@@ -150,7 +150,7 @@ class PlayerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(updateTime)
-        mediaPlayerManager.release()
+        mediaPlayer.release()
     }
 
     private fun playbackControl() {
@@ -167,24 +167,24 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun preparePlayer() {
         if (track.previewUrl.isNotEmpty()) {
-            mediaPlayerManager.prepare(track.previewUrl)
+            mediaPlayer.prepare(track.previewUrl)
             playerState = PlayerState.STATE_PREPARED
             btnPlayPause.isEnabled = true
         } else {
-            showMessage("уапуапуапуааааау","Нет файла песни, прослушивание невозможно")
+            showMessage(R.string.player_error.toString(),R.string.empty_track_url.toString())
             btnPlayPause.isEnabled = false
         }
     }
 
     private fun startPlayer() {
-        mediaPlayerManager.start()
+        mediaPlayer.start()
         btnPlayPause.setImageResource(R.drawable.ic_button_pause)
         playerState = PlayerState.STATE_PLAYING
         handler.post(updateTime)
     }
 
     private fun pausePlayer() {
-        mediaPlayerManager.pause()
+        mediaPlayer.pause()
         btnPlayPause.setImageResource(R.drawable.ic_button_play)
         playerState = PlayerState.STATE_PAUSED
         handler.removeCallbacks(updateTime)

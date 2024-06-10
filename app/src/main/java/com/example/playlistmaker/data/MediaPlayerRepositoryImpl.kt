@@ -1,12 +1,12 @@
-package com.example.playlistmaker.domain.impl
+package com.example.playlistmaker.data
 
 import android.media.MediaPlayer
-import com.example.playlistmaker.domain.api.MediaPlayerManager
+import com.example.playlistmaker.domain.api.MediaPlayerRepository
 import com.example.playlistmaker.domain.models.PlayerState
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class MediaPlayerManagerImpl : MediaPlayerManager {
+class MediaPlayerRepositoryImpl : MediaPlayerRepository {
 
     private val mediaPlayer = MediaPlayer()
     private var playerState = PlayerState.STATE_DEFAULT
@@ -38,7 +38,7 @@ class MediaPlayerManagerImpl : MediaPlayerManager {
         mediaPlayer.release()
     }
 
-    override fun getCurentPosition(): String {
+    override fun getCurrentPosition(): String {
         return SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
             .format(mediaPlayer.currentPosition)
     }
