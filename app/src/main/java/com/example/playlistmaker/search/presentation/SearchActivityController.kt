@@ -1,10 +1,8 @@
 package com.example.playlistmaker.search.presentation
 
 import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 import android.os.Handler
 import android.os.Looper
-import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -22,7 +20,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.search.data.HistoryManager
 import com.example.playlistmaker.search.domain.api.TrackInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.SearchActivity
@@ -35,9 +32,8 @@ class SearchActivityController(
     private lateinit var backButton: ImageButton
     private lateinit var etSearch: EditText
     private lateinit var etSearchClearButton: ImageView
-    private lateinit var history: SharedPreferences
     private lateinit var historyHint: TextView
-    private lateinit var historyManger: HistoryManager
+//    private lateinit var historyManger: HistoryRepositoryImpl
     private lateinit var historyClearButton: Button
     private lateinit var placeholderImage: ImageView
     private lateinit var placeholderMessage: TextView
@@ -50,6 +46,7 @@ class SearchActivityController(
 
     private var searchTracks: MutableList<Track> = mutableListOf()
     private var historyTracks = ArrayList<Track>()
+
 
     private val trackInteractor = Creator.provideTrackInteractor(searchActivity)
 
@@ -66,10 +63,10 @@ class SearchActivityController(
         progressBar = searchActivity.findViewById(R.id.progressBar)
         tvTrackList = searchActivity.findViewById(R.id.rvSearchTrackList)
 
-        history = searchActivity.getSharedPreferences(HISTORY, MODE_PRIVATE)
-        historyManger = HistoryManager(history)
-
         tvTrackList.adapter = trackListAdapter
+
+        val history = searchActivity.getSharedPreferences(HISTORY, MODE_PRIVATE)
+        val historyInteractor = Creator.provideHistoryInteractor(history)
 
         //Наблюдатель событий набора текста
         val textWatcher = object : TextWatcher {
@@ -108,7 +105,7 @@ class SearchActivityController(
 
 //Проверка находится ли поле поиска в фокусе
         etSearch.setOnFocusChangeListener { _, hasFocus ->
-            historyTracks = historyManger.loadTrackList()
+            historyTracks = historyInteractor.loadTracks()
             if ( hasFocus && etSearch.text.isEmpty() && historyTracks.size != HISTORY_MIN_SIZE) {
                 showHistoryView()
                 trackListAdapter.trackList = historyTracks
@@ -133,7 +130,7 @@ class SearchActivityController(
             hideKeyboard()
             searchTracks.clear()
             hidePlaceholderView()
-            historyTracks = historyManger.loadTrackList()
+            historyTracks = historyInteractor.loadTracks()
             if (historyTracks.size > HISTORY_MIN_SIZE) {
                 trackListAdapter.trackList = historyTracks
                 trackListAdapter.notifyDataSetChanged()
@@ -148,7 +145,7 @@ class SearchActivityController(
             historyTracks.clear()
             trackListAdapter.trackList = historyTracks
             trackListAdapter.notifyDataSetChanged()
-            historyManger.clearTrackList()
+            historyInteractor.clearTracks()
             hideHistoryView()
         }
 
