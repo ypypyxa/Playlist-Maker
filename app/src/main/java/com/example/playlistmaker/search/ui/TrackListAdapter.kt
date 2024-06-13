@@ -8,7 +8,7 @@ import com.example.playlistmaker.search.domain.model.Track
 
 class TrackListAdapter (private val onItemClickListener: (Track) -> Unit) : RecyclerView.Adapter<TrackListViewHolder> () {
 
-    var trackList = ArrayList<Track>()
+    var trackList: MutableList<Track> = mutableListOf()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackListViewHolder {
