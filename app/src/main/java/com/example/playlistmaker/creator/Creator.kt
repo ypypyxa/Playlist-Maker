@@ -16,9 +16,8 @@ import com.example.playlistmaker.search.domain.api.HistoryInteractor
 import com.example.playlistmaker.search.domain.api.HistoryRepository
 import com.example.playlistmaker.search.domain.impl.HistoryInteractorImpl
 import com.example.playlistmaker.search.domain.impl.TrackInteractorImpl
-import com.example.playlistmaker.search.presentation.SearchActivityController
-import com.example.playlistmaker.search.ui.SearchActivity
-import com.example.playlistmaker.search.ui.TrackListAdapter
+import com.example.playlistmaker.search.presentation.SearchActivityPresenter
+import com.example.playlistmaker.search.presentation.SearchView
 
 object Creator {
     private fun getTrackRepository(context: Context): TrackRepository {
@@ -45,13 +44,13 @@ object Creator {
         return MediaPlayerInteractor(getMediaPlayerRepository())
     }
 
-    fun provideSearchActivityController(
-        activity: SearchActivity,
-        adapter: TrackListAdapter
-    ): SearchActivityController {
-        return SearchActivityController(
-            searchActivity = activity,
-            trackListAdapter = adapter
+    fun provideSearchActivityPresenter(
+        view: SearchView,
+        context: Context,
+    ): SearchActivityPresenter {
+        return SearchActivityPresenter(
+            searchView = view,
+            context = context
         ) }
 
     fun providePlayerActivityController(activity: PlayerActivity): PlayerActivityController {
