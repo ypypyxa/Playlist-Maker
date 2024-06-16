@@ -23,6 +23,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.presentation.SearchView
+import com.example.playlistmaker.search.ui.model.SearchActivityState
 
 class SearchActivity : AppCompatActivity(), SearchView {
 
@@ -102,8 +103,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
 // Нажатие на клавиатуре кнопки Done
         searchEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                hideKeyboard()
-                searchActivityPresenter.onSearchButtonPress()
+                searchActivityPresenter.onSearchOrRefreshButtonPress()
                 searchActivityPresenter.searchDebounce(searchText)
             }
             false
@@ -121,6 +121,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
 
 // Кнопка "Обновить"
         placeholderButton.setOnClickListener {
+            searchActivityPresenter.onSearchOrRefreshButtonPress()
             searchActivityPresenter.searchDebounce(searchText)
         }
 
@@ -145,9 +146,25 @@ class SearchActivity : AppCompatActivity(), SearchView {
         searchActivityPresenter.onFocusChange(searchEdit.hasFocus(), searchEdit.text.isEmpty())
     }
 
-    override fun updateTrackListView(tracks: List<Track>) {
+    override fun render(state: SearchActivityState) {
+        when (state) {
+// Состояние показа загрузки
+            is SearchActivityState.Loading -> showLoading()
+// Состояние показа поиска
+            is SearchActivityState.SearchResult -> showContent(state.tracks)
+            is SearchActivityState.EmptySearchResult -> showEmptySearchResultPlaceholder(state.message)
+// Состояние показа истории
+            is SearchActivityState.History -> showHistory(state.tracks)
+// Состояние пустого экрана
+            is SearchActivityState.EmptyView -> showEmpty()
+// Состояние ошибки
+            is SearchActivityState.Error -> showErrorPlaceholder(state.message)
+        }
+    }
+
+    private fun updateTrackListView(tracks: List<Track>?) {
         trackListAdapter.trackList.clear()
-        trackListAdapter.trackList.addAll(tracks)
+        if (tracks != null) trackListAdapter.trackList.addAll(tracks)
         trackListAdapter.notifyDataSetChanged()
     }
 
@@ -161,6 +178,72 @@ class SearchActivity : AppCompatActivity(), SearchView {
         return current
     }
 
+// Состояние «загрузки»
+    private fun showLoading() {
+        trackListView.visibility = View.GONE
+        placeholderImage.visibility = View.GONE
+        placeholderMessage.visibility = View.GONE
+        placeholderButton.visibility = View.GONE
+        historyHint.visibility = View.GONE
+        historyClearButton.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
+    }
+// Состояние «ошибки»
+    private fun showErrorPlaceholder(errorMessage: String) {
+        progressBar.visibility = View.GONE
+        trackListView.visibility = View.GONE
+        historyHint.visibility = View.GONE
+        historyClearButton.visibility = View.GONE
+        placeholderImage.setImageResource(R.drawable.ic_something_went_wrong_placeholder)
+        placeholderImage.visibility = View.VISIBLE
+        placeholderMessage.text = errorMessage
+        placeholderMessage.visibility = View.VISIBLE
+        placeholderButton.visibility = View.VISIBLE
+    }
+// Состояние «пустого экрана»
+    private fun showEmpty() {
+        progressBar.visibility = View.GONE
+        trackListView.visibility = View.GONE
+        placeholderImage.visibility = View.GONE
+        placeholderButton.visibility = View.GONE
+        placeholderMessage.visibility = View.GONE
+        historyHint.visibility = View.GONE
+        historyClearButton.visibility = View.GONE
+    }
+// Состояние «пустого списка»
+    private fun showEmptySearchResultPlaceholder(emptyMessage: String) {
+        progressBar.visibility = View.GONE
+        trackListView.visibility = View.GONE
+        historyHint.visibility = View.GONE
+        historyClearButton.visibility = View.GONE
+        placeholderImage.setImageResource(R.drawable.ic_nothing_found_placeholder)
+        placeholderImage.visibility = View.VISIBLE
+        placeholderMessage.text = emptyMessage
+        placeholderMessage.visibility = View.VISIBLE
+    }
+// Состояние «контента»
+    private fun showContent(tracks: List<Track>) {
+        progressBar.visibility = View.GONE
+        placeholderImage.visibility = View.GONE
+        placeholderButton.visibility = View.GONE
+        placeholderMessage.visibility = View.GONE
+        historyHint.visibility = View.GONE
+        historyClearButton.visibility = View.GONE
+        updateTrackListView(tracks)
+        trackListView.visibility = View.VISIBLE
+    }
+// Состояние «истории»
+    private fun showHistory(tracks: List<Track>?) {
+        progressBar.visibility = View.GONE
+        placeholderImage.visibility = View.GONE
+        placeholderButton.visibility = View.GONE
+        placeholderMessage.visibility = View.GONE
+        historyHint.visibility = View.VISIBLE
+        historyClearButton.visibility = View.VISIBLE
+        updateTrackListView(tracks)
+        trackListView.visibility = View.VISIBLE
+    }
+
     override fun clearSearchEdit() {
         searchEdit.setText("")
     }
@@ -171,38 +254,11 @@ class SearchActivity : AppCompatActivity(), SearchView {
         method.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    override fun showSearchClearButton(isVisible: Boolean) {
+    override fun showSearchEditClearButton(isVisible: Boolean) {
         searchClearButton.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
-    override fun showHistoryHint(isVisible: Boolean) {
-        historyHint.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
-    override fun showHistoryClearButton(isVisible: Boolean) {
-        historyClearButton.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
-    override fun showPlaceholderImage(isVisible: Boolean) {
-        placeholderImage.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
-    override fun setPlaceholderImage(drawableID: Int) {
-        placeholderImage.setImageResource(drawableID)
-    }
-    override fun showPlaceholderMessage(isVisible: Boolean) {
-        placeholderMessage.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
-    override fun setPlaceholderMessage (message: String){
-        placeholderMessage.text = message
-    }
-    override fun showPlaceholderButton(isVisible: Boolean) {
-        placeholderButton.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
-    override fun showProgressBar(isVisible: Boolean) {
-        progressBar.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
-    override fun showTrackListView(isVisible: Boolean) {
-        trackListView.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
 
-    override fun showMessage(message: String) {
+    override fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
