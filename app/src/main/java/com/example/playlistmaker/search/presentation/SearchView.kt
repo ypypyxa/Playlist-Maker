@@ -16,4 +16,5 @@ interface SearchView {
     fun clearSearchEdit()
     fun hideKeayboard()
     fun updateTrackListView(tracks: List<Track>)
+    fun showMessage(message: String)
 }

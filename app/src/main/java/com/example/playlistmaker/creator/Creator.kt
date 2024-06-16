@@ -9,12 +9,12 @@ import com.example.playlistmaker.search.domain.api.TrackInteractor
 import com.example.playlistmaker.search.domain.api.TrackRepository
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
-import com.example.playlistmaker.player.presentation.PlayerActivityController
-import com.example.playlistmaker.player.ui.PlayerActivity
-import com.example.playlistmaker.search.data.HistoryRepositoryImpl
-import com.example.playlistmaker.search.domain.api.HistoryInteractor
-import com.example.playlistmaker.search.domain.api.HistoryRepository
-import com.example.playlistmaker.search.domain.impl.HistoryInteractorImpl
+import com.example.playlistmaker.player.presentation.PlayerActivityPresenter
+import com.example.playlistmaker.player.presentation.PlayerView
+import com.example.playlistmaker.history.data.HistoryRepositoryImpl
+import com.example.playlistmaker.history.domain.api.HistoryInteractor
+import com.example.playlistmaker.history.domain.api.HistoryRepository
+import com.example.playlistmaker.history.domain.impl.HistoryInteractorImpl
 import com.example.playlistmaker.search.domain.impl.TrackInteractorImpl
 import com.example.playlistmaker.search.presentation.SearchActivityPresenter
 import com.example.playlistmaker.search.presentation.SearchView
@@ -53,7 +53,13 @@ object Creator {
             context = context
         ) }
 
-    fun providePlayerActivityController(activity: PlayerActivity): PlayerActivityController {
-        return PlayerActivityController(playerActivity = activity)
+    fun providePlayerActivityPresenter(
+        view: PlayerView,
+        context: Context
+    ): PlayerActivityPresenter {
+        return PlayerActivityPresenter(
+            playerView = view,
+            context = context
+        )
     }
 }

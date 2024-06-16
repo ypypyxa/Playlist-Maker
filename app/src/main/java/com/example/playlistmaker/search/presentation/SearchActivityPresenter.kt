@@ -6,10 +6,9 @@ import android.content.SharedPreferences
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.widget.Toast
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.search.domain.api.HistoryInteractor
+import com.example.playlistmaker.history.domain.api.HistoryInteractor
 import com.example.playlistmaker.search.domain.api.TrackInteractor
 import com.example.playlistmaker.search.domain.model.Track
 
@@ -39,11 +38,13 @@ class SearchActivityPresenter(
 
     fun onFocusChange(hasFocus: Boolean, searchTextIsEmpty: Boolean) {
         historyTracks = historyInteractor.loadTracks()
+
         if ( hasFocus && searchTextIsEmpty && historyTracks.size != HISTORY_MIN_SIZE) {
             showHistoryView()
             searchView.updateTrackListView(historyTracks)
         } else {
             hideHistoryView()
+            searchView.showTrackListView(true)
         }
     }
 
@@ -87,9 +88,9 @@ class SearchActivityPresenter(
                         if (errorMessage != null) {
                             showFailureMessage()
                         } else if (searchText.isEmpty()) {
-                            showNothingFoundMessage()
-                        } else {
                             hidePlaceholderView()
+                        } else {
+                            showNothingFoundMessage()
                         }
                     }
                 }
@@ -133,13 +134,13 @@ class SearchActivityPresenter(
         searchView.showSearchClearButton(searchText.isNotEmpty())
     }
 
-    fun showHistoryView() {
+    private fun showHistoryView() {
         searchView.showHistoryHint(true)
         searchView.showHistoryClearButton(true)
         searchView.showTrackListView(true)
     }
 
-    fun hideHistoryView() {
+    private fun hideHistoryView() {
         searchView.showHistoryHint(false)
         searchView.showHistoryClearButton(false)
         searchView.showTrackListView(false)
@@ -157,8 +158,7 @@ class SearchActivityPresenter(
             searchView.updateTrackListView(searchTracks)
 
             if (additionalMessage.isNotEmpty()) {
-                Toast.makeText(context, additionalMessage, Toast.LENGTH_LONG)
-                    .show()
+                searchView.showMessage(additionalMessage)
             }
         } else {
             searchView.showPlaceholderMessage(false)

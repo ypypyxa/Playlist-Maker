@@ -16,6 +16,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
@@ -42,9 +43,9 @@ class SearchActivity : AppCompatActivity(), SearchView {
     private var searchEditWatcher: TextWatcher? = null
     private var searchText = ""
 
-    //Инициализируем адаптер
+// Инициализируем адаптер
     private val trackListAdapter = TrackListAdapter { item ->
-//Нажатие на итем
+// Нажатие на итем
         if (clickDebounce()) {
             val playerIntent = Intent(this, PlayerActivity::class.java)
             playerIntent.putExtra(TRACK, item)
@@ -74,14 +75,13 @@ class SearchActivity : AppCompatActivity(), SearchView {
 
         trackListView.adapter = trackListAdapter
 
-        //Наблюдатель событий набора текста
+// Наблюдатель событий набора текста
         searchEditWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // empty
             }
 
-            //Изменение текста
-//Если текстовое поле пустое, а история нет, то отображается подсказка и история поиска
+// Изменение текста
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchText = s?.toString() ?: ""
                 searchActivityPresenter.searchDebounce(searchText)
@@ -136,13 +136,19 @@ class SearchActivity : AppCompatActivity(), SearchView {
         searchActivityPresenter.onDestroy()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        searchActivityPresenter.onFocusChange(searchEdit.hasFocus(), searchEdit.text.isEmpty())
+    }
+
     override fun updateTrackListView(tracks: List<Track>) {
         trackListAdapter.trackList.clear()
         trackListAdapter.trackList.addAll(tracks)
         trackListAdapter.notifyDataSetChanged()
     }
 
-// Задержка между кликами по трекам
+// Задержка между кликами
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
@@ -175,7 +181,6 @@ class SearchActivity : AppCompatActivity(), SearchView {
     override fun showPlaceholderImage(isVisible: Boolean) {
         placeholderImage.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
-
     override fun setPlaceholderImage(drawableID: Int) {
         placeholderImage.setImageResource(drawableID)
     }
@@ -185,16 +190,18 @@ class SearchActivity : AppCompatActivity(), SearchView {
     override fun setPlaceholderMessage (message: String){
         placeholderMessage.text = message
     }
-
     override fun showPlaceholderButton(isVisible: Boolean) {
         placeholderButton.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
     override fun showProgressBar(isVisible: Boolean) {
         progressBar.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
-
     override fun showTrackListView(isVisible: Boolean) {
         trackListView.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+    override fun showMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
     companion object {
