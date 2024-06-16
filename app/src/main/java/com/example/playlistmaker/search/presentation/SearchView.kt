@@ -14,7 +14,8 @@ interface SearchView {
     fun showProgressBar(isVisible: Boolean)
     fun showTrackListView(isVisible: Boolean)
     fun clearSearchEdit()
-    fun hideKeayboard()
     fun updateTrackListView(tracks: List<Track>)
+
+    fun hideKeyboard()
     fun showMessage(message: String)
 }

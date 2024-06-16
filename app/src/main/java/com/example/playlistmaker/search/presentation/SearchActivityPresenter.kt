@@ -18,6 +18,7 @@ class SearchActivityPresenter(
 ) {
 
     private val handler = Handler(Looper.getMainLooper())
+    private var isSearchButtonPressed = false
 
     private lateinit var history: SharedPreferences
     private lateinit var historyInteractor: HistoryInteractor
@@ -43,14 +44,14 @@ class SearchActivityPresenter(
             showHistoryView()
             searchView.updateTrackListView(historyTracks)
         } else {
-            hideHistoryView()
-            searchView.showTrackListView(true)
+            if (!searchTextIsEmpty) {
+                searchView.showTrackListView(true)
+            }
         }
     }
 
     fun onClearSearchButtonPress() {
         searchView.clearSearchEdit()
-        searchView.hideKeayboard()
         searchTracks.clear()
         hidePlaceholderView()
         historyTracks = historyInteractor.loadTracks()
@@ -69,67 +70,70 @@ class SearchActivityPresenter(
         hideHistoryView()
     }
 
-    fun onItemClick(){
-// Тут должна быть обработка добавления песни в историю
+    fun onSearchButtonPress() {
+        isSearchButtonPressed = true
     }
 
-
-    fun searchTrack(searchText: String) {
-        if (searchText.isNotEmpty()) {
-            searchView.showProgressBar(true)
-            trackInteractor.searchTracks(searchText, object : TrackInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                    handler.post {
-                        searchView.showProgressBar(false)
-                        if (foundTracks != null) {
-                            searchView.updateTrackListView(foundTracks)
-                            searchView.showTrackListView(true)
-                        }
-                        if (errorMessage != null) {
-                            showFailureMessage()
-                        } else if (searchText.isEmpty()) {
-                            hidePlaceholderView()
-                        } else {
-                            showNothingFoundMessage()
-                        }
+    private fun searchTrack(searchText: String) {
+        hidePlaceholderView()
+        hideHistoryView()
+        searchView.showProgressBar(true)
+        trackInteractor.searchTracks(searchText, object : TrackInteractor.TracksConsumer {
+            override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
+                handler.post {
+                    searchView.showProgressBar(false)
+                    if (foundTracks != null) {
+                        searchView.updateTrackListView(foundTracks)
+                        searchView.showTrackListView(true)
+                    }
+                    if (errorMessage != null) {
+                        showFailureMessage()
+                    } else if (foundTracks.isNullOrEmpty()) {
+                        showNothingFoundMessage()
+                    } else {
+                        hidePlaceholderView()
                     }
                 }
-            })
-        }
+            }
+        })
     }
 
     fun searchDebounce(searchText: String) {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
-        if (searchText.isEmpty() && historyTracks.size != HISTORY_MIN_SIZE) {
+        if (searchText.isEmpty()) {
+            if (historyTracks.size != HISTORY_MIN_SIZE) {
 // если поле пустое, а история поиска не пустая - скрывается заглушка
 // и показывается история поиска
-            searchTracks.clear()
-            searchView.updateTrackListView(historyTracks)
+                searchTracks.clear()
+                searchView.updateTrackListView(historyTracks)
 
-            hidePlaceholderView()
-            showHistoryView()
-        } else if (searchText.isEmpty() && historyTracks.size == HISTORY_MIN_SIZE) {
+                hidePlaceholderView()
+                showHistoryView()
+            } else {
 // если поле и история пустые - скрываются подсказки и список песен
-            hideHistoryView()
+                hideHistoryView()
 
-            searchTracks.clear()
-            searchView.updateTrackListView(searchTracks)
+                searchTracks.clear()
+                searchView.updateTrackListView(searchTracks)
+            }
+            isSearchButtonPressed = false
         } else {
-// пока поле не пустое показывается результат предыдущего поиска
-            hideHistoryView()
-
             val searchRunnable = Runnable { searchTrack(searchText) }
 
-            val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+            var postTime: Long? = null
+
+            if (isSearchButtonPressed) {
+                postTime = SystemClock.uptimeMillis()
+                isSearchButtonPressed = false
+            } else {
+                postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+            }
             handler.postAtTime(
                 searchRunnable,
                 SEARCH_REQUEST_TOKEN,
                 postTime,
             )
-
-            searchView.updateTrackListView(searchTracks)
-            searchView.showTrackListView(true)
         }
         searchView.showSearchClearButton(searchText.isNotEmpty())
     }

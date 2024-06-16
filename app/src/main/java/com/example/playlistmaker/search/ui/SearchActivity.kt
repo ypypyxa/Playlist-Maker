@@ -65,6 +65,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
         backButton = findViewById(R.id.ib_back)
         searchClearButton = findViewById(R.id.ivClearButton)
         searchEdit = findViewById(R.id.etSearch)
+        searchEdit.imeOptions = EditorInfo.IME_ACTION_SEARCH
         historyHint = findViewById(R.id.tvHistoryHint)
         historyClearButton = findViewById(R.id.btnHistoryClear)
         placeholderImage = findViewById(R.id.ivPlaceholderImage)
@@ -100,8 +101,10 @@ class SearchActivity : AppCompatActivity(), SearchView {
 
 // Нажатие на клавиатуре кнопки Done
         searchEdit.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (clickDebounce()) searchActivityPresenter.searchTrack(searchText)
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                hideKeyboard()
+                searchActivityPresenter.onSearchButtonPress()
+                searchActivityPresenter.searchDebounce(searchText)
             }
             false
         }
@@ -118,7 +121,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
 
 // Кнопка "Обновить"
         placeholderButton.setOnClickListener {
-            if (clickDebounce()) searchActivityPresenter.searchTrack(searchText)
+            searchActivityPresenter.searchDebounce(searchText)
         }
 
 // Кнопка назад
@@ -162,11 +165,10 @@ class SearchActivity : AppCompatActivity(), SearchView {
         searchEdit.setText("")
     }
 
-    override fun hideKeayboard() {
+    override fun hideKeyboard() {
         val view = this.currentFocus ?: return
         val method = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         method.hideSoftInputFromWindow(view.windowToken, 0)
-        searchActivityPresenter.searchTrack(searchText)
     }
 
     override fun showSearchClearButton(isVisible: Boolean) {
