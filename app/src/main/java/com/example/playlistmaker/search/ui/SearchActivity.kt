@@ -18,10 +18,12 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.App
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.search.presentation.SearchActivityPresenter
 import com.example.playlistmaker.search.presentation.SearchView
 import com.example.playlistmaker.search.ui.model.SearchActivityState
 
@@ -54,14 +56,19 @@ class SearchActivity : AppCompatActivity(), SearchView {
         }
     }
 
-    private val searchActivityPresenter = Creator.provideSearchActivityPresenter(
-        this,
-        this
-    )
+    private var searchActivityPresenter : SearchActivityPresenter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        searchActivityPresenter = (this.applicationContext as? App)?.searchActivityPresenter
+        if (searchActivityPresenter == null) {
+            searchActivityPresenter = Creator.provideSearchActivityPresenter(
+                this.applicationContext
+            )
+            (this.applicationContext as? App)?.searchActivityPresenter = searchActivityPresenter
+        }
 
         backButton = findViewById(R.id.ib_back)
         searchClearButton = findViewById(R.id.ivClearButton)
@@ -86,7 +93,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
 // Изменение текста
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchText = s?.toString() ?: ""
-                searchActivityPresenter.searchDebounce(searchText)
+                searchActivityPresenter?.searchDebounce(searchText)
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -97,32 +104,32 @@ class SearchActivity : AppCompatActivity(), SearchView {
 
 // Проверка находится ли поле поиска в фокусе
         searchEdit.setOnFocusChangeListener { _, hasFocus ->
-            searchActivityPresenter.onFocusChange(hasFocus, searchText.isEmpty())
+            searchActivityPresenter?.onFocusChange(hasFocus, searchText.isEmpty())
         }
 
-// Нажатие на клавиатуре кнопки Done
+// Нажатие на клавиатуре кнопки Search
         searchEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                searchActivityPresenter.onSearchOrRefreshButtonPress()
-                searchActivityPresenter.searchDebounce(searchText)
+                searchActivityPresenter?.onSearchOrRefreshButtonPress()
+                searchActivityPresenter?.searchDebounce(searchText)
             }
             false
         }
 
 // Кнопка очистки поля поиска
         searchClearButton.setOnClickListener {
-            searchActivityPresenter.onClearSearchButtonPress()
+            searchActivityPresenter?.onClearSearchButtonPress()
         }
 
 // Кнопка "Очистить историю поиска"
         historyClearButton.setOnClickListener {
-            searchActivityPresenter.onClearHistoryButtonPress()
+            searchActivityPresenter?.onClearHistoryButtonPress()
         }
 
 // Кнопка "Обновить"
         placeholderButton.setOnClickListener {
-            searchActivityPresenter.onSearchOrRefreshButtonPress()
-            searchActivityPresenter.searchDebounce(searchText)
+            searchActivityPresenter?.onSearchOrRefreshButtonPress()
+            searchActivityPresenter?.searchDebounce(searchText)
         }
 
 // Кнопка назад
@@ -130,20 +137,51 @@ class SearchActivity : AppCompatActivity(), SearchView {
             finish()
         }
 
-        searchActivityPresenter.onCreate()
+        searchActivityPresenter?.attachView(this)
+        searchActivityPresenter?.onCreate()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
         searchEditWatcher?.let { searchEdit.removeTextChangedListener(it) }
-        searchActivityPresenter.onDestroy()
+        searchActivityPresenter?.detachView()
+        searchActivityPresenter?.onDestroy()
+
+        if (isFinishing) {
+            (this.application as? App)?.searchActivityPresenter = null
+        }
     }
 
     override fun onResume() {
         super.onResume()
 
-        searchActivityPresenter.onFocusChange(searchEdit.hasFocus(), searchEdit.text.isEmpty())
+        searchActivityPresenter?.attachView(this)
+        searchActivityPresenter?.onFocusChange(searchEdit.hasFocus(), searchEdit.text.isEmpty())
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        searchActivityPresenter?.detachView()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        searchActivityPresenter?.detachView()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        searchActivityPresenter?.detachView()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        searchActivityPresenter?.attachView(this)
     }
 
     override fun render(state: SearchActivityState) {
@@ -222,7 +260,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
         placeholderMessage.visibility = View.VISIBLE
     }
 // Состояние «контента»
-    private fun showContent(tracks: List<Track>) {
+    private fun showContent(tracks: List<Track>?) {
         progressBar.visibility = View.GONE
         placeholderImage.visibility = View.GONE
         placeholderButton.visibility = View.GONE

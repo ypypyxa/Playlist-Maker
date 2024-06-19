@@ -44,14 +44,8 @@ object Creator {
         return MediaPlayerInteractor(getMediaPlayerRepository())
     }
 
-    fun provideSearchActivityPresenter(
-        view: SearchView,
-        context: Context,
-    ): SearchActivityPresenter {
-        return SearchActivityPresenter(
-            searchView = view,
-            context = context
-        ) }
+    fun provideSearchActivityPresenter(context: Context): SearchActivityPresenter {
+        return SearchActivityPresenter(context = context) }
 
     fun providePlayerActivityPresenter(
         view: PlayerView,

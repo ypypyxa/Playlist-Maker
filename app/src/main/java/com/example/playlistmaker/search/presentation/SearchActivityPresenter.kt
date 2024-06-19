@@ -14,9 +14,23 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.model.SearchActivityState
 
 class SearchActivityPresenter(
-    private val searchView: SearchView,
-    private val context: Context,
+    private val context: Context
 ) {
+
+    private var searchView: SearchView? = null
+    private var searchActivityState: SearchActivityState? = null
+    private var latestSearchText: String? = null
+    fun attachView(view: SearchView) {
+        searchView = view
+        searchActivityState?.let { view.render((it)) }
+    }
+    fun detachView() {
+        searchView = null
+    }
+    fun renderState(state: SearchActivityState) {
+        this.searchActivityState = state
+        this.searchView?.render(state)
+    }
 
     private val handler = Handler(Looper.getMainLooper())
     private var isSearchButtonPressed = false
@@ -24,7 +38,6 @@ class SearchActivityPresenter(
     private lateinit var history: SharedPreferences
     private lateinit var historyInteractor: HistoryInteractor
 
-    private var searchTracks = ArrayList<Track>()
     private var historyTracks = ArrayList<Track>()
 
     private val trackInteractor = Creator.provideTrackInteractor(context)
@@ -42,47 +55,43 @@ class SearchActivityPresenter(
         historyTracks = historyInteractor.loadTracks()
 
         if ( hasFocus && searchTextIsEmpty && historyTracks.size != HISTORY_MIN_SIZE) {
-            searchView.render(
-                SearchActivityState.History(historyTracks)
+            renderState(
+               SearchActivityState.History(historyTracks)
             )
-        } else {
-            if (!searchTextIsEmpty) {
-                searchView.render(
-                    SearchActivityState.SearchResult(searchTracks)
-                )
-            }
         }
     }
 
     fun onClearSearchButtonPress() {
-        searchView.clearSearchEdit()
+        searchView?.clearSearchEdit()
         historyTracks = historyInteractor.loadTracks()
         if (historyTracks.size > HISTORY_MIN_SIZE) {
-            searchView.render(
+            renderState(
                 SearchActivityState.History(historyTracks)
             )
         } else {
-            searchView.render(
+            renderState(
                 SearchActivityState.EmptyView
             )
         }
     }
 
     fun onClearHistoryButtonPress() {
-        searchView.render(
+        renderState(
             SearchActivityState.EmptyView
         )
     }
 
     fun onSearchOrRefreshButtonPress() {
         isSearchButtonPressed = true
-        searchView.hideKeyboard()
+        searchView?.hideKeyboard()
     }
 
     private fun searchTrack(searchText: String) {
-        searchView.render(
+        renderState(
             SearchActivityState.Loading
         )
+        this.latestSearchText = searchText
+
         trackInteractor.searchTracks(searchText, object : TrackInteractor.TracksConsumer {
             override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
                 val tracks = ArrayList<Track>()
@@ -92,18 +101,18 @@ class SearchActivityPresenter(
                     }
                     when {
                         errorMessage != null -> {
-                            searchView.showToast(errorMessage)
-                            searchView.render(
+                            searchView?.showToast(errorMessage)
+                            renderState(
                                 SearchActivityState.Error(context.getString(R.string.something_went_wrong))
                             )
                         }
                         tracks.isEmpty() -> {
-                            searchView.render(
+                            renderState(
                                 SearchActivityState.EmptySearchResult(context.getString(R.string.nothing_found))
                             )
                         }
                         else -> {
-                            searchView.render(
+                            renderState(
                                 SearchActivityState.SearchResult(tracks)
                             )
                         }
@@ -114,18 +123,26 @@ class SearchActivityPresenter(
     }
 
     fun searchDebounce(searchText: String) {
+        if (latestSearchText == searchText) {
+            if (!latestSearchText.isNullOrEmpty()) {
+                searchView?.showSearchEditClearButton(searchText.isNotEmpty())
+            }
+            isSearchButtonPressed = false
+            return
+        }
+
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
         if (searchText.isEmpty()) {
             if (historyTracks.size != HISTORY_MIN_SIZE) {
 // если поле пустое, а история поиска не пустая - скрывается заглушка
 // и показывается история поиска
-                searchView.render(
+                renderState(
                     SearchActivityState.History(historyTracks)
                 )
             } else {
 // если поле и история пустые - скрываются подсказки и список песен
-                searchView.render(
+                renderState(
                     SearchActivityState.EmptyView
                 )
             }
@@ -141,13 +158,15 @@ class SearchActivityPresenter(
             } else {
                 postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
             }
+
             handler.postAtTime(
                 searchRunnable,
                 SEARCH_REQUEST_TOKEN,
                 postTime,
             )
         }
-        searchView.showSearchEditClearButton(searchText.isNotEmpty())
+
+        searchView?.showSearchEditClearButton(searchText.isNotEmpty())
     }
 
     companion object {
