@@ -32,12 +32,12 @@ object Creator {
         return MediaPlayerRepositoryImpl()
     }
 
-    private fun getHistoryRepository(history: SharedPreferences): HistoryRepository {
-        return HistoryRepositoryImpl(history)
+    private fun getHistoryRepository(context: Context): HistoryRepository {
+        return HistoryRepositoryImpl(context)
     }
 
-    fun provideHistoryInteractor(history: SharedPreferences): HistoryInteractor {
-        return HistoryInteractorImpl(getHistoryRepository(history))
+    fun provideHistoryInteractor(context: Context): HistoryInteractor {
+        return HistoryInteractorImpl(getHistoryRepository(context))
     }
 
     fun provideMediaPlayer(): MediaPlayerInteractor {

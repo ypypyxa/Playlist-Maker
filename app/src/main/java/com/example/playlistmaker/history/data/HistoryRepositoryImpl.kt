@@ -1,14 +1,16 @@
 package com.example.playlistmaker.history.data
 
-import android.content.SharedPreferences
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import com.example.playlistmaker.history.domain.api.HistoryRepository
 import com.example.playlistmaker.search.domain.model.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class HistoryRepositoryImpl(private val history : SharedPreferences) : HistoryRepository {
+class HistoryRepositoryImpl(context: Context) : HistoryRepository {
 
     private val historyGson = Gson()
+    private val history = context.getSharedPreferences(HISTORY, MODE_PRIVATE)
 
 // Функция сохранения trackList в SharedPreferences/history
     override fun saveTracks(trackList: ArrayList<Track>) {
@@ -23,11 +25,12 @@ class HistoryRepositoryImpl(private val history : SharedPreferences) : HistoryRe
         return historyGson.fromJson(history.getString(HISTORY_TRACKS, ""), type) ?: ArrayList()
     }
 
-    override fun clearTrack() {
+    override fun clearHistory() {
         history.edit().remove(HISTORY_TRACKS).apply()
     }
 
     companion object {
         private const val HISTORY_TRACKS = "history_tracks"
+        private const val HISTORY = "history"
     }
 }

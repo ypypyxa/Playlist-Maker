@@ -1,7 +1,6 @@
 package com.example.playlistmaker.player.presentation
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
@@ -44,8 +43,7 @@ class PlayerActivityPresenter(
         this.track = recivdeTrack
 
 // Лучшего места что бы сохранить трек в историю поиска я пока не нашел...
-        val history = context.getSharedPreferences(HISTORY, MODE_PRIVATE)
-        val historyInteractor = Creator.provideHistoryInteractor(history)
+        val historyInteractor = Creator.provideHistoryInteractor(context)
         val historyTracks = historyInteractor.loadTracks()
         if (historyTracks.none { it.trackId == track.trackId }) {
             historyTracks.add(0, track)

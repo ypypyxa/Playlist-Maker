@@ -1,8 +1,6 @@
 package com.example.playlistmaker.search.presentation
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -35,7 +33,6 @@ class SearchActivityPresenter(
     private val handler = Handler(Looper.getMainLooper())
     private var isSearchButtonPressed = false
 
-    private lateinit var history: SharedPreferences
     private lateinit var historyInteractor: HistoryInteractor
 
     private var historyTracks = ArrayList<Track>()
@@ -43,8 +40,7 @@ class SearchActivityPresenter(
     private val trackInteractor = Creator.provideTrackInteractor(context)
 
     fun onCreate() {
-        history = context.getSharedPreferences(HISTORY, MODE_PRIVATE)
-        historyInteractor = Creator.provideHistoryInteractor(history)
+        historyInteractor = Creator.provideHistoryInteractor(context)
     }
 
     fun onDestroy() {
@@ -79,6 +75,7 @@ class SearchActivityPresenter(
         renderState(
             SearchActivityState.EmptyView
         )
+        historyInteractor.clearTracks()
     }
 
     fun onSearchOrRefreshButtonPress() {
@@ -172,7 +169,6 @@ class SearchActivityPresenter(
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-        private const val HISTORY = "history"
         private const val HISTORY_MIN_SIZE = 0
         private const val HISTORY_MAX_SIZE = 10
     }
