@@ -1,8 +1,8 @@
-package com.example.playlistmaker.history.data
+package com.example.playlistmaker.utils.history.data
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import com.example.playlistmaker.history.domain.api.HistoryRepository
+import com.example.playlistmaker.utils.history.domain.api.HistoryRepository
 import com.example.playlistmaker.search.domain.model.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

@@ -1,7 +1,7 @@
-package com.example.playlistmaker.history.domain.impl
+package com.example.playlistmaker.utils.history.domain.impl
 
-import com.example.playlistmaker.history.domain.api.HistoryInteractor
-import com.example.playlistmaker.history.domain.api.HistoryRepository
+import com.example.playlistmaker.utils.history.domain.api.HistoryInteractor
+import com.example.playlistmaker.utils.history.domain.api.HistoryRepository
 import com.example.playlistmaker.search.domain.model.Track
 
 class HistoryInteractorImpl(private val historyRepository: HistoryRepository): HistoryInteractor {

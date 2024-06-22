@@ -13,11 +13,11 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.history.domain.api.HistoryInteractor
+import com.example.playlistmaker.utils.history.domain.api.HistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.model.SearchActivityState
-import com.example.playlistmaker.search.util.SingleLiveEvent
+import com.example.playlistmaker.utils.SingleLiveEvent
 
 class SearchActivityViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -65,7 +65,6 @@ class SearchActivityViewModel(application: Application) : AndroidViewModel(appli
 
     fun onFocusChange(hasFocus: Boolean, searchTextIsEmpty: Boolean) {
         historyTracks = historyInteractor.loadTracks()
-
         if ( hasFocus && searchTextIsEmpty && historyTracks.size != HISTORY_MIN_SIZE) {
             renderState(
                SearchActivityState.History(historyTracks)
@@ -76,6 +75,7 @@ class SearchActivityViewModel(application: Application) : AndroidViewModel(appli
     fun onClearSearchButtonPress() {
         clearSearchEdit.postValue(EMPTY_TEXT)
         historyTracks = historyInteractor.loadTracks()
+
         if (historyTracks.size > HISTORY_MIN_SIZE) {
             renderState(
                 SearchActivityState.History(historyTracks)
