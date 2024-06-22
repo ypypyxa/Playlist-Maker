@@ -16,29 +16,19 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
             }
             200 -> {
                 Resource.Success((response as TracksSearchResponse).results.map {
-                    val trackId = it.trackId ?: ""
-                    val trackName = it.trackName ?: ""
-                    val artistName = it.artistName ?: ""
-                    val trackTimeMillis = it.trackTimeMillis ?: ""
-                    val artworkUrl100 = it.artworkUrl100 ?: ""
-                    val collectionName = it.collectionName ?: ""
-                    val releaseDate = it.releaseDate ?: ""
-                    val primaryGenreName = it.primaryGenreName ?: ""
-                    val country = it.country ?: ""
-                    val previewUrl = it.previewUrl ?: ""
                     Track(
-                        trackId,
-                        trackName,
-                        artistName,
-                        trackTimeMillis,
-                        artworkUrl100,
-                        collectionName,
-                        releaseDate,
-                        primaryGenreName,
-                        country,
-                        previewUrl
+                        it.trackId,
+                        it.trackName,
+                        it.artistName,
+                        it.trackTimeMillis,
+                        it.artworkUrl100,
+                        it.collectionName,
+                        it.releaseDate,
+                        it.primaryGenreName,
+                        it.country,
+                        it.previewUrl
                     )
-                } ?: emptyList() )
+                } )
             }
             else -> {
                 Resource.Error("Ошибка сервера")

@@ -21,7 +21,7 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
     private val musicService = retrofit.create(MusicApi::class.java)
 
     override fun doRequest(dto: Any): Response {
-        if (isConnected() == false) {
+        if (!isConnected()) {
             return Response().apply { resultCode = -1 }
         }
         if (dto !is TracksSearchRequest) {
@@ -30,11 +30,7 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
 
         val response = musicService.searchTracks(dto.expression).execute()
         val body = response.body()
-        return if (body != null) {
-            body.apply { resultCode = response.code() }
-        } else {
-            Response().apply { resultCode = response.code() }
-        }
+        return body?.apply { resultCode = response.code() } ?: Response().apply { resultCode = response.code() }
     }
 
     private fun isConnected(): Boolean {

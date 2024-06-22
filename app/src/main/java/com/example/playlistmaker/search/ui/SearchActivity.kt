@@ -106,7 +106,7 @@ class SearchActivity : AppCompatActivity() {
 // Нажатие на клавиатуре кнопки Search
         searchEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                searchActivityViewModel.onSearchOrRefreshButtonPress()
+                searchActivityViewModel.onSearchButtonPress()
                 searchActivityViewModel.searchDebounce(searchText)
             }
             false
@@ -124,7 +124,7 @@ class SearchActivity : AppCompatActivity() {
 
 // Кнопка "Обновить"
         placeholderButton.setOnClickListener {
-            searchActivityViewModel.onSearchOrRefreshButtonPress()
+            searchActivityViewModel.onRefreshButtonPress()
             searchActivityViewModel.searchDebounce(searchText)
         }
 
@@ -166,7 +166,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
-    fun render(state: SearchActivityState) {
+    private fun render(state: SearchActivityState) {
         when (state) {
 // Состояние показа загрузки
             is SearchActivityState.Loading -> showLoading()
@@ -267,9 +267,11 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun hideKeyboard(isVisible: Boolean) {
-        val view = this.currentFocus ?: return
-        val method = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        method.hideSoftInputFromWindow(view.windowToken, 0)
+        if (isVisible) {
+            val view = this.currentFocus ?: return
+            val method = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            method.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 
     private fun showSearchEditClearButton(isVisible: Boolean) {

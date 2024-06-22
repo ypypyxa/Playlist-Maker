@@ -5,10 +5,10 @@ import com.example.playlistmaker.search.domain.model.Track
 sealed interface SearchActivityState {
 
     // Состояние показа загрузки
-    object Loading : SearchActivityState
+    data object Loading : SearchActivityState
 
     // Состояние пустого экрана
-    object EmptyView : SearchActivityState
+    data object EmptyView : SearchActivityState
 
     // Состояние показа поиска
     data class SearchResult(

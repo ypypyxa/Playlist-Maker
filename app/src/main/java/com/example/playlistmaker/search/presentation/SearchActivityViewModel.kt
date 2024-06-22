@@ -28,6 +28,7 @@ class SearchActivityViewModel(application: Application) : AndroidViewModel(appli
 
     private val handler = Handler(Looper.getMainLooper())
     private var isSearchButtonPressed = false
+    private var isRefreshButtonPressed = false
 
     private var latestSearchText: String? = null
 
@@ -93,17 +94,22 @@ class SearchActivityViewModel(application: Application) : AndroidViewModel(appli
         historyInteractor.clearTracks()
     }
 
-    fun onSearchOrRefreshButtonPress() {
+    fun onSearchButtonPress() {
         isSearchButtonPressed = true
-        hideKeyboard.postValue(isSearchButtonPressed)
+        hideKeyboard.postValue(true)
+    }
+
+    fun onRefreshButtonPress() {
+        isRefreshButtonPressed = true
     }
 
     fun searchDebounce(searchText: String) {
-        if (latestSearchText == searchText) {
+        if (latestSearchText == searchText && !isRefreshButtonPressed) {
             if (!latestSearchText.isNullOrEmpty()) {
                 showSearchEditClearButton.postValue(searchText.isNotEmpty())
             }
             isSearchButtonPressed = false
+            isRefreshButtonPressed = false
             return
         }
 
@@ -128,9 +134,10 @@ class SearchActivityViewModel(application: Application) : AndroidViewModel(appli
 
             val postTime : Long?
 
-            if (isSearchButtonPressed) {
+            if (isSearchButtonPressed || isRefreshButtonPressed) {
                 postTime = SystemClock.uptimeMillis()
                 isSearchButtonPressed = false
+                isRefreshButtonPressed = false
             } else {
                 postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
             }
