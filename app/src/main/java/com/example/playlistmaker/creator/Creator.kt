@@ -1,31 +1,28 @@
 package com.example.playlistmaker.creator
 
 import android.content.Context
-import android.content.SharedPreferences
-import com.example.playlistmaker.search.data.TrackRepositoryImpl
+import com.example.playlistmaker.search.data.TracksRepositoryImpl
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.player.domain.api.MediaPlayerRepository
-import com.example.playlistmaker.search.domain.api.TrackInteractor
-import com.example.playlistmaker.search.domain.api.TrackRepository
+import com.example.playlistmaker.search.domain.api.TracksInteractor
+import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
-import com.example.playlistmaker.player.presentation.PlayerActivityPresenter
+import com.example.playlistmaker.player.presentation.PlayerActivityViewModel
 import com.example.playlistmaker.player.presentation.PlayerView
 import com.example.playlistmaker.history.data.HistoryRepositoryImpl
 import com.example.playlistmaker.history.domain.api.HistoryInteractor
 import com.example.playlistmaker.history.domain.api.HistoryRepository
 import com.example.playlistmaker.history.domain.impl.HistoryInteractorImpl
-import com.example.playlistmaker.search.domain.impl.TrackInteractorImpl
-import com.example.playlistmaker.search.presentation.SearchActivityPresenter
-import com.example.playlistmaker.search.presentation.SearchView
+import com.example.playlistmaker.search.domain.impl.TracksInteractorImpl
 
 object Creator {
-    private fun getTrackRepository(context: Context): TrackRepository {
-        return TrackRepositoryImpl(RetrofitNetworkClient(context))
+    private fun getTracksRepository(context: Context): TracksRepository {
+        return TracksRepositoryImpl(RetrofitNetworkClient(context))
     }
 
-    fun provideTrackInteractor(context: Context): TrackInteractor {
-        return TrackInteractorImpl(getTrackRepository(context))
+    fun provideTracksInteractor(context: Context): TracksInteractor {
+        return TracksInteractorImpl(getTracksRepository(context))
     }
 
     private fun getMediaPlayerRepository(): MediaPlayerRepository {
@@ -44,14 +41,11 @@ object Creator {
         return MediaPlayerInteractor(getMediaPlayerRepository())
     }
 
-    fun provideSearchActivityPresenter(context: Context): SearchActivityPresenter {
-        return SearchActivityPresenter(context = context) }
-
-    fun providePlayerActivityPresenter(
+    fun providePlayerActivityViewModel(
         view: PlayerView,
         context: Context
-    ): PlayerActivityPresenter {
-        return PlayerActivityPresenter(
+    ): PlayerActivityViewModel {
+        return PlayerActivityViewModel(
             playerView = view,
             context = context
         )

@@ -3,7 +3,6 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.search.presentation.SearchActivityPresenter
 
 private const val SETTINGS = "settings"
 private const val DARK_THEME = "dark_theme"
@@ -12,8 +11,6 @@ class App : Application() {
 
     var darkTheme = false
     private lateinit var settings: SharedPreferences
-
-    var searchActivityPresenter : SearchActivityPresenter? = null
 
     override fun onCreate() {
         super.onCreate()

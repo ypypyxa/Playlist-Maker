@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class PlayerActivityPresenter(
+class PlayerActivityViewModel(
     private val playerView: PlayerView,
     private val context: Context
 ) {

@@ -13,13 +13,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
-import com.example.playlistmaker.player.presentation.PlayerActivityPresenter
 import com.example.playlistmaker.player.presentation.PlayerView
 import com.example.playlistmaker.search.domain.model.Track
 
 class PlayerActivity : AppCompatActivity(), PlayerView {
 
-    private val playerActivityPresenter = Creator.providePlayerActivityPresenter(this, this)
+    private val playerActivityViewModel = Creator.providePlayerActivityViewModel(this, this)
 
     private lateinit var btnBack: ImageButton
     private lateinit var btnPlayPause: ImageButton
@@ -59,11 +58,11 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
         releaseGroup = findViewById(R.id.releaseGroup)
         trackTimeGroup = findViewById(R.id.trackTimeGroup)
 
-        playerActivityPresenter.onCreate(intent.getSerializableExtra(TRACK) as Track)
+        playerActivityViewModel.onCreate(intent.getSerializableExtra(TRACK) as Track)
 
 // Кнопка Воспроизвести/Пауза
         btnPlayPause.setOnClickListener {
-            playerActivityPresenter.playbackControl()
+            playerActivityViewModel.playbackControl()
         }
 
 // Кнопка назад
@@ -75,13 +74,13 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
     override fun onPause() {
         super.onPause()
 
-        playerActivityPresenter.onPause()
+        playerActivityViewModel.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        playerActivityPresenter.onDestroy()
+        playerActivityViewModel.onDestroy()
     }
 
     override fun setTrackImage(artworkUrl512: String) {
