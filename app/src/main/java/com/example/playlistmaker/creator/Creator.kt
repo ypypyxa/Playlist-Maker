@@ -1,6 +1,7 @@
 package com.example.playlistmaker.creator
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.example.playlistmaker.search.data.TracksRepositoryImpl
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.player.domain.api.MediaPlayerRepository
@@ -13,6 +14,16 @@ import com.example.playlistmaker.utils.history.domain.api.HistoryInteractor
 import com.example.playlistmaker.utils.history.domain.api.HistoryRepository
 import com.example.playlistmaker.utils.history.domain.impl.HistoryInteractorImpl
 import com.example.playlistmaker.search.domain.impl.TracksInteractorImpl
+import com.example.playlistmaker.settings.data.ExternalNavigatorImpl
+import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
+import com.example.playlistmaker.settings.data.SharingRepositoryImpl
+import com.example.playlistmaker.settings.domain.api.ExternalNavigator
+import com.example.playlistmaker.settings.domain.api.SettingsInteractor
+import com.example.playlistmaker.settings.domain.api.SettingsRepository
+import com.example.playlistmaker.settings.domain.api.SharingInteractor
+import com.example.playlistmaker.settings.domain.api.SharingRepository
+import com.example.playlistmaker.settings.domain.impl.SettingsInteractorImpl
+import com.example.playlistmaker.settings.domain.impl.SharingInteractorImpl
 
 object Creator {
     private fun getTracksRepository(context: Context): TracksRepository {
@@ -23,10 +34,6 @@ object Creator {
         return TracksInteractorImpl(getTracksRepository(context))
     }
 
-    private fun getMediaPlayerRepository(): MediaPlayerRepository {
-        return MediaPlayerRepositoryImpl()
-    }
-
     private fun getHistoryRepository(context: Context): HistoryRepository {
         return HistoryRepositoryImpl(context)
     }
@@ -35,7 +42,34 @@ object Creator {
         return HistoryInteractorImpl(getHistoryRepository(context))
     }
 
+    private fun getMediaPlayerRepository(): MediaPlayerRepository {
+        return MediaPlayerRepositoryImpl()
+    }
+
     fun provideMediaPlayer(): MediaPlayerInteractor {
         return MediaPlayerInteractor(getMediaPlayerRepository())
+    }
+
+    private fun getExternalNavigatorImpl(context: Context) : ExternalNavigator {
+        return ExternalNavigatorImpl(context)
+    }
+
+    private fun getSharingRepository(context: Context) : SharingRepository {
+        return SharingRepositoryImpl(context)
+    }
+
+    fun provideSharingInteractor(context: Context) : SharingInteractor {
+        return SharingInteractorImpl(
+            getExternalNavigatorImpl(context),
+            getSharingRepository(context)
+        )
+    }
+
+    private fun getSettingsRepository(sharedPreferences: SharedPreferences): SettingsRepository {
+        return SettingsRepositoryImpl(sharedPreferences)
+    }
+
+    fun provideSettingsInteractor(sharedPreferences: SharedPreferences): SettingsInteractor {
+        return SettingsInteractorImpl(getSettingsRepository(sharedPreferences))
     }
 }

@@ -17,8 +17,8 @@ class App : Application() {
 
         settings = getSharedPreferences(SETTINGS, MODE_PRIVATE)
 
-        if (settings.getString(DARK_THEME, "") != "") {
-            darkTheme = settings.getString(DARK_THEME, "").toBoolean()
+        if (settings.getBoolean(DARK_THEME, false) != false) {
+            darkTheme = settings.getBoolean(DARK_THEME, false)
             switchTheme(darkTheme)
         } else {
             switchTheme(darkTheme)
@@ -38,7 +38,7 @@ class App : Application() {
         )
 
         settings.edit()
-            .putString(DARK_THEME, darkTheme.toString())
+            .putBoolean(DARK_THEME, darkTheme)
             .apply()
     }
 }

@@ -53,8 +53,8 @@ class PlayerActivityViewModel(application: Application) : AndroidViewModel(appli
 
     private var playerState = PlayerState.STATE_DEFAULT
 
-    fun onCreate(recivedTrack: Track) {
-        this.track = recivedTrack
+    fun onCreate(receivedTrack: Track) {
+        this.track = receivedTrack
 
 // Лучшего места что бы сохранить трек в историю поиска я пока не нашел...
         val historyTracks = historyInteractor.loadTracks()
@@ -75,18 +75,11 @@ class PlayerActivityViewModel(application: Application) : AndroidViewModel(appli
 
         mediaPlayer = Creator.provideMediaPlayer()
 
-        val albumGroupIsVisible: Boolean
-        val countryGroupIsVisible: Boolean
-        val genreGroupIsVisible: Boolean
-        val releaseGroupIsVisible: Boolean
-        val trackTimeGroupIsVisible: Boolean
-
-
-        albumGroupIsVisible = track.collectionName.isNotEmpty()
-        releaseGroupIsVisible = track.releaseDate.isNotEmpty()
-        genreGroupIsVisible = track.primaryGenreName.isNotEmpty()
-        countryGroupIsVisible = track.country.isNotEmpty()
-        trackTimeGroupIsVisible = track.previewUrl.isNotEmpty()
+        val albumGroupIsVisible: Boolean = track.collectionName.isNotEmpty()
+        val countryGroupIsVisible: Boolean = track.releaseDate.isNotEmpty()
+        val genreGroupIsVisible: Boolean = track.primaryGenreName.isNotEmpty()
+        val releaseGroupIsVisible: Boolean = track.country.isNotEmpty()
+        val trackTimeGroupIsVisible: Boolean = track.previewUrl.isNotEmpty()
 
         renderState(
             PlayerActivityState.Prepare(

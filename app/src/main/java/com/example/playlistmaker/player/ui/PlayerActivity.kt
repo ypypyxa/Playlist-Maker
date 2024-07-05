@@ -100,7 +100,7 @@ class PlayerActivity : AppCompatActivity() {
         playerActivityViewModel.onDestroy()
     }
 
-    fun setTrackImage(artworkUrl512: String) {
+    private fun setTrackImage(artworkUrl512: String) {
         Glide.with(tvTrackImage)
             .load(artworkUrl512)
             .placeholder(R.drawable.ic_placeholder_45x45)
@@ -136,7 +136,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun fileNotFound() {
-        enablePlayPause(true)
+        enablePlayPause(false)
     }
     private fun playTrack(isPlaying: Boolean) {
         setPlayPause(isPlaying)
@@ -176,6 +176,7 @@ class PlayerActivity : AppCompatActivity() {
         showGenreGroup(genreGroupIsVisible)
         showReleaseGroup(releaseGroupIsVisible)
         showTrackTimeGroup(trackTimeGroupIsVisible)
+        enablePlayPause(true)
     }
 
 
