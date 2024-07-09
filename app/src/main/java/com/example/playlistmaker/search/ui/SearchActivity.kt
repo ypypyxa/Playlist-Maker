@@ -115,6 +115,7 @@ class SearchActivity : AppCompatActivity() {
 // Кнопка очистки поля поиска
         searchClearButton.setOnClickListener {
             searchActivityViewModel.onClearSearchButtonPress()
+            searchEdit.requestFocus()
         }
 
 // Кнопка "Очистить историю поиска"

@@ -27,12 +27,16 @@ class PlayerActivityViewModel(application: Application) : AndroidViewModel(appli
     private lateinit var track: Track
 
     private val historyInteractor = Creator.provideHistoryInteractor(getApplication())
+    private val tracksInteractor = Creator.provideTracksInteractor(getApplication())
 
     private val playerActivityLiveData = MutableLiveData<PlayerActivityState>()
     fun observeState(): LiveData<PlayerActivityState> = playerActivityLiveData
 
     private val showError = SingleLiveEvent<Pair<String, String>>()
     fun observeToastState(): LiveData<Pair<String, String>> = showError
+
+    private val addInFavorite = SingleLiveEvent<Boolean>()
+    fun observeAddInFavorite(): LiveData<Boolean> = addInFavorite
 
 // Объявление перменных для таймера воспроизведения
     private lateinit var handler: Handler
@@ -57,17 +61,7 @@ class PlayerActivityViewModel(application: Application) : AndroidViewModel(appli
         this.track = receivedTrack
 
 // Лучшего места что бы сохранить трек в историю поиска я пока не нашел...
-        val historyTracks = historyInteractor.loadTracks()
-        if (historyTracks.none { it.trackId == track.trackId }) {
-            historyTracks.add(0, track)
-        } else {
-            historyTracks.remove(track)
-            historyTracks.add(0, track)
-        }
-        if (historyTracks.size > HISTORY_MAX_SIZE) {
-            historyTracks.removeAt(HISTORY_MAX_SIZE)
-        }
-        historyInteractor.saveTracks(historyTracks)
+        historyListUpdate()
 
         handler = Handler(Looper.getMainLooper())
 
@@ -107,8 +101,42 @@ class PlayerActivityViewModel(application: Application) : AndroidViewModel(appli
         mediaPlayer.release()
     }
 
+    private fun historyListUpdate() {
+        val historyTracks = historyInteractor.loadTracks()
+        var index: Int? = null
+
+        if (historyTracks.isEmpty()) {
+            historyTracks.add(0, track)
+        } else {
+            for (i in 0 .. historyTracks.size-1) {
+                if (historyTracks[i].trackId == track.trackId) {
+                    index = i
+                }
+            }
+            if (index != null) { historyTracks.remove(historyTracks[index]) }
+            historyTracks.add(0, track)
+        }
+        if (historyTracks.size > HISTORY_MAX_SIZE) {
+            historyTracks.removeAt(HISTORY_MAX_SIZE)
+        }
+        historyInteractor.saveTracks(historyTracks)
+    }
+
     private fun renderState(state: PlayerActivityState) {
         playerActivityLiveData.postValue(state)
+    }
+
+    fun toggleFavorite() {
+        if (track.inFavorite) {
+            track.inFavorite = false
+            tracksInteractor.removeFromFavorites(track)
+            addInFavorite.postValue(false)
+        } else {
+            track.inFavorite = true
+            tracksInteractor.addToFavorites(track)
+            addInFavorite.postValue(true)
+        }
+        historyListUpdate()
     }
 
     fun playbackControl() {

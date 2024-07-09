@@ -27,6 +27,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var btnBack: ImageButton
     private lateinit var btnPlayPause: ImageButton
+    private lateinit var btnInFavorite: ImageButton
     private lateinit var tvAlbum: TextView
     private lateinit var tvArtistName: TextView
     private lateinit var tvPlayTime: TextView
@@ -53,6 +54,7 @@ class PlayerActivity : AppCompatActivity() {
 
         btnBack = findViewById(R.id.ibBack)
         btnPlayPause = findViewById(R.id.ibPlay)
+        btnInFavorite = findViewById(R.id.ibAddToFavorite)
         tvAlbum = findViewById(R.id.tvAlbum)
         tvArtistName = findViewById(R.id.tvArtistName)
         tvPlayTime = findViewById((R.id.tvPlayTime))
@@ -78,6 +80,11 @@ class PlayerActivity : AppCompatActivity() {
             finish()
         }
 
+// Кнопка добавить в избранное
+        btnInFavorite.setOnClickListener {
+            playerActivityViewModel.toggleFavorite()
+        }
+
         playerActivityViewModel.onCreate(intent.getSerializableExtra(TRACK) as Track)
         playerActivityViewModel.observeState().observe(this) {
             render(it)
@@ -85,7 +92,9 @@ class PlayerActivity : AppCompatActivity() {
         playerActivityViewModel.observeToastState().observe(this) { pairError ->
             showError(pairError)
         }
-
+        playerActivityViewModel.observeAddInFavorite().observe(this) { inFavorite ->
+            setInFavoriteImage(inFavorite)
+        }
     }
 
     override fun onPause() {
@@ -163,6 +172,7 @@ class PlayerActivity : AppCompatActivity() {
         setTrackName(track.trackName)
         setArtistName(track.artistName)
         setTrackImage(artworkUrl512)
+        setInFavoriteImage(track.inFavorite)
         setTrackTime(
             SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
                 .format(track.trackTimeMillis.toLong())
@@ -204,13 +214,17 @@ class PlayerActivity : AppCompatActivity() {
     private fun setCountry(country: String) {
         tvCountry.text = country
     }
-
     private fun enablePlayPause(isEnabled: Boolean) {
         btnPlayPause.isEnabled = isEnabled
     }
     private fun setPlayPause(isPlaying: Boolean) {
         btnPlayPause.setImageResource(
             if (isPlaying) R.drawable.ic_button_pause else R.drawable.ic_button_play
+        )
+    }
+    private fun setInFavoriteImage(isFavorite: Boolean) {
+        btnInFavorite.setImageResource(
+            if (isFavorite) R.drawable.ic_button_added_to_favorite else R.drawable.ic_button_add_to_favorite
         )
     }
 

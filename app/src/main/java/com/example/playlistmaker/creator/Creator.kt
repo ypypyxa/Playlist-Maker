@@ -9,6 +9,7 @@ import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
+import com.example.playlistmaker.player.utils.InFavoriteSettings
 import com.example.playlistmaker.utils.history.data.HistoryRepositoryImpl
 import com.example.playlistmaker.utils.history.domain.api.HistoryInteractor
 import com.example.playlistmaker.utils.history.domain.api.HistoryRepository
@@ -27,9 +28,11 @@ import com.example.playlistmaker.settings.domain.impl.SharingInteractorImpl
 
 object Creator {
     private fun getTracksRepository(context: Context): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient(context))
+        return TracksRepositoryImpl(
+            RetrofitNetworkClient(context),
+            InFavoriteSettings(context.getSharedPreferences("favorites", Context.MODE_PRIVATE))
+        )
     }
-
     fun provideTracksInteractor(context: Context): TracksInteractor {
         return TracksInteractorImpl(getTracksRepository(context))
     }
@@ -37,7 +40,6 @@ object Creator {
     private fun getHistoryRepository(context: Context): HistoryRepository {
         return HistoryRepositoryImpl(context)
     }
-
     fun provideHistoryInteractor(context: Context): HistoryInteractor {
         return HistoryInteractorImpl(getHistoryRepository(context))
     }
@@ -45,7 +47,6 @@ object Creator {
     private fun getMediaPlayerRepository(): MediaPlayerRepository {
         return MediaPlayerRepositoryImpl()
     }
-
     fun provideMediaPlayer(): MediaPlayerInteractor {
         return MediaPlayerInteractor(getMediaPlayerRepository())
     }
@@ -53,11 +54,9 @@ object Creator {
     private fun getExternalNavigatorImpl(context: Context) : ExternalNavigator {
         return ExternalNavigatorImpl(context)
     }
-
     private fun getSharingRepository(context: Context) : SharingRepository {
         return SharingRepositoryImpl(context)
     }
-
     fun provideSharingInteractor(context: Context) : SharingInteractor {
         return SharingInteractorImpl(
             getExternalNavigatorImpl(context),
@@ -68,7 +67,6 @@ object Creator {
     private fun getSettingsRepository(sharedPreferences: SharedPreferences): SettingsRepository {
         return SettingsRepositoryImpl(sharedPreferences)
     }
-
     fun provideSettingsInteractor(sharedPreferences: SharedPreferences): SettingsInteractor {
         return SettingsInteractorImpl(getSettingsRepository(sharedPreferences))
     }

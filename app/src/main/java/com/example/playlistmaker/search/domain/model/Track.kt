@@ -12,5 +12,6 @@ data class Track(
     val releaseDate: String, // Год релиза
     val primaryGenreName: String, // Жанр
     val country: String, // Страна исполнителя
-    val previewUrl: String // Адрес файла трека
+    val previewUrl: String, // Адрес файла трека
+    var inFavorite: Boolean
     ) : Serializable
