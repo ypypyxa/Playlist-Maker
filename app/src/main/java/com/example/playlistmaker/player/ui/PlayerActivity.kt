@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.player.presentation.PlayerActivityViewModel
 import com.example.playlistmaker.player.ui.model.PlayerActivityState
 import com.example.playlistmaker.search.domain.model.Track
 import java.text.SimpleDateFormat

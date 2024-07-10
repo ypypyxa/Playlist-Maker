@@ -1,4 +1,4 @@
-package com.example.playlistmaker.player.presentation
+package com.example.playlistmaker.player.ui
 
 import android.app.Application
 import android.os.Handler
@@ -65,7 +65,7 @@ class PlayerActivityViewModel(application: Application) : AndroidViewModel(appli
 
         handler = Handler(Looper.getMainLooper())
 
-        val artworkUrl512 = track.artworkUrl100.replaceAfterLast(DELIMITER, "${BIG_SIZE}.jpg")
+        val artworkUrl512 = track.artworkUrl100.replaceAfterLast(DELIMITER, "$BIG_SIZE.jpg")
 
         mediaPlayer = Creator.provideMediaPlayer()
 

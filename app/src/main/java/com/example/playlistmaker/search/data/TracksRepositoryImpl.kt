@@ -1,16 +1,15 @@
 package com.example.playlistmaker.search.data
 
-import android.content.SharedPreferences
-import com.example.playlistmaker.player.utils.InFavoriteSettings
+import com.example.playlistmaker.player.data.Favorites
 import com.example.playlistmaker.search.data.dto.TracksSearchRequest
 import com.example.playlistmaker.search.data.dto.TracksSearchResponse
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.util.Resource
+import com.example.playlistmaker.search.domain.Resource
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val inFavoriteSettings: InFavoriteSettings
+    private val favoritesInteractor: Favorites
 ) : TracksRepository {
 
     override fun searchTracks(expression: String): Resource<List<Track>> {
@@ -20,7 +19,7 @@ class TracksRepositoryImpl(
                 Resource.Error("Проверьте подключение к интернету")
             }
             200 -> {
-                val favorites = inFavoriteSettings.getSavedFavorites()
+                val favorites = favoritesInteractor.getSavedFavorites()
 
                 Resource.Success((response as TracksSearchResponse).results.map {
                     Track(
@@ -45,10 +44,10 @@ class TracksRepositoryImpl(
     }
 
     override fun addToFavorites(track: Track) {
-        inFavoriteSettings.addToFavorites(track.trackId)
+        favoritesInteractor.addToFavorites(track.trackId)
     }
 
     override fun removeFromFavorites(track: Track) {
-        inFavoriteSettings.removeFromFavorites(track.trackId)
+        favoritesInteractor.removeFromFavorites(track.trackId)
     }
 }

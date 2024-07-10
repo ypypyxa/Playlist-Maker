@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.presentation.SearchActivityViewModel
 import com.example.playlistmaker.search.ui.model.SearchActivityState
 
 class SearchActivity : AppCompatActivity() {

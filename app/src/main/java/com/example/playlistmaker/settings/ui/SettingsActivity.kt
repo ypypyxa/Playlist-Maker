@@ -6,7 +6,6 @@ import android.widget.ImageButton
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
-import com.example.playlistmaker.settings.presentation.SettingsActivityViewModel
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 private lateinit var settingsActivityViewModel: SettingsActivityViewModel
@@ -30,7 +29,7 @@ class SettingsActivity : AppCompatActivity() {
         themeSwitcher.isChecked = settingsActivityViewModel.getThemeSettings()
 
         settingsActivityViewModel.getThemeSettingsLiveData().observe(this) {
-            (applicationContext as App).switchTheme(it.darkTheme)
+            (applicationContext as App).switchTheme(it)
         }
 
         themeSwitcher.setOnCheckedChangeListener { _, checked ->

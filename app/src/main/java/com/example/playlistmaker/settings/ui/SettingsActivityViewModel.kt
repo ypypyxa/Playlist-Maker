@@ -1,4 +1,4 @@
-package com.example.playlistmaker.settings.presentation
+package com.example.playlistmaker.settings.ui
 
 
 import android.app.Application
@@ -16,17 +16,12 @@ import com.example.playlistmaker.settings.domain.model.ThemeSettings.Companion.S
 
 class SettingsActivityViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var sharedPreferences = application.applicationContext.getSharedPreferences(
-        SETTINGS,
-        MODE_PRIVATE
-    )
-
     private val shareLiveData = MutableLiveData<Unit>()
     private val themeSettings = MutableLiveData<ThemeSettings>()
     private val themeSettingsLiveData : LiveData<ThemeSettings> = themeSettings
 
     private val sharingInteractor = Creator.provideSharingInteractor(getApplication())
-    private val settingsInteractor = Creator.provideSettingsInteractor(sharedPreferences)
+    private val settingsInteractor = Creator.provideSettingsInteractor(getApplication())
 
     fun shareApp() = shareLiveData.postValue(sharingInteractor.shareApp())
     fun sendMail() = sharingInteractor.sendEmail()

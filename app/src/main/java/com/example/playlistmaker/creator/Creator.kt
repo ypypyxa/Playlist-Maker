@@ -1,19 +1,19 @@
 package com.example.playlistmaker.creator
 
 import android.content.Context
-import android.content.SharedPreferences
 import com.example.playlistmaker.search.data.TracksRepositoryImpl
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.player.domain.api.MediaPlayerRepository
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
+import com.example.playlistmaker.player.domain.Impl.MediaPlayerInteractorImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
-import com.example.playlistmaker.player.utils.InFavoriteSettings
-import com.example.playlistmaker.utils.history.data.HistoryRepositoryImpl
-import com.example.playlistmaker.utils.history.domain.api.HistoryInteractor
-import com.example.playlistmaker.utils.history.domain.api.HistoryRepository
-import com.example.playlistmaker.utils.history.domain.impl.HistoryInteractorImpl
+import com.example.playlistmaker.player.data.Favorites
+import com.example.playlistmaker.search.data.HistoryRepositoryImpl
+import com.example.playlistmaker.search.domain.api.HistoryInteractor
+import com.example.playlistmaker.search.domain.api.HistoryRepository
+import com.example.playlistmaker.search.domain.impl.HistoryInteractorImpl
 import com.example.playlistmaker.search.domain.impl.TracksInteractorImpl
 import com.example.playlistmaker.settings.data.ExternalNavigatorImpl
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
@@ -30,7 +30,7 @@ object Creator {
     private fun getTracksRepository(context: Context): TracksRepository {
         return TracksRepositoryImpl(
             RetrofitNetworkClient(context),
-            InFavoriteSettings(context.getSharedPreferences("favorites", Context.MODE_PRIVATE))
+            Favorites(context.getSharedPreferences("favorites", Context.MODE_PRIVATE))
         )
     }
     fun provideTracksInteractor(context: Context): TracksInteractor {
@@ -38,7 +38,7 @@ object Creator {
     }
 
     private fun getHistoryRepository(context: Context): HistoryRepository {
-        return HistoryRepositoryImpl(context)
+        return HistoryRepositoryImpl(context.getSharedPreferences("history", Context.MODE_PRIVATE))
     }
     fun provideHistoryInteractor(context: Context): HistoryInteractor {
         return HistoryInteractorImpl(getHistoryRepository(context))
@@ -48,7 +48,7 @@ object Creator {
         return MediaPlayerRepositoryImpl()
     }
     fun provideMediaPlayer(): MediaPlayerInteractor {
-        return MediaPlayerInteractor(getMediaPlayerRepository())
+        return MediaPlayerInteractorImpl(getMediaPlayerRepository())
     }
 
     private fun getExternalNavigatorImpl(context: Context) : ExternalNavigator {
@@ -64,10 +64,10 @@ object Creator {
         )
     }
 
-    private fun getSettingsRepository(sharedPreferences: SharedPreferences): SettingsRepository {
-        return SettingsRepositoryImpl(sharedPreferences)
+    private fun getSettingsRepository(context: Context): SettingsRepository {
+        return SettingsRepositoryImpl(context)
     }
-    fun provideSettingsInteractor(sharedPreferences: SharedPreferences): SettingsInteractor {
-        return SettingsInteractorImpl(getSettingsRepository(sharedPreferences))
+    fun provideSettingsInteractor(context: Context): SettingsInteractor {
+        return SettingsInteractorImpl(getSettingsRepository(context))
     }
 }

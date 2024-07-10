@@ -1,8 +1,8 @@
-package com.example.playlistmaker.player.utils
+package com.example.playlistmaker.player.data
 
 import android.content.SharedPreferences
 
-class InFavoriteSettings(private val sharedPreferences: SharedPreferences) {
+class Favorites(private val sharedPreferences: SharedPreferences) {
     private companion object {
         const val FAVORITES_KEY = "FAVORITES_KEY"
     }
