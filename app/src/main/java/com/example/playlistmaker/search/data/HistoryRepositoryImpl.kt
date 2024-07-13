@@ -31,6 +31,6 @@ class HistoryRepositoryImpl(val history: SharedPreferences) : HistoryRepository 
 
     companion object {
         private const val HISTORY_TRACKS = "history_tracks"
-        private const val HISTORY = "history"
+        const val HISTORY = "history"
     }
 }

@@ -9,7 +9,7 @@ import com.example.playlistmaker.search.domain.Resource
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val favoritesInteractor: Favorites
+    private val favorites: Favorites
 ) : TracksRepository {
 
     override fun searchTracks(expression: String): Resource<List<Track>> {
@@ -19,7 +19,7 @@ class TracksRepositoryImpl(
                 Resource.Error("Проверьте подключение к интернету")
             }
             200 -> {
-                val favorites = favoritesInteractor.getSavedFavorites()
+                val favoriteTracks = favorites.getSavedFavorites()
 
                 Resource.Success((response as TracksSearchResponse).results.map {
                     Track(
@@ -33,7 +33,7 @@ class TracksRepositoryImpl(
                         it.primaryGenreName,
                         it.country,
                         it.previewUrl,
-                        inFavorite = favorites.contains(it.trackId)
+                        inFavorite = favoriteTracks.contains(it.trackId)
                     )
                 } )
             }
@@ -44,10 +44,10 @@ class TracksRepositoryImpl(
     }
 
     override fun addToFavorites(track: Track) {
-        favoritesInteractor.addToFavorites(track.trackId)
+        favorites.addToFavorites(track.trackId)
     }
 
     override fun removeFromFavorites(track: Track) {
-        favoritesInteractor.removeFromFavorites(track.trackId)
+        favorites.removeFromFavorites(track.trackId)
     }
 }

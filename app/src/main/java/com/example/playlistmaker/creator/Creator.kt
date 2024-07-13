@@ -30,7 +30,7 @@ object Creator {
     private fun getTracksRepository(context: Context): TracksRepository {
         return TracksRepositoryImpl(
             RetrofitNetworkClient(context),
-            Favorites(context.getSharedPreferences("favorites", Context.MODE_PRIVATE))
+            Favorites(context.getSharedPreferences(Favorites.FAVORITES, Context.MODE_PRIVATE))
         )
     }
     fun provideTracksInteractor(context: Context): TracksInteractor {
@@ -38,7 +38,7 @@ object Creator {
     }
 
     private fun getHistoryRepository(context: Context): HistoryRepository {
-        return HistoryRepositoryImpl(context.getSharedPreferences("history", Context.MODE_PRIVATE))
+        return HistoryRepositoryImpl(context.getSharedPreferences(HistoryRepositoryImpl.HISTORY, Context.MODE_PRIVATE))
     }
     fun provideHistoryInteractor(context: Context): HistoryInteractor {
         return HistoryInteractorImpl(getHistoryRepository(context))

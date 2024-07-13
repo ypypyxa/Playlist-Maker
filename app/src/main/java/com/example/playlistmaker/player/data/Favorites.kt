@@ -3,8 +3,9 @@ package com.example.playlistmaker.player.data
 import android.content.SharedPreferences
 
 class Favorites(private val sharedPreferences: SharedPreferences) {
-    private companion object {
-        const val FAVORITES_KEY = "FAVORITES_KEY"
+    companion object {
+        private const val FAVORITES_KEY = "FAVORITES_KEY"
+        const val FAVORITES = "favorites"
     }
 
     fun addToFavorites(trackId: String) {
