@@ -17,14 +17,16 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.model.SearchActivityState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
+
+    private val searchActivityViewModel by viewModel<SearchActivityViewModel>()
 
     private lateinit var backButton: ImageButton
     private lateinit var searchEdit: EditText
@@ -36,8 +38,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderButton: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var trackListView: RecyclerView
-
-    private lateinit var searchActivityViewModel : SearchActivityViewModel
 
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
@@ -59,11 +59,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
-        searchActivityViewModel = ViewModelProvider(
-            this,
-            SearchActivityViewModel.getViewModelFactory()
-        )[SearchActivityViewModel::class.java]
 
         backButton = findViewById(R.id.ib_back)
         searchClearButton = findViewById(R.id.ivClearButton)
@@ -132,8 +127,6 @@ class SearchActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             finish()
         }
-
-        searchActivityViewModel.onCreate()
 
         searchActivityViewModel.observeState().observe(this) {
             render(it)

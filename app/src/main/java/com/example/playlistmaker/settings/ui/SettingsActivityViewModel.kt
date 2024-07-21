@@ -2,26 +2,22 @@ package com.example.playlistmaker.settings.ui
 
 
 import android.app.Application
-import android.app.Application.MODE_PRIVATE
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.settings.domain.api.SettingsInteractor
+import com.example.playlistmaker.settings.domain.api.SharingInteractor
 import com.example.playlistmaker.settings.domain.model.ThemeSettings
-import com.example.playlistmaker.settings.domain.model.ThemeSettings.Companion.SETTINGS
 
-class SettingsActivityViewModel(application: Application) : AndroidViewModel(application) {
+class SettingsActivityViewModel(
+    private val sharingInteractor: SharingInteractor,
+    private val settingsInteractor: SettingsInteractor,
+    application: Application
+) : AndroidViewModel(application) {
 
     private val shareLiveData = MutableLiveData<Unit>()
     private val themeSettings = MutableLiveData<ThemeSettings>()
     private val themeSettingsLiveData : LiveData<ThemeSettings> = themeSettings
-
-    private val sharingInteractor = Creator.provideSharingInteractor(getApplication())
-    private val settingsInteractor = Creator.provideSettingsInteractor(getApplication())
 
     fun shareApp() = shareLiveData.postValue(sharingInteractor.shareApp())
     fun sendMail() = sharingInteractor.sendEmail()
@@ -34,15 +30,5 @@ class SettingsActivityViewModel(application: Application) : AndroidViewModel(app
     fun getThemeSettings(): Boolean {
         themeSettings.value = settingsInteractor.getThemeSettings()
         return themeSettings.value?.darkTheme ?: false
-    }
-
-
-    companion object {
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SettingsActivityViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
     }
 }
