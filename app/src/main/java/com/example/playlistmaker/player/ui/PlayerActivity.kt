@@ -10,19 +10,19 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.model.PlayerActivityState
 import com.example.playlistmaker.search.domain.model.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
 class PlayerActivity : AppCompatActivity() {
 
-    private lateinit var playerActivityViewModel : PlayerActivityViewModel
+    private val playerActivityViewModel by viewModel<PlayerActivityViewModel>()
 
     private lateinit var btnBack: ImageButton
     private lateinit var btnPlayPause: ImageButton
@@ -45,11 +45,6 @@ class PlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-
-        playerActivityViewModel = ViewModelProvider(
-            this,
-            PlayerActivityViewModel.getViewModelFactory()
-        )[PlayerActivityViewModel::class.java]
 
         btnBack = findViewById(R.id.ibBack)
         btnPlayPause = findViewById(R.id.ibPlay)

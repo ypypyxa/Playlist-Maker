@@ -6,28 +6,26 @@ import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.player.ui.model.PlayerActivityState
+import com.example.playlistmaker.search.domain.api.HistoryInteractor
+import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.utils.SingleLiveEvent
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class PlayerActivityViewModel(application: Application) : AndroidViewModel(application) {
+class PlayerActivityViewModel(
+    private val historyInteractor: HistoryInteractor,
+    private val tracksInteractor: TracksInteractor,
+    private val mediaPlayer: MediaPlayerInteractor,
+    private val application: Application
+) : AndroidViewModel(application) {
 
-    private lateinit var mediaPlayer: MediaPlayerInteractor
     private lateinit var track: Track
-
-    private val historyInteractor = Creator.provideHistoryInteractor(getApplication())
-    private val tracksInteractor = Creator.provideTracksInteractor(getApplication())
 
     private val playerActivityLiveData = MutableLiveData<PlayerActivityState>()
     fun observeState(): LiveData<PlayerActivityState> = playerActivityLiveData
@@ -66,8 +64,6 @@ class PlayerActivityViewModel(application: Application) : AndroidViewModel(appli
         handler = Handler(Looper.getMainLooper())
 
         val artworkUrl512 = track.artworkUrl100.replaceAfterLast(DELIMITER, "$BIG_SIZE.jpg")
-
-        mediaPlayer = Creator.provideMediaPlayer()
 
         val albumGroupIsVisible: Boolean = track.collectionName.isNotEmpty()
         val countryGroupIsVisible: Boolean = track.releaseDate.isNotEmpty()
@@ -203,11 +199,5 @@ class PlayerActivityViewModel(application: Application) : AndroidViewModel(appli
         private const val DELIMITER = '/'
         private const val DELAY = 1000L
         private const val HISTORY_MAX_SIZE = 10
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerActivityViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
     }
 }
