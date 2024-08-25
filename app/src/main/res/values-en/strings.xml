@@ -29,4 +29,7 @@
     <string name="country">Country</string>
     <string name="player_error">Player Error</string>
     <string name="empty_track_url">There is no song file</string>
+    <string name="empty_library">Your media library is empty</string>
+    <string name="add_playlist">New playlist</string>
+    <string name="empty_playlists">You haven\'t created any playlists</string>
 </resources>

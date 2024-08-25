@@ -15,7 +15,15 @@ interface PlayerActivityState {
     ) : PlayerActivityState
 
     // Состояние экрана, когда воспроизведение не возможно
-    data object FileNotFound : PlayerActivityState
+    data class FileNotFound(
+        val track: Track,
+        val artworkUrl512: String,
+        val albumGroupIsVisible: Boolean,
+        val countryGroupIsVisible: Boolean,
+        val genreGroupIsVisible: Boolean,
+        val releaseGroupIsVisible: Boolean,
+        val trackTimeGroupIsVisible: Boolean
+    ) : PlayerActivityState
 
     // Состояние экрана во время проигрывания
     data class Play(

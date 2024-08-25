@@ -26,6 +26,12 @@ class PlayerActivityViewModel(
 ) : AndroidViewModel(application) {
 
     private lateinit var track: Track
+    private lateinit var artworkUrl512: String
+    private var albumGroupIsVisible = false
+    private var countryGroupIsVisible = false
+    private var genreGroupIsVisible = false
+    private var releaseGroupIsVisible = false
+    private var trackTimeGroupIsVisible = false
 
     private val playerActivityLiveData = MutableLiveData<PlayerActivityState>()
     fun observeState(): LiveData<PlayerActivityState> = playerActivityLiveData
@@ -63,13 +69,13 @@ class PlayerActivityViewModel(
 
         handler = Handler(Looper.getMainLooper())
 
-        val artworkUrl512 = track.artworkUrl100.replaceAfterLast(DELIMITER, "$BIG_SIZE.jpg")
+        artworkUrl512 = track.artworkUrl100.replaceAfterLast(DELIMITER, "$BIG_SIZE.jpg")
 
-        val albumGroupIsVisible: Boolean = track.collectionName.isNotEmpty()
-        val countryGroupIsVisible: Boolean = track.releaseDate.isNotEmpty()
-        val genreGroupIsVisible: Boolean = track.primaryGenreName.isNotEmpty()
-        val releaseGroupIsVisible: Boolean = track.country.isNotEmpty()
-        val trackTimeGroupIsVisible: Boolean = track.previewUrl.isNotEmpty()
+        albumGroupIsVisible = track.collectionName.isNotEmpty()
+        countryGroupIsVisible = track.releaseDate.isNotEmpty()
+        genreGroupIsVisible = track.primaryGenreName.isNotEmpty()
+        releaseGroupIsVisible = track.country.isNotEmpty()
+        trackTimeGroupIsVisible = track.previewUrl.isNotEmpty()
 
         renderState(
             PlayerActivityState.Prepare(
@@ -153,7 +159,15 @@ class PlayerActivityViewModel(
             playerState = PlayerState.STATE_PREPARED
         } else {
             renderState(
-                PlayerActivityState.FileNotFound
+                PlayerActivityState.FileNotFound(
+                    track,
+                    artworkUrl512,
+                    albumGroupIsVisible,
+                    countryGroupIsVisible,
+                    genreGroupIsVisible,
+                    releaseGroupIsVisible,
+                    trackTimeGroupIsVisible
+                )
             )
             val error = getApplication<Application>().getString(R.string.player_error)
             val errorMessage = getApplication<Application>().getString(R.string.empty_track_url)
