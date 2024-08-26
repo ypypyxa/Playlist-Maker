@@ -3,6 +3,7 @@ package com.example.playlistmaker.media.ui.playlists
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import android.os.Bundle
 
 class PlaylistsFragment : androidx.fragment.app.Fragment() {
 
@@ -20,7 +21,7 @@ class PlaylistsFragment : androidx.fragment.app.Fragment() {
         private const val PLAYLISTS = "playlists"
 
         fun newInstance() = PlaylistsFragment().apply {
-            arguments = android.os.Bundle().apply {
+            arguments = Bundle().apply {
 
             }
         }

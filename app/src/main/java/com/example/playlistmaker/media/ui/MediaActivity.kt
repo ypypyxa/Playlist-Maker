@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.playlistmaker.databinding.ActivityMediaBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import com.example.playlistmaker.R
 
 class MediaActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMediaBinding
@@ -19,8 +20,8 @@ class MediaActivity : AppCompatActivity() {
 
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when (position) {
-                0 -> tab.text = "Избранные треки"
-                1 -> tab.text = "Плейлисты"
+                0 -> tab.text = applicationContext.getString(R.string.favorites_tracks)
+                1 -> tab.text = applicationContext.getString(R.string.playlists)
             }
         }
         tabMediator.attach()

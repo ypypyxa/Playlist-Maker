@@ -32,4 +32,7 @@
     <string name="empty_library">Your media library is empty</string>
     <string name="add_playlist">New playlist</string>
     <string name="empty_playlists">You haven\'t created any playlists</string>
+    <string name="favorites_tracks">Favorites tracks</string>
+    <string name="playlists">Playlists</string>
+    <string name="check_connection">Check your internet connection</string>
 </resources>

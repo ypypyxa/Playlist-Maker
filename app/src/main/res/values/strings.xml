@@ -27,6 +27,7 @@
     <string name="clear">Очистить</string>
     <string name="nothing_found">Ничего не найдено</string>
     <string name="something_went_wrong">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="check_connection">Проверьте подключение к интернету</string>
     <string name="refresh">Обновить</string>
     <string name="searchHint">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
@@ -37,4 +38,6 @@
     <string name="empty_library">Ваша медиатека пуста</string>
     <string name="add_playlist">Новый плэйлист</string>
     <string name="empty_playlists">Вы не создали\nни одного плэйлиста</string>
+    <string name="favorites_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
 </resources>

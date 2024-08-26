@@ -6,6 +6,7 @@ import com.example.playlistmaker.search.data.dto.TracksSearchResponse
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.Resource
+import com.example.playlistmaker.R
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
@@ -16,8 +17,7 @@ class TracksRepositoryImpl(
         val response = networkClient.doRequest(TracksSearchRequest(expression))
         return when (response.resultCode) {
             404 -> {
-                Resource.Error("Ничего не найдено")
-            }
+                Resource.Error((R.string.nothing_found).toString())            }
             -1 -> {
                 Resource.Error("Проверьте подключение к интернету")
             }
