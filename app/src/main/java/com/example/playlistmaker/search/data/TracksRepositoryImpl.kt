@@ -6,6 +6,7 @@ import com.example.playlistmaker.search.data.dto.TracksSearchResponse
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.Resource
+import com.example.playlistmaker.R
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
@@ -15,6 +16,8 @@ class TracksRepositoryImpl(
     override fun searchTracks(expression: String): Resource<List<Track>> {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
         return when (response.resultCode) {
+            404 -> {
+                Resource.Error((R.string.nothing_found).toString())            }
             -1 -> {
                 Resource.Error("Проверьте подключение к интернету")
             }
@@ -22,17 +25,27 @@ class TracksRepositoryImpl(
                 val favoriteTracks = favorites.getSavedFavorites()
 
                 Resource.Success((response as TracksSearchResponse).results.map {
+                    val trackId = it.trackId ?: ""
+                    val trackName = it.trackName ?: ""
+                    val artistName = it.artistName ?: ""
+                    val trackTimeMillis = it.trackTimeMillis ?: ""
+                    val artworkUrl100 = it.artworkUrl100 ?: ""
+                    val collectionName = it.collectionName ?: ""
+                    val releaseDate = it.releaseDate ?: ""
+                    val primaryGenreName = it.primaryGenreName ?: ""
+                    val country = it.country ?: ""
+                    val previewUrl = it.previewUrl ?: ""
                     Track(
-                        it.trackId,
-                        it.trackName,
-                        it.artistName,
-                        it.trackTimeMillis,
-                        it.artworkUrl100,
-                        it.collectionName,
-                        it.releaseDate,
-                        it.primaryGenreName,
-                        it.country,
-                        it.previewUrl,
+                        trackId,
+                        trackName,
+                        artistName,
+                        trackTimeMillis,
+                        artworkUrl100,
+                        collectionName,
+                        releaseDate,
+                        primaryGenreName,
+                        country,
+                        previewUrl,
                         inFavorite = favoriteTracks.contains(it.trackId)
                     )
                 } )

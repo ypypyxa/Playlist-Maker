@@ -130,7 +130,18 @@ class PlayerActivity : AppCompatActivity() {
                 state.releaseGroupIsVisible,
                 state.trackTimeGroupIsVisible
             )
-            is PlayerActivityState.FileNotFound -> fileNotFound()
+            is PlayerActivityState.FileNotFound -> {
+                fileNotFound()
+                prepare(
+                    state.track,
+                    state.artworkUrl512,
+                    state.albumGroupIsVisible,
+                    state.countryGroupIsVisible,
+                    state.genreGroupIsVisible,
+                    state.releaseGroupIsVisible,
+                    state.trackTimeGroupIsVisible
+                )
+            }
             is PlayerActivityState.Play -> playTrack(state.isPlaying)
             is PlayerActivityState.Pause -> pauseTrack(state.isPaused)
             is PlayerActivityState.UpdateTimer -> updatePlayTime(state.time)

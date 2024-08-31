@@ -160,9 +160,18 @@ class SearchActivityViewModel(
                 when {
                     errorMessage != null -> {
                         showToast.postValue(errorMessage!!)
-                        renderState(
-                            SearchActivityState.Error(getApplication<Application>().getString(R.string.something_went_wrong))
-                        )
+                        when (errorMessage) {
+                            getApplication<Application>().getString(R.string.nothing_found) -> {
+                                renderState(
+                                    SearchActivityState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
+                                )
+                            }
+                            else -> {
+                                renderState(
+                                    SearchActivityState.Error(getApplication<Application>().getString(R.string.something_went_wrong))
+                                )
+                            }
+                        }
                     }
                     tracks.isEmpty() -> {
                         renderState(
