@@ -55,9 +55,11 @@ class SearchViewModel(
         searchActivityLiveData.postValue(state)
     }
 
-    fun onFocusChange(hasFocus: Boolean, searchTextIsEmpty: Boolean) {
+    fun onFocusChange(hasFocus: Boolean, hasSearchTextIsEmpty: Boolean) {
         historyTracks = historyInteractor.loadTracks()
-        if ( hasFocus && searchTextIsEmpty && historyTracks.size != HISTORY_MIN_SIZE) {
+        HAS_FOCUS = hasFocus
+        HAS_SEARCH_TEXT_IS_EMPTY = hasSearchTextIsEmpty
+        if ( HAS_FOCUS && HAS_SEARCH_TEXT_IS_EMPTY && historyTracks.size != HISTORY_MIN_SIZE) {
             renderState(
                SearchActivityState.History(historyTracks)
             )
@@ -108,7 +110,7 @@ class SearchViewModel(
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
         if (searchText.isEmpty()) {
-            if (historyTracks.size != HISTORY_MIN_SIZE) {
+            if ( HAS_FOCUS && HAS_SEARCH_TEXT_IS_EMPTY && historyTracks.size != HISTORY_MIN_SIZE) {
 // если поле пустое, а история поиска не пустая - скрывается заглушка
 // и показывается история поиска
                 renderState(
@@ -193,5 +195,7 @@ class SearchViewModel(
         private val SEARCH_REQUEST_TOKEN = Any()
         private const val HISTORY_MIN_SIZE = 0
         private const val EMPTY_TEXT = ""
+        private var HAS_FOCUS = false
+        private var HAS_SEARCH_TEXT_IS_EMPTY = true
     }
 }
