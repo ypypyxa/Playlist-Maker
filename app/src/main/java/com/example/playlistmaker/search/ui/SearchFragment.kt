@@ -7,8 +7,8 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.commit
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.R
@@ -28,21 +28,10 @@ class SearchFragment : Fragment() {
 // Нажатие на итем
         if (clickDebounce()) {
             // Навигируемся на следующий экран
-            parentFragmentManager.commit {
-                replace(
-                    // Указали, в каком контейнере работаем
-                    R.id.rootFragmentContainerView,
-                    // Создали фрагмент
-                    PlayerFragment.newInstance(
-                        track = item
-                    ),
-                    // Указали тег фрагмента
-                    PlayerFragment.TAG
-                )
-
-                // Добавляем фрагмент в Back Stack
-                addToBackStack(PlayerFragment.TAG)
-            }
+            findNavController().navigate(
+                R.id.action_searchFragment_to_playerFragment,
+                PlayerFragment.createArgs(item)
+            )
         }
     }
 
@@ -106,11 +95,6 @@ class SearchFragment : Fragment() {
         binding.placeholderButton.setOnClickListener {
             searchViewModel.onRefreshButtonPress()
             searchViewModel.searchDebounce(searchText)
-        }
-
-// Кнопка назад
-        binding.backButton.setOnClickListener {
-            TODO("Сделать переход назад")
         }
 
         searchViewModel.observeState().observe(viewLifecycleOwner) {

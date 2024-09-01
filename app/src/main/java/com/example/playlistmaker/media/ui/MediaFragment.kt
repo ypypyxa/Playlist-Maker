@@ -35,8 +35,5 @@ class MediaFragment : Fragment() {
         }
         tabMediator.attach()
 
-        binding.ibBack.setOnClickListener {
-            TODO("Скорее бы от этого избавиться")
-        }
     }
 }

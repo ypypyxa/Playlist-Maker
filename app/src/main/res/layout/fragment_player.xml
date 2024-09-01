@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".player.ui.PlayerActivity">
+    tools:context=".player.ui.PlayerFragment">
 
 <!-- Левый отступ -->
     <androidx.constraintlayout.widget.Guideline

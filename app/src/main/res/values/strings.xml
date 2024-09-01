@@ -32,7 +32,7 @@
     <string name="searchHint">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
     <string name="default_time" translatable="false">0:00</string>
-    <string name="version" translatable="false">v 0.2.2</string>
+    <string name="version" translatable="false">v 0.3.0</string>
     <string name="player_error">Ошибка плеера</string>
     <string name="empty_track_url">Нет файла песни</string>
     <string name="empty_library">Ваша медиатека пуста</string>

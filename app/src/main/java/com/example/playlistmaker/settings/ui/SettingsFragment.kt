@@ -26,15 +26,11 @@ class SettingsFragment : Fragment() {
         binding.themeSwitcher.isChecked = settingsViewModel.getThemeSettings()
 
         settingsViewModel.getThemeSettingsLiveData().observe(viewLifecycleOwner) {
-            (requireContext() as App).switchTheme(it)
+            (requireContext().applicationContext as App).switchTheme(it)
         }
 
         binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
             settingsViewModel.switchTheme(checked)
-        }
-
-        binding.backButton.setOnClickListener {
-            TODO("А может оно и не надо))")
         }
 
         binding.shareButton.setOnClickListener {

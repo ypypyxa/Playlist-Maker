@@ -41,7 +41,7 @@ class PlayerFragment : Fragment() {
 
 // Кнопка назад
         binding.btnBack.setOnClickListener {
-            TODO("Ну точно не надо будет, но пока пусть будет так")
+            requireActivity().onBackPressed()
         }
 
 // Кнопка добавить в избранное
@@ -49,7 +49,7 @@ class PlayerFragment : Fragment() {
             playerViewModel.toggleFavorite()
         }
 
-        playerViewModel.onCreate(requireArguments().getSerializable(ARGS_TRACK) as Track)
+        playerViewModel.onCreate(arguments?.getSerializable(ARGS_TRACK) as Track)
         playerViewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
@@ -229,16 +229,12 @@ class PlayerFragment : Fragment() {
         private const val TIME_FORMAT = "m:ss"
         private const val DEFAULT_TIME = "0:00"
 
-        private const val ARGS_TRACK = "TRACK"
+        const val ARGS_TRACK = "TRACK"
+
+        fun createArgs(track: Track): Bundle =
+            bundleOf(ARGS_TRACK to track)
 
         // Тег для использования во FragmentManager
         const val TAG = "PlayerFragment"
-
-        fun newInstance(track: Track): Fragment {
-            return PlayerFragment().apply {
-                // Пробрасываем аргументы в Bundle
-                arguments = bundleOf(ARGS_TRACK to track)
-            }
-        }
     }
 }
