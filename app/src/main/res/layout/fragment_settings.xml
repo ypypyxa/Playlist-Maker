@@ -9,7 +9,7 @@
         android:layout_marginBottom="24dp">
 
         <ImageButton style="@style/BackButtonStyle"
-            android:id="@+id/ibBack"
+            android:id="@+id/backButton"
             android:contentDescription="@string/back"/>
 
         <TextView style="@style/HeadTextStyle"
@@ -25,7 +25,7 @@
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             style="@style/SettingsMenuSwitchStyle"
-            android:id="@+id/swTheme"
+            android:id="@+id/themeSwitcher"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
     </FrameLayout>
 
@@ -37,7 +37,7 @@
 
         <ImageButton style="@style/SettingsMenuButtonStyle"
             tools:ignore="DuplicateSpeakableTextCheck"
-            android:id="@+id/ibShare"
+            android:id="@+id/shareButton"
             android:contentDescription="@string/share"
             android:src="@drawable/ic_share_24x24"/>
     </FrameLayout>
@@ -50,7 +50,7 @@
 
         <ImageButton style="@style/SettingsMenuButtonStyle"
             tools:ignore="DuplicateSpeakableTextCheck"
-            android:id="@+id/ibMailToSupport"
+            android:id="@+id/mailToSupButton"
             android:contentDescription="@string/support"
             android:src="@drawable/ic_support_24x24"/>
     </FrameLayout>
@@ -63,7 +63,7 @@
 
         <ImageButton style="@style/SettingsMenuButtonStyle"
             android:src="@drawable/ic_next_24x24"
-            android:id="@+id/ibUserAgreement"
+            android:id="@+id/agreementButton"
             android:contentDescription="@string/next"/>
     </FrameLayout>
     <TextView
