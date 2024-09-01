@@ -1,7 +1,7 @@
 package com.example.playlistmaker.di
 
 import com.example.playlistmaker.player.ui.PlayerActivityViewModel
-import com.example.playlistmaker.search.ui.SearchActivityViewModel
+import com.example.playlistmaker.search.ui.SearchViewModel
 import com.example.playlistmaker.settings.ui.SettingsActivityViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -14,7 +14,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        SearchActivityViewModel(get(), get(), androidApplication())
+        SearchViewModel(get(), get(), androidApplication())
     }
 
     viewModel {

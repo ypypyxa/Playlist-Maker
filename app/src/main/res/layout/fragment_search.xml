@@ -8,7 +8,7 @@
     <LinearLayout style="@style/HeadStyle">
 
         <ImageButton
-            android:id="@+id/ib_back"
+            android:id="@+id/backButton"
             style="@style/BackButtonStyle"
             android:contentDescription="@string/back" />
 
@@ -26,7 +26,7 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/etSearch"
+            android:id="@+id/searchEdit"
             style="@style/EditTextStile"
             android:drawableStart="@drawable/ic_search_16x16"
             android:paddingStart="5dp"
@@ -36,7 +36,7 @@
             tools:ignore="TextContrastCheck" />
 
         <ImageView
-            android:id="@+id/ivClearButton"
+            android:id="@+id/searchClearButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -46,7 +46,7 @@
 
     </LinearLayout>
 
-    <TextView android:id="@+id/tvHistoryHint"
+    <TextView android:id="@+id/historyHint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="16dp"
@@ -66,7 +66,7 @@
         android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSearchTrackList"
+            android:id="@+id/trackListView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -75,7 +75,7 @@
             tools:itemCount="5"
             tools:listitem="@layout/track_item"/>
 
-        <Button android:id="@+id/btnHistoryClear"
+        <Button android:id="@+id/historyClearButton"
             style="Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -104,13 +104,13 @@
             android:orientation="vertical"
             android:gravity="center">
 
-            <ImageView android:id="@+id/ivPlaceholderImage"
+            <ImageView android:id="@+id/placeholderImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_something_went_wrong_placeholder"
                 android:visibility="gone"/>
 
-            <TextView android:id="@+id/tvPlaceholderMessage"
+            <TextView android:id="@+id/placeholderMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
@@ -121,7 +121,7 @@
                 android:textColor="?attr/colorOnPrimary"
                 android:visibility="gone"/>
 
-            <Button android:id="@+id/btnPlaceholderButton"
+            <Button android:id="@+id/placeholderButton"
                 style="Widget.MaterialComponents.Button.UnelevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

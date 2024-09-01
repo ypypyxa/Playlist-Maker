@@ -30,7 +30,7 @@
             android:name=".settings.ui.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".main.ui.MainActivity"
+            android:name=".root.ui.RootActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

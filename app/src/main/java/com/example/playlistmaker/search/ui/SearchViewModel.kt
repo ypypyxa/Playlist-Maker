@@ -14,7 +14,7 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.model.SearchActivityState
 import com.example.playlistmaker.utils.SingleLiveEvent
 
-class SearchActivityViewModel(
+class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
     private val historyInteractor: HistoryInteractor,
     private val application: Application
