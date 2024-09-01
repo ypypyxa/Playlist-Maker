@@ -49,7 +49,7 @@
 
 <!-- Кнопка назад -->
     <ImageButton
-        android:id="@+id/ibBack"
+        android:id="@+id/btnBack"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="56dp"
         android:layout_height="56dp"
@@ -59,13 +59,13 @@
 
 <!-- Обожка трека -->
     <ImageView
-        android:id="@+id/ivTrackImage"
+        android:id="@+id/tvTrackImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
         app:srcCompat="@drawable/ic_placeholder_45x45"
         app:layout_constraintDimensionRatio="h,1:1"
-        app:layout_constraintTop_toBottomOf="@id/ibBack"
+        app:layout_constraintTop_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
         app:layout_constraintBottom_toTopOf="@id/tvTrackName" />
@@ -81,7 +81,7 @@
         android:textFontWeight="400"
         android:textColor="?attr/colorOnPrimary"
         android:gravity="start|center"
-        app:layout_constraintTop_toBottomOf="@id/ivTrackImage"
+        app:layout_constraintTop_toBottomOf="@id/tvTrackImage"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintBottom_toTopOf="@id/tvArtistName" />
 
@@ -98,11 +98,11 @@
         android:gravity="start|center"
         app:layout_constraintTop_toBottomOf="@id/tvTrackName"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
-        app:layout_constraintBottom_toTopOf="@id/ibPlay" />
+        app:layout_constraintBottom_toTopOf="@id/btnPlayPause" />
 
 <!-- Кнопка "Воспроизвести" -->
     <ImageButton
-        android:id="@+id/ibPlay"
+        android:id="@+id/btnPlayPause"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -112,7 +112,7 @@
         android:background="@drawable/round_button"
         app:layout_constraintTop_toBottomOf="@id/tvArtistName"
         app:layout_constraintStart_toEndOf="@id/ibAddToPlaylist"
-        app:layout_constraintEnd_toStartOf="@id/ibAddToFavorite"
+        app:layout_constraintEnd_toStartOf="@id/btnInFavorite"
         app:layout_constraintBottom_toTopOf="@id/trackInfoTopBorder" />
 
 <!-- Кнопка "Добавить в плэйлист" -->
@@ -123,22 +123,22 @@
         android:layout_height="51dp"
         android:src="@drawable/ic_button_add_to_playlist"
         android:background="@drawable/round_button"
-        app:layout_constraintTop_toTopOf="@id/ibPlay"
+        app:layout_constraintTop_toTopOf="@id/btnPlayPause"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
-        app:layout_constraintBottom_toBottomOf="@id/ibPlay" />
+        app:layout_constraintBottom_toBottomOf="@id/btnPlayPause" />
 
 <!-- Кнопка "Добавить в избранное" -->
     <ImageButton
-        android:id="@+id/ibAddToFavorite"
+        android:id="@+id/btnInFavorite"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="51dp"
         android:layout_height="51dp"
         android:elevation="8dp"
         android:src="@drawable/ic_button_add_to_favorite"
         android:background="@drawable/round_button"
-        app:layout_constraintTop_toTopOf="@id/ibPlay"
+        app:layout_constraintTop_toTopOf="@id/btnPlayPause"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintBottom_toBottomOf="@id/ibPlay" />
+        app:layout_constraintBottom_toBottomOf="@id/btnPlayPause" />
 
 <!-- Время воспроизведения -->
     <TextView
@@ -152,9 +152,9 @@
         android:textFontWeight="500"
         android:textColor="?attr/colorOnPrimary"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/ibPlay"
-        app:layout_constraintStart_toStartOf="@id/ibPlay"
-        app:layout_constraintEnd_toEndOf="@+id/ibPlay" />
+        app:layout_constraintTop_toBottomOf="@id/btnPlayPause"
+        app:layout_constraintStart_toStartOf="@id/btnPlayPause"
+        app:layout_constraintEnd_toEndOf="@+id/btnPlayPause" />
 <!-- Группа "Длительность трека" -->
     <androidx.constraintlayout.widget.Group
         android:id="@+id/trackTimeGroup"
@@ -213,7 +213,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvTrackTime"
         app:layout_constraintStart_toEndOf="@id/tvHeaderAlbum"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"
-        app:layout_constraintBottom_toTopOf="@id/tvRelease" />
+        app:layout_constraintBottom_toTopOf="@id/tvReleaseDate" />
 
 <!-- Группа "Год выхода"-->
     <androidx.constraintlayout.widget.Group
@@ -221,7 +221,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="tvHeaderRelease,tvRelease" />
+        app:constraint_referenced_ids="tvHeaderRelease,tvReleaseDate" />
 
 <!-- Заголовок "Год выхода" -->
     <TextView style="@style/tvHeaderTrackInfoPrimaryStyle"
@@ -235,7 +235,7 @@
 
 <!-- Год выхода -->
     <TextView style="@style/tvTrackInfoPrimaryStyle"
-        android:id="@+id/tvRelease"
+        android:id="@+id/tvReleaseDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -270,7 +270,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         tools:text="Ну какой то жанр"
-        app:layout_constraintTop_toBottomOf="@id/tvRelease"
+        app:layout_constraintTop_toBottomOf="@id/tvReleaseDate"
         app:layout_constraintStart_toEndOf="@id/tvHeaderGenre"
         app:layout_constraintEnd_toStartOf="@id/trackInfoRightBorder"
         app:layout_constraintBottom_toTopOf="@id/tvCountry" />

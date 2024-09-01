@@ -1,6 +1,5 @@
 package com.example.playlistmaker.search.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -8,9 +7,11 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.commit
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.PlayerActivity
+import com.example.playlistmaker.player.ui.PlayerFragment
+import com.example.playlistmaker.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -26,9 +27,22 @@ class SearchFragment : Fragment() {
     private val trackListAdapter = TrackListAdapter { item ->
 // Нажатие на итем
         if (clickDebounce()) {
-            val playerIntent = Intent(requireContext(), PlayerActivity::class.java)
-            playerIntent.putExtra(TRACK, item)
-            startActivity(playerIntent)
+            // Навигируемся на следующий экран
+            parentFragmentManager.commit {
+                replace(
+                    // Указали, в каком контейнере работаем
+                    R.id.rootFragmentContainerView,
+                    // Создали фрагмент
+                    PlayerFragment.newInstance(
+                        track = item
+                    ),
+                    // Указали тег фрагмента
+                    PlayerFragment.TAG
+                )
+
+                // Добавляем фрагмент в Back Stack
+                addToBackStack(PlayerFragment.TAG)
+            }
         }
     }
 
