@@ -37,7 +37,7 @@
     <string name="empty_track_url">Нет файла песни</string>
     <string name="empty_library">Ваша медиатека пуста</string>
     <string name="add_playlist">Новый плэйлист</string>
-    <string name="empty_playlists">Вы не создали\nни одного плэйлиста</string>
+    <string name="empty_playlists">Вы не создали\nни одного плейлиста</string>
     <string name="favorites_tracks">Избранные треки</string>
     <string name="playlists">Плейлисты</string>
 </resources>
