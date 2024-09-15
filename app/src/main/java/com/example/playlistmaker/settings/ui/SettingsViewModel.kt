@@ -9,7 +9,7 @@ import com.example.playlistmaker.settings.domain.api.SettingsInteractor
 import com.example.playlistmaker.settings.domain.api.SharingInteractor
 import com.example.playlistmaker.settings.domain.model.ThemeSettings
 
-class SettingsActivityViewModel(
+class SettingsViewModel(
     private val sharingInteractor: SharingInteractor,
     private val settingsInteractor: SettingsInteractor,
     application: Application

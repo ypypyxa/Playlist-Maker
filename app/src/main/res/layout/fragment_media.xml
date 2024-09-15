@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/ActivityStyle">
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/ActivityStyle"
+    tools:context=".media.ui.MediaFragment">
 
     <!-- ШАПКА -->
-    <LinearLayout style="@style/HeadStyle">
+    <LinearLayout style="@style/HeadStyle"
+        android:paddingVertical="14dp">
 
-        <ImageButton style="@style/BackButtonStyle"
-            android:id="@+id/ibBack"
-            android:contentDescription="@string/back"/>
-
-        <TextView style="@style/HeadTextStyle"
-            android:text="@string/media"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="16dp"
+            android:text="@string/media"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/primary_button_text_size"
+            android:layout_gravity="center"
+            android:fontFamily="@font/ys_display_medium"
+            android:textFontWeight="500" />
 
     </LinearLayout>
 

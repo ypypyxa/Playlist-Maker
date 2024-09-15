@@ -3,16 +3,16 @@ package com.example.playlistmaker.player.ui
 import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.Group
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.player.ui.model.PlayerActivityState
 import com.example.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -20,96 +20,65 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment : Fragment() {
 
-    private val playerActivityViewModel by viewModel<PlayerActivityViewModel>()
+    private lateinit var binding: FragmentPlayerBinding
 
-    private lateinit var btnBack: ImageButton
-    private lateinit var btnPlayPause: ImageButton
-    private lateinit var btnInFavorite: ImageButton
-    private lateinit var tvAlbum: TextView
-    private lateinit var tvArtistName: TextView
-    private lateinit var tvPlayTime: TextView
-    private lateinit var tvReleaseDate: TextView
-    private lateinit var tvTrackName: TextView
-    private lateinit var tvTrackTime: TextView
-    private lateinit var tvTrackImage: ImageView
-    private lateinit var tvGenre: TextView
-    private lateinit var tvCountry: TextView
-    private lateinit var albumGroup: Group
-    private lateinit var countryGroup: Group
-    private lateinit var genreGroup: Group
-    private lateinit var releaseGroup: Group
-    private lateinit var trackTimeGroup: Group
+    private val playerViewModel by viewModel<PlayerViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        btnBack = findViewById(R.id.ibBack)
-        btnPlayPause = findViewById(R.id.ibPlay)
-        btnInFavorite = findViewById(R.id.ibAddToFavorite)
-        tvAlbum = findViewById(R.id.tvAlbum)
-        tvArtistName = findViewById(R.id.tvArtistName)
-        tvPlayTime = findViewById((R.id.tvPlayTime))
-        tvReleaseDate = findViewById(R.id.tvRelease)
-        tvTrackName = findViewById(R.id.tvTrackName)
-        tvTrackTime = findViewById(R.id.tvTrackTime)
-        tvTrackImage = findViewById(R.id.ivTrackImage)
-        tvGenre = findViewById(R.id.tvGenre)
-        tvCountry = findViewById(R.id.tvCountry)
-        albumGroup = findViewById(R.id.albumGroup)
-        countryGroup = findViewById(R.id.countryGroup)
-        genreGroup = findViewById(R.id.genreGroup)
-        releaseGroup = findViewById(R.id.releaseGroup)
-        trackTimeGroup = findViewById(R.id.trackTimeGroup)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-// Кнопка Воспроизвести/Пауза
-        btnPlayPause.setOnClickListener {
-            playerActivityViewModel.playbackControl()
+        // Кнопка Воспроизвести/Пауза
+        binding.btnPlayPause.setOnClickListener {
+            playerViewModel.playbackControl()
         }
 
 // Кнопка назад
-        btnBack.setOnClickListener {
-            finish()
+        binding.btnBack.setOnClickListener {
+            requireActivity().onBackPressed()
         }
 
 // Кнопка добавить в избранное
-        btnInFavorite.setOnClickListener {
-            playerActivityViewModel.toggleFavorite()
+        binding.btnInFavorite.setOnClickListener {
+            playerViewModel.toggleFavorite()
         }
 
-        playerActivityViewModel.onCreate(intent.getSerializableExtra(TRACK) as Track)
-        playerActivityViewModel.observeState().observe(this) {
+        playerViewModel.onCreate(arguments?.getSerializable(ARGS_TRACK) as Track)
+        playerViewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
-        playerActivityViewModel.observeToastState().observe(this) { pairError ->
+        playerViewModel.observeToastState().observe(viewLifecycleOwner) { pairError ->
             showError(pairError)
         }
-        playerActivityViewModel.observeAddInFavorite().observe(this) { inFavorite ->
+        playerViewModel.observeAddInFavorite().observe(viewLifecycleOwner) { inFavorite ->
             setInFavoriteImage(inFavorite)
         }
     }
-
     override fun onPause() {
         super.onPause()
 
-        playerActivityViewModel.onPause()
+        playerViewModel.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        playerActivityViewModel.onDestroy()
+        playerViewModel.onDestroy()
     }
 
     private fun setTrackImage(artworkUrl512: String) {
-        Glide.with(tvTrackImage)
+        Glide.with(binding.tvTrackImage)
             .load(artworkUrl512)
             .placeholder(R.drawable.ic_placeholder_45x45)
             .fitCenter()
-            .transform(RoundedCorners(dpToPx(tvTrackImage.context)))
-            .into(tvTrackImage)
+            .transform(RoundedCorners(dpToPx(binding.tvTrackImage.context)))
+            .into(binding.tvTrackImage)
     }
 
     private fun dpToPx(context: Context): Int {
@@ -183,7 +152,7 @@ class PlayerActivity : AppCompatActivity() {
                 .format(track.trackTimeMillis.toLong())
         )
         setAlbum(track.collectionName)
-        setReleaseDate(playerActivityViewModel.getYear(track.releaseDate))
+        setReleaseDate(playerViewModel.getYear(track.releaseDate))
         setGenre(track.primaryGenreName)
         setCountry(track.country)
         showAlbumGroup(albumGroupIsVisible)
@@ -196,70 +165,76 @@ class PlayerActivity : AppCompatActivity() {
 
 
     private fun setTrackName(trackName: String) {
-        tvTrackName.text = trackName
+        binding.tvTrackName.text = trackName
     }
     private fun setAlbum(album: String) {
-        tvAlbum.text = album
+        binding.tvAlbum.text = album
     }
     private fun setArtistName(artistName: String) {
-        tvArtistName.text = artistName
+        binding.tvArtistName.text = artistName
     }
     private fun setPlayTime(playTime: String) {
-        tvPlayTime.text = playTime
+        binding.tvPlayTime.text = playTime
     }
     private fun setReleaseDate(releaseDate: String) {
-        tvReleaseDate.text = releaseDate
+        binding.tvReleaseDate.text = releaseDate
     }
     private fun setTrackTime(trackTime: String) {
-        tvTrackTime.text = trackTime
+        binding.tvTrackTime.text = trackTime
     }
     private fun setGenre(genre: String) {
-        tvGenre.text = genre
+        binding.tvGenre.text = genre
     }
     private fun setCountry(country: String) {
-        tvCountry.text = country
+        binding.tvCountry.text = country
     }
     private fun enablePlayPause(isEnabled: Boolean) {
-        btnPlayPause.isEnabled = isEnabled
+        binding.btnPlayPause.isEnabled = isEnabled
     }
     private fun setPlayPause(isPlaying: Boolean) {
-        btnPlayPause.setImageResource(
+        binding.btnPlayPause.setImageResource(
             if (isPlaying) R.drawable.ic_button_pause else R.drawable.ic_button_play
         )
     }
     private fun setInFavoriteImage(isFavorite: Boolean) {
-        btnInFavorite.setImageResource(
+        binding.btnInFavorite.setImageResource(
             if (isFavorite) R.drawable.ic_button_added_to_favorite else R.drawable.ic_button_add_to_favorite
         )
     }
 
     private fun showAlbumGroup(isVisible: Boolean) {
-        albumGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.albumGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
     private fun showCountryGroup(isVisible: Boolean) {
-        countryGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.countryGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
     private fun showGenreGroup(isVisible: Boolean) {
-        genreGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.genreGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
     private fun showReleaseGroup(isVisible: Boolean) {
-        releaseGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.releaseGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
     private fun showTrackTimeGroup(isVisible: Boolean) {
-        trackTimeGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.trackTimeGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
     private fun showError(pairError: Pair<String, String>) {
         val error = pairError.first
         val errorMessage = pairError.second
 
-        Toast.makeText(this, error+"\n"+errorMessage, Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), error+"\n"+errorMessage, Toast.LENGTH_LONG).show()
     }
 
     companion object {
-        private const val TRACK = "TRACK"
         private const val CORNERS_ANGLE = 8.0F
         private const val TIME_FORMAT = "m:ss"
         private const val DEFAULT_TIME = "0:00"
-    }
 
+        const val ARGS_TRACK = "TRACK"
+
+        fun createArgs(track: Track): Bundle =
+            bundleOf(ARGS_TRACK to track)
+
+        // Тег для использования во FragmentManager
+        const val TAG = "PlayerFragment"
+    }
 }

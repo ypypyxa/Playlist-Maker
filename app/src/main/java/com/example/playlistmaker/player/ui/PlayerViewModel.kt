@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class PlayerActivityViewModel(
+class PlayerViewModel(
     private val historyInteractor: HistoryInteractor,
     private val tracksInteractor: TracksInteractor,
     private val mediaPlayer: MediaPlayerInteractor,
