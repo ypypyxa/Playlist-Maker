@@ -7,12 +7,14 @@ import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.HistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.model.SearchActivityState
 import com.example.playlistmaker.utils.SingleLiveEvent
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
@@ -68,6 +70,7 @@ class SearchViewModel(
 
     fun onClearSearchButtonPress() {
         clearSearchEdit.postValue(EMPTY_TEXT)
+        latestSearchText = EMPTY_TEXT
         historyTracks = historyInteractor.loadTracks()
 
         if (historyTracks.size > HISTORY_MIN_SIZE) {
@@ -98,7 +101,7 @@ class SearchViewModel(
     }
 
     fun searchDebounce(searchText: String) {
-        if (latestSearchText == searchText && !isRefreshButtonPressed) {
+        if ((latestSearchText == searchText && !isRefreshButtonPressed) or (searchText == "")) {
             if (!latestSearchText.isNullOrEmpty()) {
                 showSearchEditClearButton.postValue(searchText.isNotEmpty())
             }
@@ -109,39 +112,23 @@ class SearchViewModel(
 
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
-        if (searchText.isEmpty()) {
-            if ( HAS_FOCUS && HAS_SEARCH_TEXT_IS_EMPTY && historyTracks.size != HISTORY_MIN_SIZE) {
-// если поле пустое, а история поиска не пустая - скрывается заглушка
-// и показывается история поиска
-                renderState(
-                    SearchActivityState.History(historyTracks)
-                )
-            } else {
-// если поле и история пустые - скрываются подсказки и список песен
-                renderState(
-                    SearchActivityState.EmptyView
-                )
-            }
+        val searchRunnable = Runnable { searchTrack(searchText) }
+
+        val postTime : Long?
+
+        if (isSearchButtonPressed || isRefreshButtonPressed) {
+            postTime = SystemClock.uptimeMillis()
             isSearchButtonPressed = false
+            isRefreshButtonPressed = false
         } else {
-            val searchRunnable = Runnable { searchTrack(searchText) }
+            postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+        }
 
-            val postTime : Long?
-
-            if (isSearchButtonPressed || isRefreshButtonPressed) {
-                postTime = SystemClock.uptimeMillis()
-                isSearchButtonPressed = false
-                isRefreshButtonPressed = false
-            } else {
-                postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-            }
-
-            handler.postAtTime(
+        handler.postAtTime(
                 searchRunnable,
                 SEARCH_REQUEST_TOKEN,
                 postTime,
             )
-        }
 
         showSearchEditClearButton.postValue(searchText.isNotEmpty())
     }
@@ -152,42 +139,48 @@ class SearchViewModel(
         )
         this.latestSearchText = searchText
 
-        tracksInteractor.searchTracks(searchText, object : TracksInteractor.TracksConsumer {
-            override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                val tracks = ArrayList<Track>()
-
-                if (foundTracks != null) {
-                    tracks.addAll(foundTracks)
+        viewModelScope.launch {
+            tracksInteractor
+                .searchTracks(searchText)
+                .collect { pair ->
+                    processResult(pair.first, pair.second)
                 }
-                when {
-                    errorMessage != null -> {
-                        showToast.postValue(errorMessage!!)
-                        when (errorMessage) {
-                            getApplication<Application>().getString(R.string.nothing_found) -> {
-                                renderState(
-                                    SearchActivityState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
-                                )
-                            }
-                            else -> {
-                                renderState(
-                                    SearchActivityState.Error(getApplication<Application>().getString(R.string.something_went_wrong))
-                                )
-                            }
-                        }
-                    }
-                    tracks.isEmpty() -> {
+        }
+    }
+
+    private fun processResult(foundTracks: List<Track>?, errorMessage: String?) {
+        val tracks = ArrayList<Track>()
+
+        if (foundTracks != null) {
+            tracks.addAll(foundTracks)
+        }
+        when {
+            errorMessage != null -> {
+                showToast.postValue(errorMessage!!)
+                when (errorMessage) {
+                    getApplication<Application>().getString(R.string.nothing_found) -> {
                         renderState(
                             SearchActivityState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
                         )
                     }
                     else -> {
                         renderState(
-                            SearchActivityState.SearchResult(tracks)
+                            SearchActivityState.Error(getApplication<Application>().getString(R.string.something_went_wrong))
                         )
                     }
                 }
             }
-        })
+            tracks.isEmpty() -> {
+                renderState(
+                    SearchActivityState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
+                )
+            }
+            else -> {
+                renderState(
+                    SearchActivityState.SearchResult(tracks)
+                )
+            }
+        }
     }
 
     companion object {

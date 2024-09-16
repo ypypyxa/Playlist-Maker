@@ -1,19 +1,21 @@
 package com.example.playlistmaker.player.ui
 
 import android.app.Application
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
-import com.example.playlistmaker.player.ui.model.PlayerActivityState
+import com.example.playlistmaker.player.ui.model.PlayerFragmentState
 import com.example.playlistmaker.search.domain.api.HistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.utils.SingleLiveEvent
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -33,8 +35,10 @@ class PlayerViewModel(
     private var releaseGroupIsVisible = false
     private var trackTimeGroupIsVisible = false
 
-    private val playerActivityLiveData = MutableLiveData<PlayerActivityState>()
-    fun observeState(): LiveData<PlayerActivityState> = playerActivityLiveData
+    private var timerJob: Job? = null
+
+    private val playerLiveData = MutableLiveData<PlayerFragmentState>()
+    fun observeState(): LiveData<PlayerFragmentState> = playerLiveData
 
     private val showError = SingleLiveEvent<Pair<String, String>>()
     fun observeToastState(): LiveData<Pair<String, String>> = showError
@@ -42,19 +46,19 @@ class PlayerViewModel(
     private val addInFavorite = SingleLiveEvent<Boolean>()
     fun observeAddInFavorite(): LiveData<Boolean> = addInFavorite
 
-// Объявление перменных для таймера воспроизведения
-    private lateinit var handler: Handler
-    private val updateTime = object : Runnable {
-        override fun run() {
-            renderState(
-                PlayerActivityState.UpdateTimer(
-                    mediaPlayer.getCurrentPosition()
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (playerState == PlayerState.STATE_PLAYING) {
+                delay(DELAY)
+                renderState(
+                    PlayerFragmentState.UpdateTimer(
+                        mediaPlayer.getCurrentPosition()
+                    )
                 )
-            )
-            playerState = mediaPlayer.getPlayerState()
-            handler.postDelayed(this, DELAY) // Обновляем каждую секунду
-            if (playerState == PlayerState.STATE_COMPLETE) {
-                stopPlayer()
+                playerState = mediaPlayer.getPlayerState()
+                if (playerState == PlayerState.STATE_COMPLETE) {
+                    stopPlayer()
+                }
             }
         }
     }
@@ -67,8 +71,6 @@ class PlayerViewModel(
 // Лучшего места что бы сохранить трек в историю поиска я пока не нашел...
         historyListUpdate()
 
-        handler = Handler(Looper.getMainLooper())
-
         artworkUrl512 = track.artworkUrl100.replaceAfterLast(DELIMITER, "$BIG_SIZE.jpg")
 
         albumGroupIsVisible = track.collectionName.isNotEmpty()
@@ -78,7 +80,7 @@ class PlayerViewModel(
         trackTimeGroupIsVisible = track.previewUrl.isNotEmpty()
 
         renderState(
-            PlayerActivityState.Prepare(
+            PlayerFragmentState.Prepare(
                 track,
                 artworkUrl512,
                 albumGroupIsVisible,
@@ -95,12 +97,17 @@ class PlayerViewModel(
 
     fun onPause() {
         pausePlayer()
-        handler.removeCallbacks(updateTime)
+        timerJob?.cancel()
     }
 
     fun onDestroy() {
-        handler.removeCallbacks(updateTime)
+        timerJob?.cancel()
         mediaPlayer.release()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        stopPlayer()
     }
 
     private fun historyListUpdate() {
@@ -124,8 +131,8 @@ class PlayerViewModel(
         historyInteractor.saveTracks(historyTracks)
     }
 
-    private fun renderState(state: PlayerActivityState) {
-        playerActivityLiveData.postValue(state)
+    private fun renderState(state: PlayerFragmentState) {
+        playerLiveData.postValue(state)
     }
 
     fun toggleFavorite() {
@@ -159,7 +166,7 @@ class PlayerViewModel(
             playerState = PlayerState.STATE_PREPARED
         } else {
             renderState(
-                PlayerActivityState.FileNotFound(
+                PlayerFragmentState.FileNotFound(
                     track,
                     artworkUrl512,
                     albumGroupIsVisible,
@@ -178,27 +185,27 @@ class PlayerViewModel(
     private fun startPlayer() {
         mediaPlayer.start()
         renderState(
-            PlayerActivityState.Play(true)
+            PlayerFragmentState.Play(true)
         )
         playerState = PlayerState.STATE_PLAYING
-        handler.post(updateTime)
+        startTimer()
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
         renderState(
-            PlayerActivityState.Pause(true)
+            PlayerFragmentState.Pause(true)
         )
         playerState = PlayerState.STATE_PAUSED
-        handler.removeCallbacks(updateTime)
+        timerJob?.cancel()
     }
 
     private fun stopPlayer() {
         renderState(
-            PlayerActivityState.Stop(true)
+            PlayerFragmentState.Stop(true)
         )
         playerState = PlayerState.STATE_PREPARED
-        handler.removeCallbacks(updateTime)
+        timerJob?.cancel()
     }
 
     fun getYear(date: String) : String {
@@ -211,7 +218,7 @@ class PlayerViewModel(
         private const val BIG_SIZE = "512x512"
         private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         private const val DELIMITER = '/'
-        private const val DELAY = 1000L
+        private const val DELAY = 300L
         private const val HISTORY_MAX_SIZE = 10
     }
 }

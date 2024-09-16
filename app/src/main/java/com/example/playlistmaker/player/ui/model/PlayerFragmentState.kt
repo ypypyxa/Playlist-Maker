@@ -2,7 +2,7 @@ package com.example.playlistmaker.player.ui.model
 
 import com.example.playlistmaker.search.domain.model.Track
 
-interface PlayerActivityState {
+interface PlayerFragmentState {
 
     data class Prepare(
         val track: Track,
@@ -12,7 +12,7 @@ interface PlayerActivityState {
         val genreGroupIsVisible: Boolean,
         val releaseGroupIsVisible: Boolean,
         val trackTimeGroupIsVisible: Boolean
-    ) : PlayerActivityState
+    ) : PlayerFragmentState
 
     // Состояние экрана, когда воспроизведение не возможно
     data class FileNotFound(
@@ -23,24 +23,24 @@ interface PlayerActivityState {
         val genreGroupIsVisible: Boolean,
         val releaseGroupIsVisible: Boolean,
         val trackTimeGroupIsVisible: Boolean
-    ) : PlayerActivityState
+    ) : PlayerFragmentState
 
     // Состояние экрана во время проигрывания
     data class Play(
         val isPlaying: Boolean
-    ) : PlayerActivityState
+    ) : PlayerFragmentState
 
     // Состояние экрана во время паузы
     data class Pause(
         val isPaused: Boolean
-    ) : PlayerActivityState
+    ) : PlayerFragmentState
 
     data class Stop(
         val isStoped: Boolean
-    ) : PlayerActivityState
+    ) : PlayerFragmentState
 
     //Обновление таймера
     data class UpdateTimer(
         val time: String
-    ) : PlayerActivityState
+    ) : PlayerFragmentState
 }

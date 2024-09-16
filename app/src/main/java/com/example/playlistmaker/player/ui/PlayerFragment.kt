@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
-import com.example.playlistmaker.player.ui.model.PlayerActivityState
+import com.example.playlistmaker.player.ui.model.PlayerFragmentState
 import com.example.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -88,9 +88,9 @@ class PlayerFragment : Fragment() {
             context.resources.displayMetrics).toInt()
     }
 
-    private fun render(state: PlayerActivityState) {
+    private fun render(state: PlayerFragmentState) {
         when (state) {
-            is PlayerActivityState.Prepare -> prepare(
+            is PlayerFragmentState.Prepare -> prepare(
                 state.track,
                 state.artworkUrl512,
                 state.albumGroupIsVisible,
@@ -99,7 +99,7 @@ class PlayerFragment : Fragment() {
                 state.releaseGroupIsVisible,
                 state.trackTimeGroupIsVisible
             )
-            is PlayerActivityState.FileNotFound -> {
+            is PlayerFragmentState.FileNotFound -> {
                 fileNotFound()
                 prepare(
                     state.track,
@@ -111,10 +111,10 @@ class PlayerFragment : Fragment() {
                     state.trackTimeGroupIsVisible
                 )
             }
-            is PlayerActivityState.Play -> playTrack(state.isPlaying)
-            is PlayerActivityState.Pause -> pauseTrack(state.isPaused)
-            is PlayerActivityState.UpdateTimer -> updatePlayTime(state.time)
-            is PlayerActivityState.Stop -> playerStop(state.isStoped)
+            is PlayerFragmentState.Play -> playTrack(state.isPlaying)
+            is PlayerFragmentState.Pause -> pauseTrack(state.isPaused)
+            is PlayerFragmentState.UpdateTimer -> updatePlayTime(state.time)
+            is PlayerFragmentState.Stop -> playerStop(state.isStoped)
         }
     }
 
