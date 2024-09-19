@@ -125,8 +125,7 @@ class SearchFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        searchViewModel.onFocusChange(binding.searchEdit.hasFocus(), binding.searchEdit.text.isEmpty())
-        searchViewModel.onResume(binding.searchEdit.text.isEmpty())
+        searchViewModel.onResume()
         isClickAllowed = true
     }
 

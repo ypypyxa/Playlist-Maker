@@ -26,6 +26,7 @@ class SearchViewModel(
     private var isRefreshButtonPressed = false
 
     private var latestSearchText: String? = null
+    private var latestFragmentState: SearchFragmentState? = null
 
     private val tracksSearchDebounce = debounce<String>(
         SEARCH_DEBOUNCE_DELAY,
@@ -50,8 +51,8 @@ class SearchViewModel(
     private val hideKeyboard = SingleLiveEvent<Boolean>()
     fun observeHideKeyboardCommand(): LiveData<Boolean> = hideKeyboard
 
-    fun onResume(searchEditIsEmpty: Boolean) {
-        if (searchEditIsEmpty) {
+    fun onResume() {
+        if (latestFragmentState is SearchFragmentState.History) {
             historyTracks = historyInteractor.loadTracks()
             renderState(
                 SearchFragmentState.History(historyTracks)
@@ -68,6 +69,7 @@ class SearchViewModel(
         HAS_FOCUS = hasFocus
         HAS_SEARCH_TEXT_IS_EMPTY = hasSearchTextIsEmpty
         if ( HAS_FOCUS && HAS_SEARCH_TEXT_IS_EMPTY && historyTracks.size != HISTORY_MIN_SIZE) {
+            latestFragmentState = SearchFragmentState.History(historyTracks)
             renderState(
                SearchFragmentState.History(historyTracks)
             )
@@ -80,10 +82,12 @@ class SearchViewModel(
         historyTracks = historyInteractor.loadTracks()
 
         if (historyTracks.size > HISTORY_MIN_SIZE) {
+            latestFragmentState = SearchFragmentState.History(historyTracks)
             renderState(
                 SearchFragmentState.History(historyTracks)
             )
         } else {
+            latestFragmentState = null
             renderState(
                 SearchFragmentState.EmptyView
             )
@@ -91,6 +95,7 @@ class SearchViewModel(
     }
 
     fun onClearHistoryButtonPress() {
+        latestFragmentState = null
         renderState(
             SearchFragmentState.EmptyView
         )
@@ -128,6 +133,7 @@ class SearchViewModel(
     }
 
     private fun searchTrack(searchText: String) {
+        latestFragmentState = null
         renderState(
             SearchFragmentState.Loading
         )
@@ -153,11 +159,13 @@ class SearchViewModel(
                 showToast.postValue(errorMessage!!)
                 when (errorMessage) {
                     getApplication<Application>().getString(R.string.nothing_found) -> {
+                        latestFragmentState = null
                         renderState(
                             SearchFragmentState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
                         )
                     }
                     else -> {
+                        latestFragmentState = null
                         renderState(
                             SearchFragmentState.Error(getApplication<Application>().getString(R.string.something_went_wrong))
                         )
@@ -165,11 +173,13 @@ class SearchViewModel(
                 }
             }
             tracks.isEmpty() -> {
+                latestFragmentState = null
                 renderState(
                     SearchFragmentState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
                 )
             }
             else -> {
+                latestFragmentState = null
                 renderState(
                     SearchFragmentState.SearchResult(tracks)
                 )
