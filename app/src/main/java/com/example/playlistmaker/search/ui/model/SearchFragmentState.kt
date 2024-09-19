@@ -2,31 +2,31 @@ package com.example.playlistmaker.search.ui.model
 
 import com.example.playlistmaker.search.domain.model.Track
 
-sealed interface SearchActivityState {
+sealed interface SearchFragmentState {
 
     // Состояние показа загрузки
-    data object Loading : SearchActivityState
+    data object Loading : SearchFragmentState
 
     // Состояние пустого экрана
-    data object EmptyView : SearchActivityState
+    data object EmptyView : SearchFragmentState
 
     // Состояние показа поиска
     data class SearchResult(
         val tracks: ArrayList<Track>
-    ) : SearchActivityState
+    ) : SearchFragmentState
 
     //Состояние показа пустого результата поиска
     data class EmptySearchResult(
         val message: String
-    ) : SearchActivityState
+    ) : SearchFragmentState
 
     // Состояние показа истории
     data class History (
         val tracks: ArrayList<Track>
-    ) : SearchActivityState
+    ) : SearchFragmentState
 
     // Состояние ошибки
     data class Error (
         val message: String
-    ) : SearchActivityState
+    ) : SearchFragmentState
 }

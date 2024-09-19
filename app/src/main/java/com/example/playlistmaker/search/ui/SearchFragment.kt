@@ -1,17 +1,20 @@
 package com.example.playlistmaker.search.ui
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerFragment
+import com.example.playlistmaker.search.ui.model.SearchFragmentState
 import com.example.playlistmaker.R
+import com.example.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -19,7 +22,6 @@ class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
 
     private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
 
     private var searchEditWatcher: TextWatcher? = null
     private var searchText = ""
@@ -118,13 +120,14 @@ class SearchFragment : Fragment() {
         super.onDestroy()
 
         searchEditWatcher?.let { binding.searchEdit.removeTextChangedListener(it) }
-        searchViewModel.onDestroy()
     }
 
     override fun onResume() {
         super.onResume()
 
         searchViewModel.onFocusChange(binding.searchEdit.hasFocus(), binding.searchEdit.text.isEmpty())
+        searchViewModel.onResume(binding.searchEdit.text.isEmpty())
+        isClickAllowed = true
     }
 
     // Задержка между кликами
@@ -132,28 +135,26 @@ class SearchFragment : Fragment() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }
 
-    private fun render(state: com.example.playlistmaker.search.ui.model.SearchActivityState) {
+    private fun render(state: SearchFragmentState) {
         when (state) {
-// Состояние показа загрузки
-            is com.example.playlistmaker.search.ui.model.SearchActivityState.Loading -> showLoading()
-// Состояние показа поиска
-            is com.example.playlistmaker.search.ui.model.SearchActivityState.SearchResult -> showContent(state.tracks)
-            is com.example.playlistmaker.search.ui.model.SearchActivityState.EmptySearchResult -> showEmptySearchResultPlaceholder(state.message)
-// Состояние показа истории
-            is com.example.playlistmaker.search.ui.model.SearchActivityState.History -> showHistory(state.tracks)
-// Состояние пустого экрана
-            is com.example.playlistmaker.search.ui.model.SearchActivityState.EmptyView -> showEmpty()
-// Состояние ошибки
-            is com.example.playlistmaker.search.ui.model.SearchActivityState.Error -> showErrorPlaceholder(state.message)
+            is SearchFragmentState.Loading -> showLoading()
+            is SearchFragmentState.SearchResult -> showContent(state.tracks)
+            is SearchFragmentState.EmptySearchResult -> showEmptySearchResultPlaceholder(state.message)
+            is SearchFragmentState.History -> showHistory(state.tracks)
+            is SearchFragmentState.EmptyView -> showEmpty()
+            is SearchFragmentState.Error -> showErrorPlaceholder(state.message)
         }
     }
 
-    private fun updateTrackListView(tracks: List<com.example.playlistmaker.search.domain.model.Track>?) {
+    private fun updateTrackListView(tracks: List<Track>?) {
         trackListAdapter.trackList.clear()
         if (tracks != null) trackListAdapter.trackList.addAll(tracks)
         trackListAdapter.notifyDataSetChanged()
@@ -175,7 +176,7 @@ class SearchFragment : Fragment() {
         binding.trackListView.visibility = View.GONE
         binding.historyHint.visibility = View.GONE
         binding.historyClearButton.visibility = View.GONE
-        binding.placeholderImage.setImageResource(com.example.playlistmaker.R.drawable.ic_something_went_wrong_placeholder)
+        binding.placeholderImage.setImageResource(R.drawable.ic_something_went_wrong_placeholder)
         binding.placeholderImage.visibility = View.VISIBLE
         binding.placeholderMessage.text = errorMessage
         binding.placeholderMessage.visibility = View.VISIBLE
@@ -198,13 +199,13 @@ class SearchFragment : Fragment() {
         binding.trackListView.visibility = View.GONE
         binding.historyHint.visibility = View.GONE
         binding.historyClearButton.visibility = View.GONE
-        binding.placeholderImage.setImageResource(com.example.playlistmaker.R.drawable.ic_nothing_found_placeholder)
+        binding.placeholderImage.setImageResource(R.drawable.ic_nothing_found_placeholder)
         binding.placeholderImage.visibility = View.VISIBLE
         binding.placeholderMessage.text = emptyMessage
         binding.placeholderMessage.visibility = View.VISIBLE
     }
     // Состояние «контента»
-    private fun showContent(tracks: List<com.example.playlistmaker.search.domain.model.Track>?) {
+    private fun showContent(tracks: List<Track>?) {
         binding.progressBar.visibility = View.GONE
         binding.placeholderImage.visibility = View.GONE
         binding.placeholderButton.visibility = View.GONE
@@ -215,7 +216,7 @@ class SearchFragment : Fragment() {
         binding.trackListView.visibility = View.VISIBLE
     }
     // Состояние «истории»
-    private fun showHistory(tracks: List<com.example.playlistmaker.search.domain.model.Track>?) {
+    private fun showHistory(tracks: List<Track>?) {
         binding.searchClearButton.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
         binding.placeholderImage.visibility = View.GONE

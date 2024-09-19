@@ -1,9 +1,6 @@
 package com.example.playlistmaker.search.ui
 
 import android.app.Application
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,8 +9,9 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.HistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.ui.model.SearchActivityState
+import com.example.playlistmaker.search.ui.model.SearchFragmentState
 import com.example.playlistmaker.utils.SingleLiveEvent
+import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -24,14 +22,21 @@ class SearchViewModel(
 
     private var historyTracks = ArrayList<Track>()
 
-    private val handler = Handler(Looper.getMainLooper())
     private var isSearchButtonPressed = false
     private var isRefreshButtonPressed = false
 
     private var latestSearchText: String? = null
 
-    private val searchActivityLiveData = MutableLiveData<SearchActivityState>()
-    fun observeState(): LiveData<SearchActivityState> = searchActivityLiveData
+    private val tracksSearchDebounce = debounce<String>(
+        SEARCH_DEBOUNCE_DELAY,
+        viewModelScope,
+        true
+    ) {
+        changedText -> searchTrack(changedText)
+    }
+
+    private val searchLiveData = MutableLiveData<SearchFragmentState>()
+    fun observeState(): LiveData<SearchFragmentState> = searchLiveData
 
     private val showToast = SingleLiveEvent<String>()
     fun observeToastState(): LiveData<String> = showToast
@@ -45,16 +50,17 @@ class SearchViewModel(
     private val hideKeyboard = SingleLiveEvent<Boolean>()
     fun observeHideKeyboardCommand(): LiveData<Boolean> = hideKeyboard
 
-    fun onDestroy() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+    fun onResume(searchEditIsEmpty: Boolean) {
+        if (searchEditIsEmpty) {
+            historyTracks = historyInteractor.loadTracks()
+            renderState(
+                SearchFragmentState.History(historyTracks)
+            )
+        }
     }
 
-    override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
-
-    fun renderState(state: SearchActivityState) {
-        searchActivityLiveData.postValue(state)
+    fun renderState(state: SearchFragmentState) {
+        searchLiveData.postValue(state)
     }
 
     fun onFocusChange(hasFocus: Boolean, hasSearchTextIsEmpty: Boolean) {
@@ -63,7 +69,7 @@ class SearchViewModel(
         HAS_SEARCH_TEXT_IS_EMPTY = hasSearchTextIsEmpty
         if ( HAS_FOCUS && HAS_SEARCH_TEXT_IS_EMPTY && historyTracks.size != HISTORY_MIN_SIZE) {
             renderState(
-               SearchActivityState.History(historyTracks)
+               SearchFragmentState.History(historyTracks)
             )
         }
     }
@@ -75,18 +81,18 @@ class SearchViewModel(
 
         if (historyTracks.size > HISTORY_MIN_SIZE) {
             renderState(
-                SearchActivityState.History(historyTracks)
+                SearchFragmentState.History(historyTracks)
             )
         } else {
             renderState(
-                SearchActivityState.EmptyView
+                SearchFragmentState.EmptyView
             )
         }
     }
 
     fun onClearHistoryButtonPress() {
         renderState(
-            SearchActivityState.EmptyView
+            SearchFragmentState.EmptyView
         )
         historyInteractor.clearTracks()
     }
@@ -110,32 +116,20 @@ class SearchViewModel(
             return
         }
 
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-
-        val searchRunnable = Runnable { searchTrack(searchText) }
-
-        val postTime : Long?
-
         if (isSearchButtonPressed || isRefreshButtonPressed) {
-            postTime = SystemClock.uptimeMillis()
             isSearchButtonPressed = false
             isRefreshButtonPressed = false
+            searchTrack(searchText)
         } else {
-            postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+            tracksSearchDebounce(searchText)
         }
-
-        handler.postAtTime(
-                searchRunnable,
-                SEARCH_REQUEST_TOKEN,
-                postTime,
-            )
 
         showSearchEditClearButton.postValue(searchText.isNotEmpty())
     }
 
     private fun searchTrack(searchText: String) {
         renderState(
-            SearchActivityState.Loading
+            SearchFragmentState.Loading
         )
         this.latestSearchText = searchText
 
@@ -160,24 +154,24 @@ class SearchViewModel(
                 when (errorMessage) {
                     getApplication<Application>().getString(R.string.nothing_found) -> {
                         renderState(
-                            SearchActivityState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
+                            SearchFragmentState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
                         )
                     }
                     else -> {
                         renderState(
-                            SearchActivityState.Error(getApplication<Application>().getString(R.string.something_went_wrong))
+                            SearchFragmentState.Error(getApplication<Application>().getString(R.string.something_went_wrong))
                         )
                     }
                 }
             }
             tracks.isEmpty() -> {
                 renderState(
-                    SearchActivityState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
+                    SearchFragmentState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
                 )
             }
             else -> {
                 renderState(
-                    SearchActivityState.SearchResult(tracks)
+                    SearchFragmentState.SearchResult(tracks)
                 )
             }
         }
@@ -185,7 +179,6 @@ class SearchViewModel(
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
         private const val HISTORY_MIN_SIZE = 0
         private const val EMPTY_TEXT = ""
         private var HAS_FOCUS = false
