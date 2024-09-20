@@ -12,6 +12,8 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.model.SearchFragmentState
 import com.example.playlistmaker.utils.SingleLiveEvent
 import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -28,13 +30,7 @@ class SearchViewModel(
     private var latestSearchText: String? = null
     private var latestFragmentState: SearchFragmentState? = null
 
-    private val tracksSearchDebounce = debounce<String>(
-        SEARCH_DEBOUNCE_DELAY,
-        viewModelScope,
-        true
-    ) {
-        changedText -> searchTrack(changedText)
-    }
+    private var buttonPressesDebounce: Job? = null
 
     private val searchLiveData = MutableLiveData<SearchFragmentState>()
     fun observeState(): LiveData<SearchFragmentState> = searchLiveData
@@ -112,39 +108,59 @@ class SearchViewModel(
     }
 
     fun searchDebounce(searchText: String) {
-        if ((latestSearchText == searchText && !isRefreshButtonPressed) or (searchText == "")) {
-            if (!latestSearchText.isNullOrEmpty()) {
-                showSearchEditClearButton.postValue(searchText.isNotEmpty())
+
+        buttonPressesDebounce?.cancel()
+
+        if (searchText.isEmpty()) {
+            latestSearchText = EMPTY_TEXT
+            if ( HAS_FOCUS && HAS_SEARCH_TEXT_IS_EMPTY && historyTracks.size != HISTORY_MIN_SIZE) {
+                renderState(
+                    SearchFragmentState.History(historyTracks)
+                )
+            } else {
+                renderState(
+                    SearchFragmentState.EmptyView
+                )
             }
             isSearchButtonPressed = false
-            isRefreshButtonPressed = false
-            return
-        }
-
-        if (isSearchButtonPressed || isRefreshButtonPressed) {
-            isSearchButtonPressed = false
-            isRefreshButtonPressed = false
-            searchTrack(searchText)
         } else {
-            tracksSearchDebounce(searchText)
-        }
+            if (isSearchButtonPressed || isRefreshButtonPressed) {
+                isSearchButtonPressed = false
+                isRefreshButtonPressed = false
+                if (latestSearchText != searchText) {
+                    searchTrack(searchText)
+                }
+            }
 
-        showSearchEditClearButton.postValue(searchText.isNotEmpty())
+            if (latestSearchText != searchText) {
+                buttonPressesDebounce = viewModelScope.launch {
+                    delay(SEARCH_DEBOUNCE_DELAY)
+                    searchTrack(searchText)
+                }
+            } else {
+                return
+            }
+            showSearchEditClearButton.postValue(searchText.isNotEmpty())
+        }
     }
 
     private fun searchTrack(searchText: String) {
-        latestFragmentState = null
-        renderState(
-            SearchFragmentState.Loading
-        )
-        this.latestSearchText = searchText
+        if (searchText.isNotEmpty()) {
 
-        viewModelScope.launch {
-            tracksInteractor
-                .searchTracks(searchText)
-                .collect { pair ->
-                    processResult(pair.first, pair.second)
-                }
+            latestFragmentState = null
+            latestSearchText = searchText
+
+            renderState(
+                SearchFragmentState.Loading
+            )
+
+            viewModelScope.launch {
+                tracksInteractor
+                    .searchTracks(searchText)
+                    .collect { pair ->
+                        processResult(pair.first, pair.second)
+                    }
+            }
         }
     }
 
