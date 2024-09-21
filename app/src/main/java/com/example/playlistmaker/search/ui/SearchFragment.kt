@@ -13,6 +13,8 @@ import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.ui.model.SearchFragmentState
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.utils.gone
+import com.example.playlistmaker.utils.show
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -161,70 +163,70 @@ class SearchFragment : Fragment() {
 
     // Состояние «загрузки»
     private fun showLoading() {
-        binding.trackListView.visibility = View.GONE
-        binding.placeholderImage.visibility = View.GONE
-        binding.placeholderMessage.visibility = View.GONE
-        binding.placeholderButton.visibility = View.GONE
-        binding.historyHint.visibility = View.GONE
-        binding.historyClearButton.visibility = View.GONE
-        binding.progressBar.visibility = View.VISIBLE
+        binding.trackListView.gone()
+        binding.placeholderImage.gone()
+        binding.placeholderMessage.gone()
+        binding.placeholderButton.gone()
+        binding.historyHint.gone()
+        binding.historyClearButton.gone()
+        binding.progressBar.show()
     }
     // Состояние «ошибки»
     private fun showErrorPlaceholder(errorMessage: String) {
-        binding.progressBar.visibility = View.GONE
-        binding.trackListView.visibility = View.GONE
-        binding.historyHint.visibility = View.GONE
-        binding.historyClearButton.visibility = View.GONE
+        binding.progressBar.gone()
+        binding.trackListView.gone()
+        binding.historyHint.gone()
+        binding.historyClearButton.gone()
         binding.placeholderImage.setImageResource(R.drawable.ic_something_went_wrong_placeholder)
-        binding.placeholderImage.visibility = View.VISIBLE
+        binding.placeholderImage.show()
         binding.placeholderMessage.text = errorMessage
-        binding.placeholderMessage.visibility = View.VISIBLE
-        binding.placeholderButton.visibility = View.VISIBLE
+        binding.placeholderMessage.show()
+        binding.placeholderButton.show()
     }
     // Состояние «пустого экрана»
     private fun showEmpty() {
-        binding.searchClearButton.visibility = View.GONE
-        binding.progressBar.visibility = View.GONE
-        binding.trackListView.visibility = View.GONE
-        binding.placeholderImage.visibility = View.GONE
-        binding.placeholderButton.visibility = View.GONE
-        binding.placeholderMessage.visibility = View.GONE
-        binding.historyHint.visibility = View.GONE
-        binding.historyClearButton.visibility = View.GONE
+        binding.searchClearButton.gone()
+        binding.progressBar.gone()
+        binding.trackListView.gone()
+        binding.placeholderImage.gone()
+        binding.placeholderButton.gone()
+        binding.placeholderMessage.gone()
+        binding.historyHint.gone()
+        binding.historyClearButton.gone()
     }
     // Состояние «пустого списка»
     private fun showEmptySearchResultPlaceholder(emptyMessage: String) {
-        binding.progressBar.visibility = View.GONE
-        binding.trackListView.visibility = View.GONE
-        binding.historyHint.visibility = View.GONE
-        binding.historyClearButton.visibility = View.GONE
+        binding.progressBar.gone()
+        binding.trackListView.gone()
+        binding.historyHint.gone()
+        binding.historyClearButton.gone()
         binding.placeholderImage.setImageResource(R.drawable.ic_nothing_found_placeholder)
-        binding.placeholderImage.visibility = View.VISIBLE
+        binding.placeholderImage.show()
         binding.placeholderMessage.text = emptyMessage
-        binding.placeholderMessage.visibility = View.VISIBLE
+        binding.placeholderMessage.show()
     }
     // Состояние «контента»
     private fun showContent(tracks: List<Track>?) {
-        binding.progressBar.visibility = View.GONE
-        binding.placeholderImage.visibility = View.GONE
-        binding.placeholderButton.visibility = View.GONE
-        binding.placeholderMessage.visibility = View.GONE
-        binding.historyHint.visibility = View.GONE
-        binding.historyClearButton.visibility = View.GONE
+        binding.progressBar.gone()
+        binding.placeholderImage.gone()
+        binding.placeholderButton.gone()
+        binding.placeholderMessage.gone()
+        binding.historyHint.gone()
+        binding.historyClearButton.gone()
         updateTrackListView(tracks)
-        binding.trackListView.visibility = View.VISIBLE
+        binding.trackListView.show()
     }
     // Состояние «истории»
     private fun showHistory(tracks: List<Track>?) {
-        binding.searchClearButton.visibility = View.GONE
-        binding.progressBar.visibility = View.GONE
-        binding.placeholderImage.visibility = View.GONE
-        binding.placeholderButton.visibility = View.GONE
-        binding.placeholderMessage.visibility = View.GONE
-        binding.historyHint.visibility = View.VISIBLE
-        binding.historyClearButton.visibility = View.VISIBLE
+        binding.searchClearButton.gone()
+        binding.progressBar.gone()
+        binding.placeholderImage.gone()
+        binding.placeholderButton.gone()
+        binding.placeholderMessage.gone()
+        binding.historyHint.show()
+        binding.historyClearButton.show()
         updateTrackListView(tracks)
-        binding.trackListView.visibility = View.VISIBLE
+        binding.trackListView.show()
     }
 
     private fun hideKeyboard(isVisible: Boolean) {
