@@ -1,6 +1,7 @@
 package com.example.playlistmaker.search.ui
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,7 +12,6 @@ import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.model.SearchFragmentState
 import com.example.playlistmaker.utils.SingleLiveEvent
-import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -26,6 +26,7 @@ class SearchViewModel(
 
     private var isSearchButtonPressed = false
     private var isRefreshButtonPressed = false
+    private var isClearSearchEditButtonPressed = false
 
     private var latestSearchText: String? = null
     private var latestFragmentState: SearchFragmentState? = null
@@ -60,10 +61,19 @@ class SearchViewModel(
         searchLiveData.postValue(state)
     }
 
-    fun onFocusChange(hasFocus: Boolean, hasSearchTextIsEmpty: Boolean) {
+    fun onFocusChange(hasFocus: Boolean) {
+
+        buttonPressesDebounce?.cancel()
         historyTracks = historyInteractor.loadTracks()
         HAS_FOCUS = hasFocus
-        HAS_SEARCH_TEXT_IS_EMPTY = hasSearchTextIsEmpty
+
+        if (isClearSearchEditButtonPressed) {
+            HAS_SEARCH_TEXT_IS_EMPTY = true
+            isSearchButtonPressed = false
+        } else {
+            HAS_SEARCH_TEXT_IS_EMPTY = latestSearchText.isNullOrEmpty()
+        }
+
         if ( HAS_FOCUS && HAS_SEARCH_TEXT_IS_EMPTY && historyTracks.size != HISTORY_MIN_SIZE) {
             latestFragmentState = SearchFragmentState.History(historyTracks)
             renderState(
@@ -73,8 +83,11 @@ class SearchViewModel(
     }
 
     fun onClearSearchButtonPress() {
+        buttonPressesDebounce?.cancel()
         clearSearchEdit.postValue(EMPTY_TEXT)
         latestSearchText = EMPTY_TEXT
+        isClearSearchEditButtonPressed = true
+        HAS_SEARCH_TEXT_IS_EMPTY = true
         historyTracks = historyInteractor.loadTracks()
 
         if (historyTracks.size > HISTORY_MIN_SIZE) {
@@ -110,6 +123,7 @@ class SearchViewModel(
     fun searchDebounce(searchText: String) {
 
         buttonPressesDebounce?.cancel()
+        showSearchEditClearButton.postValue(!searchText.isEmpty())
 
         if (searchText.isEmpty()) {
             latestSearchText = EMPTY_TEXT
@@ -140,7 +154,6 @@ class SearchViewModel(
             } else {
                 return
             }
-            showSearchEditClearButton.postValue(searchText.isNotEmpty())
         }
     }
 

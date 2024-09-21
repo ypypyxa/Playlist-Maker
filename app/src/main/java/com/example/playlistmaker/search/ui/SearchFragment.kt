@@ -70,7 +70,7 @@ class SearchFragment : Fragment() {
 
 // Проверка находится ли поле поиска в фокусе
         binding.searchEdit.setOnFocusChangeListener { _, hasFocus ->
-            searchViewModel.onFocusChange(hasFocus, searchText.isEmpty())
+            searchViewModel.onFocusChange(hasFocus)
         }
 
 // Нажатие на клавиатуре кнопки Search
