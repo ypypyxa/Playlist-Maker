@@ -6,11 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
-import com.example.playlistmaker.root.domain.model.Track
+import com.example.playlistmaker.common.domain.models.Track
 import com.example.playlistmaker.search.domain.api.HistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.ui.model.SearchFragmentState
-import com.example.playlistmaker.utils.SingleLiveEvent
+import com.example.playlistmaker.common.utils.SingleLiveEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

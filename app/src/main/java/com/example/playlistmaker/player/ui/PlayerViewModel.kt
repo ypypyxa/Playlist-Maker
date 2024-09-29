@@ -10,9 +10,9 @@ import com.example.playlistmaker.media.favorites.domain.db.FavoritesInteractor
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.player.ui.model.PlayerFragmentState
-import com.example.playlistmaker.root.domain.model.Track
+import com.example.playlistmaker.common.domain.models.Track
 import com.example.playlistmaker.search.domain.api.HistoryInteractor
-import com.example.playlistmaker.utils.SingleLiveEvent
+import com.example.playlistmaker.common.utils.SingleLiveEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

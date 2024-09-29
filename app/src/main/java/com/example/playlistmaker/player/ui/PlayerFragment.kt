@@ -14,7 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.player.ui.model.PlayerFragmentState
-import com.example.playlistmaker.root.domain.model.Track
+import com.example.playlistmaker.common.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -26,7 +26,7 @@ class PlayerFragment : Fragment() {
 
     private val playerViewModel by viewModel<PlayerViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentPlayerBinding.inflate(inflater, container, false)
         return binding.root
     }

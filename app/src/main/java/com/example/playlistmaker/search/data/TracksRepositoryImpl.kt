@@ -6,8 +6,8 @@ import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.Resource
 import com.example.playlistmaker.R
 import com.example.playlistmaker.media.favorites.data.db.FavoritesDatabase
-import com.example.playlistmaker.root.data.converters.TrackDbConvertor
-import com.example.playlistmaker.root.domain.model.Track
+import com.example.playlistmaker.common.data.converters.TrackDbConvertor
+import com.example.playlistmaker.common.domain.models.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -33,16 +33,16 @@ class TracksRepositoryImpl(
                 emit(
                     Resource.Success(
                         (response as TracksSearchResponse).results.map {
-                            val trackId = it.trackId.toLong()
-                            val trackName = it.trackName ?: ""
-                            val artistName = it.artistName ?: ""
-                            val trackTimeMillis = it.trackTimeMillis ?: ""
-                            val artworkUrl100 = it.artworkUrl100 ?: ""
-                            val collectionName = it.collectionName ?: ""
-                            val releaseDate = it.releaseDate ?: ""
-                            val primaryGenreName = it.primaryGenreName ?: ""
-                            val country = it.country ?: ""
-                            val previewUrl = it.previewUrl ?: ""
+                            val trackId = it.trackId
+                            val trackName = it.trackName
+                            val artistName = it.artistName
+                            val trackTimeMillis = it.trackTimeMillis
+                            val artworkUrl100 = it.artworkUrl100
+                            val collectionName = it.collectionName
+                            val releaseDate = it.releaseDate
+                            val primaryGenreName = it.primaryGenreName
+                            val country = it.country
+                            val previewUrl = it.previewUrl
                             val inFavorite = favoriteTracks.any { favoriteTrack -> favoriteTrack.trackId == trackId }
                             val addToFavoritesDate = favoriteTracks.firstOrNull { favoriteTrack -> favoriteTrack.trackId == trackId }?.addToFavoritesDate ?: 0
                             Track(

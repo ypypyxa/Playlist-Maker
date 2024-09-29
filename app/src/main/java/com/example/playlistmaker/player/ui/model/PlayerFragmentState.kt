@@ -1,6 +1,6 @@
 package com.example.playlistmaker.player.ui.model
 
-import com.example.playlistmaker.root.domain.model.Track
+import com.example.playlistmaker.common.domain.models.Track
 
 interface PlayerFragmentState {
 

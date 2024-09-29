@@ -12,9 +12,10 @@ import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.ui.model.SearchFragmentState
 import com.example.playlistmaker.R
-import com.example.playlistmaker.root.domain.model.Track
-import com.example.playlistmaker.utils.gone
-import com.example.playlistmaker.utils.show
+import com.example.playlistmaker.common.ui.adapters.TrackListAdapter
+import com.example.playlistmaker.common.domain.models.Track
+import com.example.playlistmaker.common.utils.gone
+import com.example.playlistmaker.common.utils.show
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,7 +42,7 @@ class SearchFragment : Fragment() {
 
     private val searchViewModel by viewModel<SearchViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }

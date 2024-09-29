@@ -1,7 +1,7 @@
-package com.example.playlistmaker.root.data.converters
+package com.example.playlistmaker.common.data.converters
 
-import com.example.playlistmaker.root.data.db.entity.TrackEntity
-import com.example.playlistmaker.root.domain.model.Track
+import com.example.playlistmaker.common.data.db.entity.TrackEntity
+import com.example.playlistmaker.common.domain.models.Track
 import com.example.playlistmaker.search.data.dto.TrackDto
 
 class TrackDbConvertor {
