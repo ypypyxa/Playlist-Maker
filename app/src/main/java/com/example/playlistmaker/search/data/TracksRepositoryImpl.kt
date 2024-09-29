@@ -7,51 +7,57 @@ import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.Resource
 import com.example.playlistmaker.R
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
     private val favorites: Favorites
 ) : TracksRepository {
 
-    override fun searchTracks(expression: String): Resource<List<Track>> {
+    override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
-        return when (response.resultCode) {
+        when (response.resultCode) {
             404 -> {
-                Resource.Error((R.string.nothing_found).toString())            }
+                emit(Resource.Error((R.string.nothing_found).toString()))            }
             -1 -> {
-                Resource.Error("Проверьте подключение к интернету")
+                emit(Resource.Error("Проверьте подключение к интернету"))
             }
             200 -> {
                 val favoriteTracks = favorites.getSavedFavorites()
 
-                Resource.Success((response as TracksSearchResponse).results.map {
-                    val trackId = it.trackId ?: ""
-                    val trackName = it.trackName ?: ""
-                    val artistName = it.artistName ?: ""
-                    val trackTimeMillis = it.trackTimeMillis ?: ""
-                    val artworkUrl100 = it.artworkUrl100 ?: ""
-                    val collectionName = it.collectionName ?: ""
-                    val releaseDate = it.releaseDate ?: ""
-                    val primaryGenreName = it.primaryGenreName ?: ""
-                    val country = it.country ?: ""
-                    val previewUrl = it.previewUrl ?: ""
-                    Track(
-                        trackId,
-                        trackName,
-                        artistName,
-                        trackTimeMillis,
-                        artworkUrl100,
-                        collectionName,
-                        releaseDate,
-                        primaryGenreName,
-                        country,
-                        previewUrl,
-                        inFavorite = favoriteTracks.contains(it.trackId)
+                emit(
+                    Resource.Success(
+                        (response as TracksSearchResponse).results.map {
+                            val trackId = it.trackId ?: ""
+                            val trackName = it.trackName ?: ""
+                            val artistName = it.artistName ?: ""
+                            val trackTimeMillis = it.trackTimeMillis ?: ""
+                            val artworkUrl100 = it.artworkUrl100 ?: ""
+                            val collectionName = it.collectionName ?: ""
+                            val releaseDate = it.releaseDate ?: ""
+                            val primaryGenreName = it.primaryGenreName ?: ""
+                            val country = it.country ?: ""
+                            val previewUrl = it.previewUrl ?: ""
+                            Track(
+                                trackId,
+                                trackName,
+                                artistName,
+                                trackTimeMillis,
+                                artworkUrl100,
+                                collectionName,
+                                releaseDate,
+                                primaryGenreName,
+                                country,
+                                previewUrl,
+                                inFavorite = favoriteTracks.contains(it.trackId)
+                            )
+                        }
                     )
-                } )
+                )
             }
             else -> {
-                Resource.Error("Ошибка сервера")
+                emit(Resource.Error("Ошибка сервера"))
             }
         }
     }

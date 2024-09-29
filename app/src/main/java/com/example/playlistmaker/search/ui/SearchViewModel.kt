@@ -1,18 +1,20 @@
 package com.example.playlistmaker.search.ui
 
 import android.app.Application
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.HistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.ui.model.SearchActivityState
+import com.example.playlistmaker.search.ui.model.SearchFragmentState
 import com.example.playlistmaker.utils.SingleLiveEvent
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
@@ -22,14 +24,17 @@ class SearchViewModel(
 
     private var historyTracks = ArrayList<Track>()
 
-    private val handler = Handler(Looper.getMainLooper())
     private var isSearchButtonPressed = false
     private var isRefreshButtonPressed = false
+    private var isClearSearchEditButtonPressed = false
 
     private var latestSearchText: String? = null
+    private var latestFragmentState: SearchFragmentState? = null
 
-    private val searchActivityLiveData = MutableLiveData<SearchActivityState>()
-    fun observeState(): LiveData<SearchActivityState> = searchActivityLiveData
+    private var buttonPressesDebounce: Job? = null
+
+    private val searchLiveData = MutableLiveData<SearchFragmentState>()
+    fun observeState(): LiveData<SearchFragmentState> = searchLiveData
 
     private val showToast = SingleLiveEvent<String>()
     fun observeToastState(): LiveData<String> = showToast
@@ -43,47 +48,65 @@ class SearchViewModel(
     private val hideKeyboard = SingleLiveEvent<Boolean>()
     fun observeHideKeyboardCommand(): LiveData<Boolean> = hideKeyboard
 
-    fun onDestroy() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+    fun onResume() {
+        if (latestFragmentState is SearchFragmentState.History) {
+            historyTracks = historyInteractor.loadTracks()
+            renderState(
+                SearchFragmentState.History(historyTracks)
+            )
+        }
     }
 
-    override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+    fun renderState(state: SearchFragmentState) {
+        searchLiveData.postValue(state)
     }
 
-    fun renderState(state: SearchActivityState) {
-        searchActivityLiveData.postValue(state)
-    }
+    fun onFocusChange(hasFocus: Boolean) {
 
-    fun onFocusChange(hasFocus: Boolean, hasSearchTextIsEmpty: Boolean) {
+        buttonPressesDebounce?.cancel()
         historyTracks = historyInteractor.loadTracks()
         HAS_FOCUS = hasFocus
-        HAS_SEARCH_TEXT_IS_EMPTY = hasSearchTextIsEmpty
+
+        if (isClearSearchEditButtonPressed) {
+            HAS_SEARCH_TEXT_IS_EMPTY = true
+            isSearchButtonPressed = false
+        } else {
+            HAS_SEARCH_TEXT_IS_EMPTY = latestSearchText.isNullOrEmpty()
+        }
+
         if ( HAS_FOCUS && HAS_SEARCH_TEXT_IS_EMPTY && historyTracks.size != HISTORY_MIN_SIZE) {
+            latestFragmentState = SearchFragmentState.History(historyTracks)
             renderState(
-               SearchActivityState.History(historyTracks)
+               SearchFragmentState.History(historyTracks)
             )
         }
     }
 
     fun onClearSearchButtonPress() {
+        buttonPressesDebounce?.cancel()
         clearSearchEdit.postValue(EMPTY_TEXT)
+        latestSearchText = EMPTY_TEXT
+        isClearSearchEditButtonPressed = true
+        HAS_SEARCH_TEXT_IS_EMPTY = true
         historyTracks = historyInteractor.loadTracks()
 
         if (historyTracks.size > HISTORY_MIN_SIZE) {
+            latestFragmentState = SearchFragmentState.History(historyTracks)
             renderState(
-                SearchActivityState.History(historyTracks)
+                SearchFragmentState.History(historyTracks)
             )
         } else {
+            latestFragmentState = null
             renderState(
-                SearchActivityState.EmptyView
+                SearchFragmentState.EmptyView
             )
         }
     }
 
     fun onClearHistoryButtonPress() {
+        latestFragmentState = null
         renderState(
-            SearchActivityState.EmptyView
+            SearchFragmentState.EmptyView
         )
         historyInteractor.clearTracks()
     }
@@ -98,101 +121,103 @@ class SearchViewModel(
     }
 
     fun searchDebounce(searchText: String) {
-        if (latestSearchText == searchText && !isRefreshButtonPressed) {
-            if (!latestSearchText.isNullOrEmpty()) {
-                showSearchEditClearButton.postValue(searchText.isNotEmpty())
-            }
-            isSearchButtonPressed = false
-            isRefreshButtonPressed = false
-            return
-        }
 
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        buttonPressesDebounce?.cancel()
+        showSearchEditClearButton.postValue(!searchText.isEmpty())
 
         if (searchText.isEmpty()) {
+            latestSearchText = EMPTY_TEXT
             if ( HAS_FOCUS && HAS_SEARCH_TEXT_IS_EMPTY && historyTracks.size != HISTORY_MIN_SIZE) {
-// если поле пустое, а история поиска не пустая - скрывается заглушка
-// и показывается история поиска
                 renderState(
-                    SearchActivityState.History(historyTracks)
+                    SearchFragmentState.History(historyTracks)
                 )
             } else {
-// если поле и история пустые - скрываются подсказки и список песен
                 renderState(
-                    SearchActivityState.EmptyView
+                    SearchFragmentState.EmptyView
                 )
             }
             isSearchButtonPressed = false
         } else {
-            val searchRunnable = Runnable { searchTrack(searchText) }
-
-            val postTime : Long?
-
             if (isSearchButtonPressed || isRefreshButtonPressed) {
-                postTime = SystemClock.uptimeMillis()
                 isSearchButtonPressed = false
                 isRefreshButtonPressed = false
-            } else {
-                postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+                if (latestSearchText != searchText) {
+                    searchTrack(searchText)
+                }
             }
 
-            handler.postAtTime(
-                searchRunnable,
-                SEARCH_REQUEST_TOKEN,
-                postTime,
-            )
+            if (latestSearchText != searchText) {
+                buttonPressesDebounce = viewModelScope.launch {
+                    delay(SEARCH_DEBOUNCE_DELAY)
+                    searchTrack(searchText)
+                }
+            } else {
+                return
+            }
         }
-
-        showSearchEditClearButton.postValue(searchText.isNotEmpty())
     }
 
     private fun searchTrack(searchText: String) {
-        renderState(
-            SearchActivityState.Loading
-        )
-        this.latestSearchText = searchText
+        if (searchText.isNotEmpty()) {
 
-        tracksInteractor.searchTracks(searchText, object : TracksInteractor.TracksConsumer {
-            override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                val tracks = ArrayList<Track>()
+            latestFragmentState = null
+            latestSearchText = searchText
 
-                if (foundTracks != null) {
-                    tracks.addAll(foundTracks)
-                }
-                when {
-                    errorMessage != null -> {
-                        showToast.postValue(errorMessage!!)
-                        when (errorMessage) {
-                            getApplication<Application>().getString(R.string.nothing_found) -> {
-                                renderState(
-                                    SearchActivityState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
-                                )
-                            }
-                            else -> {
-                                renderState(
-                                    SearchActivityState.Error(getApplication<Application>().getString(R.string.something_went_wrong))
-                                )
-                            }
-                        }
+            renderState(
+                SearchFragmentState.Loading
+            )
+
+            viewModelScope.launch {
+                tracksInteractor
+                    .searchTracks(searchText)
+                    .collect { pair ->
+                        processResult(pair.first, pair.second)
                     }
-                    tracks.isEmpty() -> {
+            }
+        }
+    }
+
+    private fun processResult(foundTracks: List<Track>?, errorMessage: String?) {
+        val tracks = ArrayList<Track>()
+
+        if (foundTracks != null) {
+            tracks.addAll(foundTracks)
+        }
+        when {
+            errorMessage != null -> {
+                showToast.postValue(errorMessage!!)
+                when (errorMessage) {
+                    getApplication<Application>().getString(R.string.nothing_found) -> {
+                        latestFragmentState = null
                         renderState(
-                            SearchActivityState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
+                            SearchFragmentState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
                         )
                     }
                     else -> {
+                        latestFragmentState = null
                         renderState(
-                            SearchActivityState.SearchResult(tracks)
+                            SearchFragmentState.Error(getApplication<Application>().getString(R.string.something_went_wrong))
                         )
                     }
                 }
             }
-        })
+            tracks.isEmpty() -> {
+                latestFragmentState = null
+                renderState(
+                    SearchFragmentState.EmptySearchResult(getApplication<Application>().getString(R.string.nothing_found))
+                )
+            }
+            else -> {
+                latestFragmentState = null
+                renderState(
+                    SearchFragmentState.SearchResult(tracks)
+                )
+            }
+        }
     }
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
         private const val HISTORY_MIN_SIZE = 0
         private const val EMPTY_TEXT = ""
         private var HAS_FOCUS = false
