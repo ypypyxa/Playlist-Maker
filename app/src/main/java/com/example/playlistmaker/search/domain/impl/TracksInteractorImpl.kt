@@ -1,8 +1,8 @@
 package com.example.playlistmaker.search.domain.impl
 
+import com.example.playlistmaker.root.domain.model.Track
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.api.TracksRepository
-import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -19,12 +19,5 @@ class TracksInteractorImpl(private val repository: TracksRepository) : TracksInt
                 is Resource.Error -> { Pair(null, result.message) }
             }
         }
-    }
-
-    override fun addToFavorites(track: Track) {
-        repository.addToFavorites(track)
-    }
-    override fun removeFromFavorites(track: Track) {
-        repository.removeFromFavorites(track)
     }
 }

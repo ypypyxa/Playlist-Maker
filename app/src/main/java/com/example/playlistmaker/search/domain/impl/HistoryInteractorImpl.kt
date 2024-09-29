@@ -1,8 +1,8 @@
 package com.example.playlistmaker.search.domain.impl
 
+import com.example.playlistmaker.root.domain.model.Track
 import com.example.playlistmaker.search.domain.api.HistoryInteractor
 import com.example.playlistmaker.search.domain.api.HistoryRepository
-import com.example.playlistmaker.search.domain.model.Track
 
 class HistoryInteractorImpl(private val historyRepository: HistoryRepository): HistoryInteractor {
     override fun saveTracks(tracks: ArrayList<Track>) {

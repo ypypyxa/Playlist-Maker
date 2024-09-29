@@ -12,7 +12,7 @@ import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.ui.model.SearchFragmentState
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.root.domain.model.Track
 import com.example.playlistmaker.utils.gone
 import com.example.playlistmaker.utils.show
 import kotlinx.coroutines.delay

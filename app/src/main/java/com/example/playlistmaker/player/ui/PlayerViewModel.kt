@@ -6,12 +6,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
+import com.example.playlistmaker.media.favorites.domain.db.FavoritesInteractor
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.player.ui.model.PlayerFragmentState
+import com.example.playlistmaker.root.domain.model.Track
 import com.example.playlistmaker.search.domain.api.HistoryInteractor
-import com.example.playlistmaker.search.domain.api.TracksInteractor
-import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.utils.SingleLiveEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -22,7 +22,7 @@ import java.util.Locale
 
 class PlayerViewModel(
     private val historyInteractor: HistoryInteractor,
-    private val tracksInteractor: TracksInteractor,
+    private val favoritesInteractor: FavoritesInteractor,
     private val mediaPlayer: MediaPlayerInteractor,
     private val application: Application
 ) : AndroidViewModel(application) {
@@ -138,11 +138,16 @@ class PlayerViewModel(
     fun toggleFavorite() {
         if (track.inFavorite) {
             track.inFavorite = false
-            tracksInteractor.removeFromFavorites(track)
+            track.addToFavoritesDate = System.currentTimeMillis()
+            viewModelScope.launch {
+                favoritesInteractor.removeFromFavorites(track)
+            }
             addInFavorite.postValue(false)
         } else {
             track.inFavorite = true
-            tracksInteractor.addToFavorites(track)
+            viewModelScope.launch {
+                favoritesInteractor.addToFavorites(track)
+            }
             addInFavorite.postValue(true)
         }
         historyListUpdate()

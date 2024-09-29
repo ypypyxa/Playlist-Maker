@@ -1,6 +1,9 @@
 package com.example.playlistmaker.di
 
 import android.content.Context.MODE_PRIVATE
+import com.example.playlistmaker.media.favorites.data.FavoritesRepositoryImpl
+import com.example.playlistmaker.media.favorites.domain.FavoritesRepository
+import com.example.playlistmaker.root.data.converters.TrackDbConvertor
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayerRepository
 import com.example.playlistmaker.search.data.HistoryRepositoryImpl
@@ -19,7 +22,7 @@ import org.koin.dsl.module
 val repositoryModule = module {
 
     single<TracksRepository> {
-        TracksRepositoryImpl(get(), get())
+        TracksRepositoryImpl(get(), get(), get())
     }
 
     factory<MediaPlayerRepository> {
@@ -36,5 +39,11 @@ val repositoryModule = module {
 
     single<SettingsRepository> {
         SettingsRepositoryImpl(androidContext().getSharedPreferences(SETTINGS, MODE_PRIVATE))
+    }
+
+    factory { TrackDbConvertor() }
+
+    single<FavoritesRepository> {
+        FavoritesRepositoryImpl(get(), get())
     }
 }

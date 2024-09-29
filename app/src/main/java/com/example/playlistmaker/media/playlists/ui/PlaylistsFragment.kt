@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media.ui.playlists
+package com.example.playlistmaker.media.playlists.ui
 
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -7,7 +7,9 @@ import android.os.Bundle
 
 class PlaylistsFragment : androidx.fragment.app.Fragment() {
 
-    private val playlistsViewModel: PlaylistsViewModel by viewModel { parametersOf(requireArguments().getString(PLAYLISTS)) }
+    private val playlistsViewModel: PlaylistsViewModel by viewModel { parametersOf(requireArguments().getString(
+        PLAYLISTS
+    )) }
 
     private lateinit var binding: FragmentPlaylistsBinding
 

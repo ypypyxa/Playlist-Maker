@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -42,23 +43,61 @@ android {
 
 dependencies {
 
-    //NavigationGraph
-    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
-    implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
-    implementation("androidx.fragment:fragment-ktx:1.5.6")
+    // Работа с базой данных (Database Handling):
+    // Room Compiler использует KAPT (Kotlin Annotation Processing Tool)
+    // для генерации кода на основе аннотаций, таких как @Entity, @Dao и @Database.
+    kapt(libs.androidx.room.compiler)
+    // Room Runtime — основная библиотека,
+    // необходимая для выполнения операций с базой данных во время работы приложения.
+    implementation(libs.androidx.room.runtime)
+    // Room KTX — набор Kotlin-расширений для Room, упрощающих использование API и делая код более идиоматичным для Kotlin.
+    implementation(libs.androidx.room.ktx)
 
-    implementation("io.insert-koin:koin-android:3.3.0")
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    // Навигация (Navigation)
+    // Kotlin-расширения для библиотеки навигации, упрощающие работу с фрагментами.
+    implementation(libs.androidx.navigation.fragment.ktx)
+    // Kotlin-расширения для навигации в пользовательском интерфейсе.
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    // Фрагменты (Fragments)
+    //Kotlin-расширения для работы с фрагментами, облегчающие использование API.
+    implementation(libs.androidx.fragment.ktx)
+
+    // Внедрение зависимостей (Dependency Injection)
+    // Koin — легковесный фреймворк для внедрения зависимостей в Kotlin/Android приложениях.
+    implementation(libs.koin.android)
+
+    // Базовые библиотеки AndroidX
+    // Kotlin-расширения для базовых классов Android, упрощающие разработку.
+    implementation(libs.androidx.core.ktx)
+    // Обеспечивает обратную совместимость компонентов интерфейса на старых версиях Android.
+    implementation(libs.androidx.appcompat)
+
+    // Компоненты пользовательского интерфейса (UI Components)
+    // Библиотека компонентов Material Design от Google.
+    implementation(libs.material)
+    // Лайаут для создания гибких и сложных интерфейсов.
+    implementation(libs.androidx.constraintlayout)
+
+    // Загрузка и обработка изображений (Image Loading and Processing)
+    // Библиотека для загрузки и кэширования изображений.
+    implementation(libs.glide)
+    // Компилятор для Glide, необходимый для генерации кода.
+    annotationProcessor(libs.compiler)
+
+    // Работа с сетью и данными (Networking and Data Handling)
+    // Клиент для HTTP-запросов, упрощающий работу с REST API.
+    implementation(libs.retrofit2.retrofit)
+    // Конвертер для Retrofit, использующий Gson для сериализации/десериализации JSON.
+    implementation(libs.converter.gson)
+    // Библиотека для работы с JSON, преобразование объектов Java в JSON и обратно.
+    implementation(libs.gson)
+
+    // Тестирование (Testing)
+    // JUnit 4 для написания модульных тестов.
+    testImplementation(libs.junit)
+    // Расширения JUnit для Android, поддержка инструментальных тестов.
+    androidTestImplementation(libs.androidx.junit)
+    // Espresso для автоматизированного UI-тестирования.
+    androidTestImplementation(libs.androidx.espresso.core)
 }

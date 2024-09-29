@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".media.ui.playlists.PlaylistsFragment">
+    tools:context=".media.playlists.ui.PlaylistsFragment">
 
     <Button android:id="@+id/btnPlaceholderButton"
         style="Widget.MaterialComponents.Button.UnelevatedButton"

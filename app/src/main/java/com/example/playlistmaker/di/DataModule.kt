@@ -1,7 +1,8 @@
 package com.example.playlistmaker.di
 
 import android.content.Context
-import com.example.playlistmaker.player.data.Favorites
+import androidx.room.Room
+import com.example.playlistmaker.media.favorites.data.db.FavoritesDatabase
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.network.MusicApi
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -31,11 +32,12 @@ val dataModule = module {
         RetrofitNetworkClient(get(), androidContext())
     }
 
-    single<Favorites> {
-        Favorites(androidContext().getSharedPreferences(Favorites.FAVORITES, Context.MODE_PRIVATE))
-    }
-
     single<ExternalNavigator> {
         ExternalNavigatorImpl(androidContext())
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), FavoritesDatabase::class.java, "favorites.db")
+            .build()
     }
 }

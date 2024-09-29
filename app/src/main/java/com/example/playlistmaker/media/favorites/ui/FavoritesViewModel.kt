@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media.ui.favorites
+package com.example.playlistmaker.media.favorites.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
