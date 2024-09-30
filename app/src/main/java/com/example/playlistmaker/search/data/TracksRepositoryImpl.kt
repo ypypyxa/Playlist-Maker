@@ -8,10 +8,10 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.media.favorites.data.db.FavoritesDatabase
 import com.example.playlistmaker.common.data.converters.TrackDbConvertor
 import com.example.playlistmaker.common.domain.models.Track
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.map
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
@@ -28,7 +28,11 @@ class TracksRepositoryImpl(
                 emit(Resource.Error("Проверьте подключение к интернету"))
             }
             200 -> {
-                val favoriteTracks = loadFavorites()
+                // Получаем избранные треки из DAO как Flow
+                val favoriteTracksFlow = favorites.favoritesDao().getTracks()
+                    .map { entities -> entities.map { trackDbConvertor.map(it) } }
+                // Собираем список избранных треков
+                val favoriteTracks = favoriteTracksFlow.first()
 
                 emit(
                     Resource.Success(
@@ -67,9 +71,5 @@ class TracksRepositoryImpl(
                 emit(Resource.Error("Ошибка сервера"))
             }
         }
-    }
-
-    private suspend fun loadFavorites(): List<Track> = withContext(Dispatchers.IO) {
-        favorites.favoritesDao().getTracks().map { track -> trackDbConvertor.map(track) }
     }
 }

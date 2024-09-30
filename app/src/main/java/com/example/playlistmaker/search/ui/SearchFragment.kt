@@ -30,7 +30,7 @@ class SearchFragment : Fragment() {
     private var searchText = ""
 
     private val trackListAdapter = TrackListAdapter { item ->
-// Нажатие на итем
+        // Нажатие на итем
         if (clickDebounce()) {
             // Навигируемся на следующий экран
             findNavController().navigate(

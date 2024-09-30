@@ -138,13 +138,13 @@ class PlayerViewModel(
     fun toggleFavorite() {
         if (track.inFavorite) {
             track.inFavorite = false
-            track.addToFavoritesDate = System.currentTimeMillis()
             viewModelScope.launch {
                 favoritesInteractor.removeFromFavorites(track)
             }
             addInFavorite.postValue(false)
         } else {
             track.inFavorite = true
+            track.addToFavoritesDate = System.currentTimeMillis()
             viewModelScope.launch {
                 favoritesInteractor.addToFavorites(track)
             }

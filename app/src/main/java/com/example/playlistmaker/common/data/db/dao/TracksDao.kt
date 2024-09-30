@@ -7,13 +7,14 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.playlistmaker.common.data.db.entity.TrackEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TracksDao {
 
     // Чтение
     @Query("SELECT * FROM favorites_table")
-    fun getTracks(): List<TrackEntity>
+    fun getTracks(): Flow<List<TrackEntity>>
     @Query("SELECT * FROM favorites_table WHERE track_id = :trackId")
     suspend fun getTrackById(trackId: Long): TrackEntity
     @Query("SELECT * FROM favorites_table WHERE track_name LIKE :search")
