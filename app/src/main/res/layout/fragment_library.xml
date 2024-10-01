@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/ActivityStyle"
-    tools:context=".media.ui.MediaFragment">
+    tools:context=".media.ui.LibraryFragment">
 
     <!-- ШАПКА -->
     <LinearLayout style="@style/HeadStyle"

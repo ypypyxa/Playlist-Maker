@@ -1,18 +1,19 @@
 package com.example.playlistmaker.player.ui
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
+import com.example.playlistmaker.media.favorites.domain.db.FavoritesInteractor
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.player.ui.model.PlayerFragmentState
+import com.example.playlistmaker.common.domain.models.Track
 import com.example.playlistmaker.search.domain.api.HistoryInteractor
-import com.example.playlistmaker.search.domain.api.TracksInteractor
-import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.utils.SingleLiveEvent
+import com.example.playlistmaker.common.utils.SingleLiveEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ import java.util.Locale
 
 class PlayerViewModel(
     private val historyInteractor: HistoryInteractor,
-    private val tracksInteractor: TracksInteractor,
+    private val favoritesInteractor: FavoritesInteractor,
     private val mediaPlayer: MediaPlayerInteractor,
     private val application: Application
 ) : AndroidViewModel(application) {
@@ -137,12 +138,22 @@ class PlayerViewModel(
 
     fun toggleFavorite() {
         if (track.inFavorite) {
-            track.inFavorite = false
-            tracksInteractor.removeFromFavorites(track)
+            track = track.copy(
+                inFavorite = false,
+                addToFavoritesDate = 0
+            )
+            viewModelScope.launch {
+                favoritesInteractor.removeFromFavorites(track)
+            }
             addInFavorite.postValue(false)
         } else {
-            track.inFavorite = true
-            tracksInteractor.addToFavorites(track)
+            track = track.copy(
+                inFavorite = true,
+                addToFavoritesDate = System.currentTimeMillis()
+            )
+            viewModelScope.launch {
+                favoritesInteractor.addToFavorites(track)
+            }
             addInFavorite.postValue(true)
         }
         historyListUpdate()

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.ui
+package com.example.playlistmaker.common.ui.adapters
 
 import android.content.Context
 import android.util.TypedValue
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.common.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
