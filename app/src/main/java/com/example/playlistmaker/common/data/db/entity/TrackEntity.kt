@@ -27,7 +27,7 @@ data class TrackEntity(
     @ColumnInfo(name = "preview_url")               // Адрес файла трека
     val previewUrl: String,
     @ColumnInfo(name = "favorite")                  // Добавлен ли трек в избранное
-    var inFavorite: Boolean,
+    val inFavorite: Boolean,
     @ColumnInfo(name = "add_date")                  // Дата добавления трека в избранное
-    var addToFavoritesDate: Long
+    val addToFavoritesDate: Long
 )

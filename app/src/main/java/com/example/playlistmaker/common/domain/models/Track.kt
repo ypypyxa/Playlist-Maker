@@ -13,6 +13,6 @@ data class Track(
     val primaryGenreName: String,   // Жанр
     val country: String,            // Страна исполнителя
     val previewUrl: String,         // Адрес файла трека
-    var inFavorite: Boolean,        // Добавлен ли трек в избранное
-    var addToFavoritesDate: Long    // Дата добавления трека в избранное
+    val inFavorite: Boolean,        // Добавлен ли трек в избранное
+    val addToFavoritesDate: Long    // Дата добавления трека в избранное
     ) : Serializable

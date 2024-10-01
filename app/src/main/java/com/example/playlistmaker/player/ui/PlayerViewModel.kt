@@ -1,6 +1,7 @@
 package com.example.playlistmaker.player.ui
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -137,14 +138,19 @@ class PlayerViewModel(
 
     fun toggleFavorite() {
         if (track.inFavorite) {
-            track.inFavorite = false
+            track = track.copy(
+                inFavorite = false,
+                addToFavoritesDate = 0
+            )
             viewModelScope.launch {
                 favoritesInteractor.removeFromFavorites(track)
             }
             addInFavorite.postValue(false)
         } else {
-            track.inFavorite = true
-            track.addToFavoritesDate = System.currentTimeMillis()
+            track = track.copy(
+                inFavorite = true,
+                addToFavoritesDate = System.currentTimeMillis()
+            )
             viewModelScope.launch {
                 favoritesInteractor.addToFavorites(track)
             }
