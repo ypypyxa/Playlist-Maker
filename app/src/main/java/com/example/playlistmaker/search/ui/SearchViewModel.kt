@@ -119,6 +119,10 @@ class SearchViewModel(
         isRefreshButtonPressed = true
     }
 
+    fun historyListUpdate(track: Track) {
+        historyInteractor.updateHistoryList(track)
+    }
+
     fun searchDebounce(searchText: String) {
 
         buttonPressesDebounce?.cancel()

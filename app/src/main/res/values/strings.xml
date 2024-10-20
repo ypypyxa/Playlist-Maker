@@ -40,4 +40,13 @@
     <string name="empty_playlists">Вы не создали\nни одного плейлиста</string>
     <string name="favorites_tracks">Избранные треки</string>
     <string name="playlists">Плейлисты</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="playlist_name">Название*</string>
+    <string name="playlist_description">Описание</string>
+    <string name="create">Создать</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="cancel_creating_playlist">Вы хотите отменить создание плейлиста?</string>
+    <string name="unsaved_changes_will_be_lost">Все несохраненные данные будут потеряны</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
 </resources>

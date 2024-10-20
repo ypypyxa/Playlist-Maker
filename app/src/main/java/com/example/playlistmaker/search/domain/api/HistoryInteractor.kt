@@ -6,4 +6,5 @@ interface HistoryInteractor {
     fun saveTracks(tracks: ArrayList<Track>)
     fun loadTracks(): ArrayList<Track>
     fun clearTracks()
+    fun updateHistoryList(track: Track)
 }

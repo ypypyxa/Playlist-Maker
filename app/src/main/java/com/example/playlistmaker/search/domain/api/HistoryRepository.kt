@@ -6,4 +6,5 @@ interface HistoryRepository {
     fun saveTracks(trackList: ArrayList<Track>)
     fun loadTrack(): ArrayList<Track>
     fun clearHistory()
+    fun updateHistoryList(track: Track)
 }

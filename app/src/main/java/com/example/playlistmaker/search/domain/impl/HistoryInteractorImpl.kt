@@ -14,4 +14,7 @@ class HistoryInteractorImpl(private val historyRepository: HistoryRepository): H
     override fun clearTracks() {
         historyRepository.clearHistory()
     }
+    override fun updateHistoryList(track: Track) {
+        historyRepository.updateHistoryList(track)
+    }
 }

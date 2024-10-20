@@ -14,7 +14,6 @@ class FavoritesViewModel(
 ) : ViewModel() {
 
     private val stateLiveData = MutableLiveData<FavoritesFragmentState>()
-
     fun observeState(): LiveData<FavoritesFragmentState> = stateLiveData
 
     fun fillData() {

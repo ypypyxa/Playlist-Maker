@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".media.playlists.ui.PlaylistsFragment">
 
-    <Button android:id="@+id/btnPlaceholderButton"
+    <Button android:id="@+id/createPlaylistButton"
         style="Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,22 +23,42 @@
         app:cornerRadius="54dp"
         android:visibility="visible"/>
 
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="46dp"
-        android:src="@drawable/ic_nothing_found_placeholder" />
-
-    <TextView
+    <FrameLayout
+        android:id="@+id/playlistIsEmptyPlaceholder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:text="@string/empty_playlists"
-        android:textColor="?attr/colorOnPrimary"
-        android:fontFamily="@font/ys_display_medium"
-        android:textSize="19sp"/>
+        android:layout_marginTop="46dp">
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="46dp"
+            android:layout_marginBottom="62dp"
+            android:src="@drawable/ic_nothing_found_placeholder" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:text="@string/empty_playlists"
+            android:textColor="?attr/colorOnPrimary"
+            android:fontFamily="@font/ys_display_medium"
+            android:textSize="19sp"/>
+    </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlistRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
+        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:listitem="@layout/playlist_item"
+        tools:itemCount="8"
+        tools:spanCount="2" />
 
 </LinearLayout>

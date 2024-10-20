@@ -4,6 +4,9 @@ import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import android.os.Bundle
+import android.view.View
+import androidx.navigation.findNavController
+import com.example.playlistmaker.R
 
 class PlaylistsFragment : androidx.fragment.app.Fragment() {
 
@@ -17,6 +20,15 @@ class PlaylistsFragment : androidx.fragment.app.Fragment() {
                               savedInstanceState: android.os.Bundle?) : android.view.View? {
         binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.createPlaylistButton.setOnClickListener {
+            view.findNavController()
+                .navigate(R.id.action_libraryFragment_to_createPlaylistFragment)
+        }
     }
 
     companion object {

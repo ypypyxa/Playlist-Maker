@@ -69,9 +69,6 @@ class PlayerViewModel(
     fun onCreate(receivedTrack: Track) {
         this.track = receivedTrack
 
-// Лучшего места что бы сохранить трек в историю поиска я пока не нашел...
-        historyListUpdate()
-
         artworkUrl512 = track.artworkUrl100.replaceAfterLast(DELIMITER, "$BIG_SIZE.jpg")
 
         albumGroupIsVisible = track.collectionName.isNotEmpty()
@@ -111,27 +108,6 @@ class PlayerViewModel(
         stopPlayer()
     }
 
-    private fun historyListUpdate() {
-        val historyTracks = historyInteractor.loadTracks()
-        var index: Int? = null
-
-        if (historyTracks.isEmpty()) {
-            historyTracks.add(0, track)
-        } else {
-            for (i in 0 .. historyTracks.size-1) {
-                if (historyTracks[i].trackId == track.trackId) {
-                    index = i
-                }
-            }
-            if (index != null) { historyTracks.remove(historyTracks[index]) }
-            historyTracks.add(0, track)
-        }
-        if (historyTracks.size > HISTORY_MAX_SIZE) {
-            historyTracks.removeAt(HISTORY_MAX_SIZE)
-        }
-        historyInteractor.saveTracks(historyTracks)
-    }
-
     private fun renderState(state: PlayerFragmentState) {
         playerLiveData.postValue(state)
     }
@@ -156,7 +132,7 @@ class PlayerViewModel(
             }
             addInFavorite.postValue(true)
         }
-        historyListUpdate()
+        historyInteractor.updateHistoryList(track)
     }
 
     fun playbackControl() {
@@ -230,6 +206,5 @@ class PlayerViewModel(
         private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         private const val DELIMITER = '/'
         private const val DELAY = 300L
-        private const val HISTORY_MAX_SIZE = 10
     }
 }

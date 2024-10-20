@@ -35,4 +35,13 @@
     <string name="favorites_tracks">Favorites tracks</string>
     <string name="playlists">Playlists</string>
     <string name="check_connection">Check your internet connection</string>
+    <string name="new_playlist">New Playlist</string>
+    <string name="playlist_name">Title</string>
+    <string name="playlist_description">Description</string>
+    <string name="create">Create</string>
+    <string name="add_to_playlist">Add to playlist</string>
+    <string name="cancel_creating_playlist">Do you want to cancel the playlist creation?</string>
+    <string name="unsaved_changes_will_be_lost">All unsaved changes will be lost</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 </resources>
