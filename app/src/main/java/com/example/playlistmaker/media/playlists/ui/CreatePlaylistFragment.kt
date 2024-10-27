@@ -1,6 +1,12 @@
 package com.example.playlistmaker.media.playlists.ui
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -10,6 +16,7 @@ import android.widget.ImageButton
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -35,6 +42,7 @@ class CreatePlaylistFragment : androidx.fragment.app.Fragment() {
     private lateinit var playlistDescriptionEditText: TextInputEditText
     private lateinit var playlistImage: ShapeableImageView
     private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,13 +81,26 @@ class CreatePlaylistFragment : androidx.fragment.app.Fragment() {
                 viewModel.setPlaylistUri(uri)
             }
         }
+
+        // Инициализация запроса разрешений
+        requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Разрешение предоставлено, запускаем выбор изображения
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            } else {
+                // Разрешение отклонено
+                showPermissionDeniedDialog()
+            }
+        }
     }
 
     private fun setupListeners() {
         updateDescriptionImeOptions()
 
         playlistImage.setOnClickListener {
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            requestPhotoPermission()
         }
 
         playlistNameEditText.addTextChangedListener(object : TextWatcher {
@@ -114,6 +135,54 @@ class CreatePlaylistFragment : androidx.fragment.app.Fragment() {
                 findNavController().popBackStack()
             }
         }
+    }
+
+    private fun requestPhotoPermission() {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
+        when {
+            ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED -> {
+                // Разрешение уже предоставлено
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }
+            shouldShowRequestPermissionRationale(permission) -> {
+                // Показать объяснение необходимости разрешения
+                showPermissionRationale(permission)
+            }
+            else -> {
+                // Запросить разрешение
+                requestPermissionLauncher.launch(permission)
+            }
+        }
+    }
+
+    private fun showPermissionRationale(permission: String) {
+        MaterialAlertDialogBuilder(requireContext(), R.style.alertStyle)
+            .setTitle("Требуется разрешение")
+            .setMessage("Для выбора изображения необходимо предоставить доступ к фотографиям.")
+            .setPositiveButton("Разрешить") { _, _ ->
+                requestPermissionLauncher.launch(permission)
+            }
+            .setNegativeButton("Отмена", null)
+            .show()
+    }
+
+    private fun showPermissionDeniedDialog() {
+        MaterialAlertDialogBuilder(requireContext(), R.style.alertStyle)
+            .setTitle("Разрешение отклонено")
+            .setMessage("Вы можете предоставить доступ к фотографиям в настройках приложения.")
+            .setPositiveButton("Открыть настройки") { _, _ ->
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                val uri = Uri.fromParts("package", requireContext().packageName, null)
+                intent.data = uri
+                startActivity(intent)
+            }
+            .setNegativeButton("Отмена", null)
+            .show()
     }
 
     fun dialog() {
