@@ -1,13 +1,12 @@
 package com.example.playlistmaker.player.ui
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
-import com.example.playlistmaker.media.favorites.domain.db.FavoritesInteractor
+import com.example.playlistmaker.media.favorites.domain.api.FavoritesInteractor
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.player.ui.model.PlayerFragmentState

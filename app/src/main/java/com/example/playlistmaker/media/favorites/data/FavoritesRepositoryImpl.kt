@@ -1,9 +1,9 @@
 package com.example.playlistmaker.media.favorites.data
 
 import com.example.playlistmaker.common.data.converters.TrackDbConvertor
-import com.example.playlistmaker.media.favorites.data.db.FavoritesDatabase
+import com.example.playlistmaker.common.data.db.database.FavoritesDatabase
 import com.example.playlistmaker.common.data.db.entity.TrackEntity
-import com.example.playlistmaker.media.favorites.domain.FavoritesRepository
+import com.example.playlistmaker.media.favorites.domain.api.FavoritesRepository
 import com.example.playlistmaker.common.domain.models.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +29,7 @@ class FavoritesRepositoryImpl (
         favoritesDatabase.favoritesDao().deleteTrackEntity(trackDbConvertor.convert(track))
     }
 
-        private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
-            return tracks.map { track -> trackDbConvertor.map(track) }
-        }
+    private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
+        return tracks.map { track -> trackDbConvertor.map(track) }
+    }
 }

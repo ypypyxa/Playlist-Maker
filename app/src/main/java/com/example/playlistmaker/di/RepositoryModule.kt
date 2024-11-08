@@ -1,9 +1,12 @@
 package com.example.playlistmaker.di
 
 import android.content.Context.MODE_PRIVATE
+import com.example.playlistmaker.common.data.converters.PlaylistDbConverter
 import com.example.playlistmaker.media.favorites.data.FavoritesRepositoryImpl
-import com.example.playlistmaker.media.favorites.domain.FavoritesRepository
+import com.example.playlistmaker.media.favorites.domain.api.FavoritesRepository
 import com.example.playlistmaker.common.data.converters.TrackDbConvertor
+import com.example.playlistmaker.media.playlists.data.PlaylistRepositoryImpl
+import com.example.playlistmaker.media.playlists.domain.api.PlaylistsRepository
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayerRepository
 import com.example.playlistmaker.search.data.HistoryRepositoryImpl
@@ -42,8 +45,12 @@ val repositoryModule = module {
     }
 
     factory { TrackDbConvertor() }
-
     single<FavoritesRepository> {
         FavoritesRepositoryImpl(get(), get())
+    }
+
+    factory { PlaylistDbConverter() }
+    single<PlaylistsRepository> {
+        PlaylistRepositoryImpl(get(), get())
     }
 }

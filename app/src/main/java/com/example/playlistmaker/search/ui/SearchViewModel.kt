@@ -107,7 +107,7 @@ class SearchViewModel(
         renderState(
             SearchFragmentState.EmptyView
         )
-        historyInteractor.clearTracks()
+        historyInteractor.clearHistory()
     }
 
     fun onSearchButtonPress() {
