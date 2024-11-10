@@ -40,8 +40,13 @@
     <string name="playlist_description">Description</string>
     <string name="create">Create</string>
     <string name="add_to_playlist">Add to playlist</string>
-    <string name="cancel_creating_playlist">Do you want to cancel the playlist creation?</string>
+    <string name="cancel_creating_playlist">Do you want to end the playlist creation?</string>
     <string name="unsaved_changes_will_be_lost">All unsaved changes will be lost</string>
-    <string name="no">No</string>
-    <string name="yes">Yes</string>
+    <string name="playlist">The playlist</string>
+    <string name="created">has been created</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="permission_denied_message">You can grant access to photos in the app settings.</string>
+    <string name="open_settings">Open settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="end">End</string>
 </resources>

@@ -2,22 +2,25 @@ package com.example.playlistmaker.media.playlists.ui
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
+import android.text.InputType.TYPE_CLASS_TEXT
+import android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 import android.text.TextWatcher
+import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+import android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
@@ -28,11 +31,13 @@ import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
-class CreatePlaylistFragment : androidx.fragment.app.Fragment() {
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
+class CreatePlaylistFragment : Fragment() {
+
+    private val viewModel by viewModel<CreatePlaylistViewModel>()
 
     private lateinit var binding: FragmentCreatePlaylistBinding
-
-    private val viewModel: CreatePlaylistViewModel by viewModels()
 
     private lateinit var backButton: ImageButton
     private lateinit var createButton: MaterialButton
@@ -61,10 +66,10 @@ class CreatePlaylistFragment : androidx.fragment.app.Fragment() {
         playlistNameEditText = playlistNameInputLayout.editText as TextInputEditText
         playlistDescriptionEditText = descriptionInputLayout.editText as TextInputEditText
 
-        playlistNameEditText.imeOptions = android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
-        playlistNameEditText.setRawInputType(android.text.InputType.TYPE_CLASS_TEXT)
-        playlistDescriptionEditText.imeOptions = android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
-        playlistDescriptionEditText.setRawInputType(android.text.InputType.TYPE_CLASS_TEXT)
+        playlistNameEditText.imeOptions = IME_ACTION_NEXT
+        playlistNameEditText.setRawInputType(TYPE_CLASS_TEXT or TYPE_TEXT_FLAG_CAP_SENTENCES)
+        playlistDescriptionEditText.imeOptions = IME_ACTION_NEXT
+        playlistDescriptionEditText.setRawInputType(TYPE_CLASS_TEXT or TYPE_TEXT_FLAG_CAP_SENTENCES)
 
         setupListeners()
         observeViewModel()
@@ -125,11 +130,19 @@ class CreatePlaylistFragment : androidx.fragment.app.Fragment() {
         })
 
         createButton.setOnClickListener {
-            viewModel.isEdited()
+            viewModel.createNewPlaylist()
+            Toast.makeText(
+                requireContext(),
+                "${requireContext().getString(R.string.playlist)}" +
+                    " ${playlistNameEditText.text}" +
+                    " ${requireContext().getString(R.string.created)}.",
+                Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
         }
 
         backButton.setOnClickListener {
             if (viewModel.isEdited()) {
+                val flag = viewModel.isEdited()
                 dialog()
             } else {
                 findNavController().popBackStack()
@@ -143,45 +156,20 @@ class CreatePlaylistFragment : androidx.fragment.app.Fragment() {
         } else {
             Manifest.permission.READ_EXTERNAL_STORAGE
         }
-
-        when {
-            ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED -> {
-                // Разрешение уже предоставлено
-                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }
-            shouldShowRequestPermissionRationale(permission) -> {
-                // Показать объяснение необходимости разрешения
-                showPermissionRationale(permission)
-            }
-            else -> {
-                // Запросить разрешение
-                requestPermissionLauncher.launch(permission)
-            }
-        }
-    }
-
-    private fun showPermissionRationale(permission: String) {
-        MaterialAlertDialogBuilder(requireContext(), R.style.alertStyle)
-            .setTitle("Требуется разрешение")
-            .setMessage("Для выбора изображения необходимо предоставить доступ к фотографиям.")
-            .setPositiveButton("Разрешить") { _, _ ->
-                requestPermissionLauncher.launch(permission)
-            }
-            .setNegativeButton("Отмена", null)
-            .show()
+        requestPermissionLauncher.launch(permission)
     }
 
     private fun showPermissionDeniedDialog() {
         MaterialAlertDialogBuilder(requireContext(), R.style.alertStyle)
-            .setTitle("Разрешение отклонено")
-            .setMessage("Вы можете предоставить доступ к фотографиям в настройках приложения.")
-            .setPositiveButton("Открыть настройки") { _, _ ->
+            .setTitle(requireContext().getString(R.string.permission_denied))
+            .setMessage(requireContext().getString(R.string.permission_denied_message))
+            .setPositiveButton(requireContext().getString(R.string.open_settings)) { _, _ ->
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 val uri = Uri.fromParts("package", requireContext().packageName, null)
                 intent.data = uri
                 startActivity(intent)
             }
-            .setNegativeButton("Отмена", null)
+            .setNegativeButton(requireContext().getString(R.string.cancel), null)
             .show()
     }
 
@@ -189,16 +177,16 @@ class CreatePlaylistFragment : androidx.fragment.app.Fragment() {
         MaterialAlertDialogBuilder(requireContext(), R.style.alertStyle)
             .setTitle(requireContext().getString(R.string.cancel_creating_playlist))
             .setMessage(requireContext().getString(R.string.unsaved_changes_will_be_lost))
-            .setNegativeButton(requireContext().getString(R.string.no)) { _, _ -> }
-            .setPositiveButton(requireContext().getString(R.string.yes)) { _, _ -> findNavController().popBackStack() }
+            .setNegativeButton(requireContext().getString(R.string.cancel)) { _, _ -> }
+            .setPositiveButton(requireContext().getString(R.string.end)) { _, _ -> findNavController().popBackStack() }
             .show()
     }
 
     private fun updateDescriptionImeOptions() {
         playlistDescriptionEditText.imeOptions = if (playlistNameEditText.text.isNullOrBlank()) {
-            android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            IME_ACTION_NEXT
         } else {
-            android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+            IME_ACTION_DONE
         }
     }
 

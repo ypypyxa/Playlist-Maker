@@ -9,9 +9,7 @@ import com.example.playlistmaker.media.favorites.domain.api.FavoritesInteractor
 import com.example.playlistmaker.media.favorites.ui.models.FavoritesFragmentState
 import kotlinx.coroutines.launch
 
-class FavoritesViewModel(
-    private val favoritesInteractor: FavoritesInteractor
-) : ViewModel() {
+class FavoritesViewModel(private val favoritesInteractor: FavoritesInteractor) : ViewModel() {
 
     private val stateLiveData = MutableLiveData<FavoritesFragmentState>()
     fun observeState(): LiveData<FavoritesFragmentState> = stateLiveData

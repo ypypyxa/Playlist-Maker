@@ -1,17 +1,25 @@
 package com.example.playlistmaker.common.data.converters
 
+import androidx.core.net.toUri
 import com.example.playlistmaker.common.data.db.entity.PlaylistEntity
 import com.example.playlistmaker.common.domain.models.Playlist
+import com.example.playlistmaker.common.domain.models.Track
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class PlaylistDbConverter {
-    fun convert(playlist: PlaylistEntity): Playlist {
+
+    private val tracksGson = Gson()
+
+    fun convert(playlistEntity: PlaylistEntity): Playlist {
+        val type = object : TypeToken<List<Track>>() {}.type
         return Playlist(
-            playlist.playlistId,
-            playlist.playlistName,
-            playlist.playlistDescription,
-            playlist.artworkUri,
-            playlist.tracks,
-            playlist.tracksCount
+            playlistEntity.playlistId,
+            playlistEntity.playlistName,
+            playlistEntity.playlistDescription,
+            playlistEntity.artworkUri.toUri(),
+            tracksGson.fromJson(playlistEntity.tracks, type),
+            playlistEntity.tracksCount
         )
     }
 
@@ -20,8 +28,8 @@ class PlaylistDbConverter {
             playlist.playlistId,
             playlist.playlistName,
             playlist.playlistDescription,
-            playlist.artworkUri,
-            playlist.tracks,
+            playlist.artworkUri.toString(),
+            tracksGson.toJson(playlist.tracks),
             playlist.tracksCount
         )
     }

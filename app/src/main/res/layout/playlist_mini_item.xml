@@ -10,7 +10,7 @@
     android:foreground="?attr/selectableItemBackground" >
 
     <ImageView
-        android:id="@+id/playlistImage"
+        android:id="@+id/playlistImageMini"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_gravity="center"
@@ -27,7 +27,7 @@
         android:paddingHorizontal="8dp">
 
         <TextView style="@style/nameFieldOnItemsPrimaryStyle"
-            android:id="@+id/playlistName"
+            android:id="@+id/playlistNameMini"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:textColor="?attr/colorOnPrimary"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content">
 
             <TextView style="@style/descriptionOnItemsSecondaryStyle"
-                android:id="@+id/tvArtistName"
+                android:id="@+id/playlistDescriptionMini"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

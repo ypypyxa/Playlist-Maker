@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="8dp" >
+    android:paddingHorizontal="8dp"
+    android:paddingBottom="16dp">
 
     <ImageView
-        android:id="@+id/playlist_image_big_card"
+        android:id="@+id/playlistImage"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:background="@drawable/playlist_image_background"
@@ -18,19 +19,19 @@
         tools:src="@drawable/ic_placeholder_45x45"/>
 
     <TextView
-        android:id="@+id/playlist_name_big_card"
+        android:id="@+id/playlistName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playlist_image_big_card"
+        app:layout_constraintTop_toBottomOf="@+id/playlistImage"
         tools:text="@string/playlist_name" />
 
     <TextView
-        android:id="@+id/playlist_tracks_quantity_big_card"
+        android:id="@+id/playlistDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@+id/playlist_name_big_card"
-        app:layout_constraintTop_toBottomOf="@+id/playlist_name_big_card"
+        app:layout_constraintStart_toStartOf="@+id/playlistName"
+        app:layout_constraintTop_toBottomOf="@+id/playlistName"
         tools:text="@string/playlist_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

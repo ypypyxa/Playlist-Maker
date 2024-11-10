@@ -12,14 +12,14 @@ import kotlinx.coroutines.flow.map
 
 class FavoritesRepositoryImpl (
     private val favoritesDatabase: FavoritesDatabase,
-    private val trackDbConvertor: TrackDbConvertor,
-    ) : FavoritesRepository {
-        override fun favoritesTracks(): Flow<List<Track>> =
-            favoritesDatabase.favoritesDao().getTracks()
-                .map { entites ->
-                    entites.map { entity -> trackDbConvertor.map(entity) }
-                }
-                .flowOn(Dispatchers.IO)
+    private val trackDbConvertor: TrackDbConvertor) : FavoritesRepository {
+
+    override fun favoritesTracks(): Flow<List<Track>> =
+        favoritesDatabase.favoritesDao().getTracks()
+            .map { entites ->
+                entites.map { entity -> trackDbConvertor.map(entity) }
+            }
+            .flowOn(Dispatchers.IO)
 
     override suspend fun addToFavorites(track: Track) {
         favoritesDatabase.favoritesDao().insertNewTrack(trackDbConvertor.convert(track))
