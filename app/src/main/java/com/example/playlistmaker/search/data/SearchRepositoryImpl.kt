@@ -2,7 +2,7 @@ package com.example.playlistmaker.search.data
 
 import com.example.playlistmaker.search.data.dto.TracksSearchRequest
 import com.example.playlistmaker.search.data.dto.TracksSearchResponse
-import com.example.playlistmaker.search.domain.api.SearchRepository
+import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.Resource
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.data.db.database.FavoritesDatabase
@@ -17,7 +17,7 @@ class SearchRepositoryImpl(
     private val networkClient: NetworkClient,
     private val favorites: FavoritesDatabase,
     private val trackDbConvertor: TrackDbConvertor
-) : SearchRepository {
+) : TracksRepository {
 
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(TracksSearchRequest(expression))

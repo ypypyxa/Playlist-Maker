@@ -13,7 +13,7 @@ import com.example.playlistmaker.common.data.HistoryRepositoryImpl
 import com.example.playlistmaker.common.data.HistoryRepositoryImpl.Companion.HISTORY
 import com.example.playlistmaker.search.data.SearchRepositoryImpl
 import com.example.playlistmaker.common.domain.api.HistoryRepository
-import com.example.playlistmaker.search.domain.api.SearchRepository
+import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.data.SharingRepositoryImpl
 import com.example.playlistmaker.settings.domain.api.SettingsRepository
@@ -24,7 +24,7 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
 
-    single<SearchRepository> {
+    single<TracksRepository> {
         SearchRepositoryImpl(get(), get(), get())
     }
 

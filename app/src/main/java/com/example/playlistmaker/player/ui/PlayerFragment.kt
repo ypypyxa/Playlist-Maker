@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.common.domain.models.Playlist
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.player.ui.model.PlayerFragmentState
 import com.example.playlistmaker.common.domain.models.Track
@@ -155,6 +154,7 @@ class PlayerFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         isClickAllowed = true
+        playerViewModel.onResume()
     }
 
     override fun onDestroy() {
@@ -265,12 +265,6 @@ class PlayerFragment : Fragment() {
         showReleaseGroup(releaseGroupIsVisible)
         showTrackTimeGroup(trackTimeGroupIsVisible)
         enablePlayPause(true)
-    }
-
-    private fun showPlaylists(playlists: List<Playlist>) {
-        adapter.playlists.addAll(playlists)
-        adapter.notifyDataSetChanged()
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     private fun setTrackName(trackName: String) {

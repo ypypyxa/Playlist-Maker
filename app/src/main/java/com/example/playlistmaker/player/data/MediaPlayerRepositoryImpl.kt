@@ -58,6 +58,15 @@ class MediaPlayerRepositoryImpl : MediaPlayerRepository {
     override fun getPlayerState(): PlayerState {
         return playerState
     }
+
+    override fun getCurrentPositionMillis(): Int {
+        return mediaPlayer?.currentPosition ?: 0
+    }
+
+    override fun seekTo(position: Int) {
+        mediaPlayer?.seekTo(position)
+    }
+
     companion object {
         private const val TIME_FORMAT = "m:ss"
     }

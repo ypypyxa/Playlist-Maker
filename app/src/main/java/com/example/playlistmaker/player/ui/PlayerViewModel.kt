@@ -40,6 +40,8 @@ class PlayerViewModel(
 
     private var timerJob: Job? = null
 
+    private var currentPosition: Int = 0
+
     private val playerLiveData = MutableLiveData<PlayerFragmentState>()
     fun observeState(): LiveData<PlayerFragmentState> = playerLiveData
 
@@ -104,7 +106,22 @@ class PlayerViewModel(
         preparePlayer()
     }
 
+    fun onResume() {
+        if (playerState == PlayerState.STATE_PAUSED) {
+            renderState(
+                PlayerFragmentState.Pause(true)
+            )
+            renderState(
+                PlayerFragmentState.UpdateTimer(
+                    SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
+                        .format(currentPosition)
+                )
+            )
+        }
+    }
+
     fun onPause() {
+        currentPosition = mediaPlayer.getCurrentPositionMillis()
         pausePlayer()
         timerJob?.cancel()
     }
@@ -112,11 +129,6 @@ class PlayerViewModel(
     fun onDestroy() {
         timerJob?.cancel()
         mediaPlayer.release()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        //stopPlayer()
     }
 
     private fun renderState(state: PlayerFragmentState) {
@@ -181,6 +193,10 @@ class PlayerViewModel(
     }
 
     private fun startPlayer() {
+        if (currentPosition > 0) {
+            mediaPlayer.seekTo(currentPosition)
+        }
+
         mediaPlayer.start()
         renderState(
             PlayerFragmentState.Play(true)
@@ -190,6 +206,7 @@ class PlayerViewModel(
     }
 
     private fun pausePlayer() {
+        currentPosition = mediaPlayer.getCurrentPositionMillis()
         mediaPlayer.pause()
         renderState(
             PlayerFragmentState.Pause(true)
@@ -199,9 +216,13 @@ class PlayerViewModel(
     }
 
     private fun stopPlayer() {
+        currentPosition = 0
+        mediaPlayer.release()
+
         renderState(
             PlayerFragmentState.Stop(true)
         )
+        preparePlayer()
         playerState = PlayerState.STATE_PREPARED
         timerJob?.cancel()
     }
@@ -247,5 +268,6 @@ class PlayerViewModel(
         private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         private const val DELIMITER = '/'
         private const val DELAY = 300L
+        private const val TIME_FORMAT = "m:ss"
     }
 }
