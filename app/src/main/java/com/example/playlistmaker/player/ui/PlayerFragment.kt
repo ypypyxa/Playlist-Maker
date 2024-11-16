@@ -149,9 +149,6 @@ class PlayerFragment : Fragment() {
     override fun onPause() {
         super.onPause()
 
-//        when () {
-
-//        }
         playerViewModel.onPause()
     }
 

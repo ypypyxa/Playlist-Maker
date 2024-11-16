@@ -116,7 +116,7 @@ class PlayerViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        stopPlayer()
+        //stopPlayer()
     }
 
     private fun renderState(state: PlayerFragmentState) {
