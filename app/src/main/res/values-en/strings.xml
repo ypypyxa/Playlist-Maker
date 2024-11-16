@@ -49,4 +49,6 @@
     <string name="open_settings">Open settings</string>
     <string name="cancel">Cancel</string>
     <string name="end">End</string>
+    <string name="added_to_playlist">Added to the playlist</string>
+    <string name="already_added">The track has already been added to the playlist</string>
 </resources>

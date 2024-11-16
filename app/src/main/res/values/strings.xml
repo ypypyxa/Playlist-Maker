@@ -54,4 +54,6 @@
     <string name="permission_denied">Разрешение отклонено</string>
     <string name="permission_denied_message">Вы можете предоставить доступ к фотографиям в настройках приложения.</string>
     <string name="open_settings">Открыть настройки</string>
+    <string name="added_to_playlist">Добавлено в плейлист</string>
+    <string name="already_added">Трек уже добавлен в плейлист</string>
 </resources>

@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.domain.models.Track
-import com.example.playlistmaker.search.domain.api.HistoryInteractor
-import com.example.playlistmaker.search.domain.api.TracksInteractor
+import com.example.playlistmaker.common.domain.api.HistoryInteractor
+import com.example.playlistmaker.search.domain.api.SearchInteractor
 import com.example.playlistmaker.search.ui.model.SearchFragmentState
 import com.example.playlistmaker.common.utils.SingleLiveEvent
 import kotlinx.coroutines.Job
@@ -16,7 +16,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
-    private val tracksInteractor: TracksInteractor,
+    private val searchInteractor: SearchInteractor,
     private val historyInteractor: HistoryInteractor,
     private val application: Application
 ) : AndroidViewModel(application) {
@@ -171,7 +171,7 @@ class SearchViewModel(
             )
 
             viewModelScope.launch {
-                tracksInteractor
+                searchInteractor
                     .searchTracks(searchText)
                     .collect { pair ->
                         processResult(pair.first, pair.second)

@@ -316,6 +316,12 @@
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <View android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:id="@+id/bottomSheet"
         android:layout_width="match_parent"
@@ -362,7 +368,7 @@
             app:cornerRadius="54dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/playlistsRecyclerView"
+            android:id="@+id/miniPlaylistsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"

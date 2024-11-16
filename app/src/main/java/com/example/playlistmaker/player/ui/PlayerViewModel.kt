@@ -6,13 +6,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
+import com.example.playlistmaker.common.domain.models.Playlist
 import com.example.playlistmaker.media.favorites.domain.api.FavoritesInteractor
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.player.ui.model.PlayerFragmentState
 import com.example.playlistmaker.common.domain.models.Track
-import com.example.playlistmaker.search.domain.api.HistoryInteractor
+import com.example.playlistmaker.common.domain.api.HistoryInteractor
 import com.example.playlistmaker.common.utils.SingleLiveEvent
+import com.example.playlistmaker.common.domain.api.PlaylistInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -23,6 +25,7 @@ import java.util.Locale
 class PlayerViewModel(
     private val historyInteractor: HistoryInteractor,
     private val favoritesInteractor: FavoritesInteractor,
+    private val playlistInteractor: PlaylistInteractor,
     private val mediaPlayer: MediaPlayerInteractor,
     private val application: Application
 ) : AndroidViewModel(application) {
@@ -45,6 +48,15 @@ class PlayerViewModel(
 
     private val addInFavorite = SingleLiveEvent<Boolean>()
     fun observeAddInFavorite(): LiveData<Boolean> = addInFavorite
+
+    private val _alpha = MutableLiveData<Float>()
+    val alpha: LiveData<Float> get() = _alpha
+
+    private val playlists = MutableLiveData<List<Playlist>>()
+    fun observePlaylists(): LiveData<List<Playlist>> = playlists
+
+    private val showAddToPlaylistResult = SingleLiveEvent<String>()
+    fun observeAddToPlaylistResult(): LiveData<String> = showAddToPlaylistResult
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
@@ -198,6 +210,36 @@ class PlayerViewModel(
         val calendar = Calendar.getInstance()
         calendar.time = SimpleDateFormat(DATE_FORMAT,Locale.getDefault()).parse(date)!!
         return calendar.get(Calendar.YEAR).toString()
+    }
+
+    fun updateAlpha(slideOffset: Float) {
+        val maxAlpha = 3f // Максимальное значение альфы (менее прозрачное)
+        val adjustedAlpha = ((slideOffset + 1) / 2) * maxAlpha
+        _alpha.value = adjustedAlpha
+    }
+
+    fun updateList() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect() {
+                playlists.postValue(it)
+            }
+        }
+    }
+
+    fun addToPlaylist(playlist: Playlist) {
+        val trackExists = playlist.tracks.any { it.trackId == track.trackId }
+        if (trackExists) {
+            // Трек уже есть в плейлисте
+            val message = getApplication<Application>().getString(R.string.already_added)
+            showAddToPlaylistResult.postValue("$message ${playlist.playlistName}")
+        } else {
+            viewModelScope.launch {
+                // Добавляем трек в плейлист
+                val message = getApplication<Application>().getString(R.string.added_to_playlist)
+                playlistInteractor.addTrackToPlaylist(playlist.playlistId, track)
+                showAddToPlaylistResult.postValue("$message ${playlist.playlistName}")
+            }
+        }
     }
 
     companion object {

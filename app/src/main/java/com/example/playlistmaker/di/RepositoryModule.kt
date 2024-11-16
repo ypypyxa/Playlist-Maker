@@ -5,15 +5,15 @@ import com.example.playlistmaker.common.data.converters.PlaylistDbConverter
 import com.example.playlistmaker.media.favorites.data.FavoritesRepositoryImpl
 import com.example.playlistmaker.media.favorites.domain.api.FavoritesRepository
 import com.example.playlistmaker.common.data.converters.TrackDbConvertor
-import com.example.playlistmaker.media.playlists.data.PlaylistRepositoryImpl
-import com.example.playlistmaker.media.playlists.domain.api.PlaylistsRepository
+import com.example.playlistmaker.common.data.PlaylistRepositoryImpl
+import com.example.playlistmaker.common.domain.api.PlaylistsRepository
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayerRepository
-import com.example.playlistmaker.search.data.HistoryRepositoryImpl
-import com.example.playlistmaker.search.data.HistoryRepositoryImpl.Companion.HISTORY
-import com.example.playlistmaker.search.data.TracksRepositoryImpl
-import com.example.playlistmaker.search.domain.api.HistoryRepository
-import com.example.playlistmaker.search.domain.api.TracksRepository
+import com.example.playlistmaker.common.data.HistoryRepositoryImpl
+import com.example.playlistmaker.common.data.HistoryRepositoryImpl.Companion.HISTORY
+import com.example.playlistmaker.search.data.SearchRepositoryImpl
+import com.example.playlistmaker.common.domain.api.HistoryRepository
+import com.example.playlistmaker.search.domain.api.SearchRepository
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.data.SharingRepositoryImpl
 import com.example.playlistmaker.settings.domain.api.SettingsRepository
@@ -24,8 +24,8 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
 
-    single<TracksRepository> {
-        TracksRepositoryImpl(get(), get(), get())
+    single<SearchRepository> {
+        SearchRepositoryImpl(get(), get(), get())
     }
 
     factory<MediaPlayerRepository> {

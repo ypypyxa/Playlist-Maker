@@ -11,7 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.common.domain.models.Playlist
-import com.example.playlistmaker.media.playlists.domain.api.PlaylistInteractor
+import com.example.playlistmaker.common.domain.api.PlaylistInteractor
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -93,7 +93,8 @@ class CreatePlaylistViewModel(
             when {
                 editedName?.isEmpty() == false -> return true
                 editedDescription?.isEmpty() == false -> return true
-                editedUri?.toString()?.isEmpty() == false -> return true
+                editedUri?.toString()?.isEmpty() == false ->
+                    return editedUri != "0".toUri()
                 else -> return false
             }
     }

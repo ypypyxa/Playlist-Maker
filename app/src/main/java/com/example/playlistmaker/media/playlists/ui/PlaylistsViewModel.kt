@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.common.domain.models.Playlist
-import com.example.playlistmaker.media.playlists.domain.api.PlaylistInteractor
+import com.example.playlistmaker.common.domain.api.PlaylistInteractor
 import com.example.playlistmaker.media.playlists.ui.model.PlaylistFragmentState
 import kotlinx.coroutines.launch
 
@@ -30,7 +30,7 @@ class PlaylistsViewModel(private val playlistInteractor: PlaylistInteractor) : V
         } else {
             renderState(
                 PlaylistFragmentState.Content(
-                playlists.sortedByDescending { it.playlistId }
+                playlists.sortedBy { it.playlistId }
             ))
         }
     }
