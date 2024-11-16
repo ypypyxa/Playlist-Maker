@@ -56,4 +56,7 @@
     <string name="open_settings">Открыть настройки</string>
     <string name="added_to_playlist">Добавлено в плейлист</string>
     <string name="already_added">Трек уже добавлен в плейлист</string>
+    <string name="tracks">треков</string>
+    <string name="track">трек</string>
+    <string name="alt_tracks">трека</string>
 </resources>

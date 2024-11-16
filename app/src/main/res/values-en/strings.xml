@@ -51,4 +51,7 @@
     <string name="end">End</string>
     <string name="added_to_playlist">Added to the playlist</string>
     <string name="already_added">The track has already been added to the playlist</string>
+    <string name="tracks">tracks</string>
+    <string name="track">track</string>
+    <string name="alt_tracks">tracks</string>
 </resources>

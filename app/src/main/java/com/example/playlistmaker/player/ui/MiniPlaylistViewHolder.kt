@@ -12,9 +12,12 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.common.domain.models.Playlist
 
 class MiniPlaylistViewHolder(view: View): RecyclerView.ViewHolder(view) {
+
+    private val context = itemView.context
+
     private val playlistCover: ImageView = view.findViewById(R.id.playlistImageMini)
     private val playlistName: TextView = view.findViewById(R.id.playlistNameMini)
-    private val tracksCount: TextView = view.findViewById(R.id.tracksCount)
+    private val tracksCount: TextView = view.findViewById(R.id.tracksCountMini)
 
     fun bind(model: Playlist) {
         playlistName.text = model.playlistName
@@ -38,10 +41,10 @@ class MiniPlaylistViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val remainder100 = count % 100
 
         return when {
-            remainder100 in 11..19 -> "$count треков" // Исключение для чисел от 11 до 19
-            remainder10 == 1 -> "$count трек" // Например, 1, 21, 31
-            remainder10 in 2..4 -> "$count трека" // Например, 2, 3, 4, 22, 23, 24
-            else -> "$count треков" // Все остальные случаи
+            remainder100 in 11..19 -> "$count ${context.getString(R.string.tracks)}" // Исключение для чисел от 11 до 19
+            remainder10 == 1 -> "$count ${context.getString(R.string.track)}" // Например, 1, 21, 31
+            remainder10 in 2..4 -> "$count ${context.getString(R.string.alt_tracks)}" // Например, 2, 3, 4, 22, 23, 24
+            else -> "$count ${context.getString(R.string.tracks)}" // Все остальные случаи
         }
     }
 

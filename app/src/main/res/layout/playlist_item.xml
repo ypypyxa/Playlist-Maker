@@ -28,12 +28,12 @@
         android:textColor="?attr/colorOnPrimary"/>
 
     <TextView
-        android:id="@+id/playlistDescription"
+        android:id="@+id/tracksCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@+id/playlistName"
         app:layout_constraintTop_toBottomOf="@+id/playlistName"
-        tools:text="@string/playlist_description"
+        tools:text="@string/tracks"
         android:textColor="?attr/colorOnPrimary"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
