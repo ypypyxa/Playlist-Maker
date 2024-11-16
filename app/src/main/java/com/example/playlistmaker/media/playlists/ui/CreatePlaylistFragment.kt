@@ -17,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -148,6 +149,18 @@ class CreatePlaylistFragment : Fragment() {
                 findNavController().popBackStack()
             }
         }
+
+        // Обработка системной кнопки "Назад"
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (viewModel.isEdited()) {
+                    val flag = viewModel.isEdited()
+                    dialog()
+                } else {
+                    findNavController().popBackStack()
+                }
+            }
+        })
     }
 
     private fun requestPhotoPermission() {
