@@ -35,4 +35,23 @@
     <string name="favorites_tracks">Favorites tracks</string>
     <string name="playlists">Playlists</string>
     <string name="check_connection">Check your internet connection</string>
+    <string name="new_playlist">New Playlist</string>
+    <string name="playlist_name">Title</string>
+    <string name="playlist_description">Description</string>
+    <string name="create">Create</string>
+    <string name="add_to_playlist">Add to playlist</string>
+    <string name="cancel_creating_playlist">Do you want to end the playlist creation?</string>
+    <string name="unsaved_changes_will_be_lost">All unsaved changes will be lost</string>
+    <string name="playlist">The playlist</string>
+    <string name="created">has been created</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="permission_denied_message">You can grant access to photos in the app settings.</string>
+    <string name="open_settings">Open settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="end">End</string>
+    <string name="added_to_playlist">Added to the playlist</string>
+    <string name="already_added">The track has already been added to the playlist</string>
+    <string name="tracks">tracks</string>
+    <string name="track">track</string>
+    <string name="alt_tracks">tracks</string>
 </resources>

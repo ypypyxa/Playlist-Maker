@@ -112,7 +112,7 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="tvTrackPrimaryStyle">
+    <style name="nameFieldOnItemsPrimaryStyle">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textFontWeight">400</item>
@@ -120,7 +120,7 @@
         <item name="android:ellipsize">marquee</item>
     </style>
 
-    <style name="tvTrackSecondaryStyle">
+    <style name="descriptionOnItemsSecondaryStyle">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
         <item name="android:textFontWeight">400</item>
@@ -155,6 +155,35 @@
     <style name="bottomNavigationViewText" >
         <item name="fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="cutCornerStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="alertStyle">
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialogText</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertBodyText</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveMaterialAlertButtonText</item>
+        <item name="buttonBarNegativeButtonStyle">@style/MaterialAlertButtonText</item>
+    </style>
+
+    <style name="MaterialAlertDialogText" parent="@style/MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="MaterialAlertBodyText" parent="MaterialAlertDialog.Material3.Body.Text">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:maxEms">25</item>
+    </style>
+
+    <style name="MaterialAlertButtonText" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+    <style name="PositiveMaterialAlertButtonText" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 
 </resources>

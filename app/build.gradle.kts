@@ -43,6 +43,10 @@ android {
 
 dependencies {
 
+    //Peko:
+    //Библиотека для запроса разрешений
+    implementation(libs.peko.v302)
+
     // Работа с базой данных (Database Handling):
     // Room Compiler использует KAPT (Kotlin Annotation Processing Tool)
     // для генерации кода на основе аннотаций, таких как @Entity, @Dao и @Database.

@@ -6,15 +6,23 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.player.ui.model.PlayerFragmentState
 import com.example.playlistmaker.common.domain.models.Track
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -26,6 +34,12 @@ class PlayerFragment : Fragment() {
 
     private val playerViewModel by viewModel<PlayerViewModel>()
 
+    private lateinit var adapter: MiniPlaylistAdapter
+    private lateinit var playlistsView : RecyclerView
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    private var isClickAllowed = true
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentPlayerBinding.inflate(inflater, container, false)
         return binding.root
@@ -34,17 +48,76 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Кнопка Воспроизвести/Пауза
+        adapter = MiniPlaylistAdapter { item ->
+            // Нажатие на итем
+            if (clickDebounce()) {
+                // Добавляем трек в плейлист
+                playerViewModel.addToPlaylist(item)
+            }
+        }
+
+        playlistsView = binding.miniPlaylistsRecyclerView
+        playlistsView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        playlistsView.adapter = adapter
+
+        val bottomSheetContainer = binding.bottomSheet
+        val overlay = binding.overlay
+
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        playerViewModel.alpha.observe(viewLifecycleOwner) { alpha ->
+            overlay.alpha = alpha
+        }
+        playerViewModel.observePlaylists().observe(viewLifecycleOwner) { plalist ->
+            adapter.playlists.clear()
+            adapter.playlists.addAll(plalist)
+            playlistsView.adapter?.notifyDataSetChanged()
+        }
+
+        playerViewModel.observeAddToPlaylistResult().observe(viewLifecycleOwner) { message ->
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            if (message.contains(getString(R.string.added_to_playlist))) {
+                // Закрываем BottomSheet, если трек успешно добавлен
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
+
+        bottomSheetBehavior.peekHeight = (resources.displayMetrics.heightPixels * 2) / 3
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        overlay.visibility = View.GONE
+                        adapter.playlists.clear()
+                        adapter.notifyDataSetChanged()
+                    }
+                    else -> {
+                        playerViewModel.updateList()
+                        overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                playerViewModel.updateAlpha(slideOffset)
+            }
+        })
+
+    // Кнопка Воспроизвести/Пауза
         binding.btnPlayPause.setOnClickListener {
             playerViewModel.playbackControl()
         }
 
-// Кнопка назад
+        // Кнопка назад
         binding.btnBack.setOnClickListener {
             requireActivity().onBackPressed()
         }
 
-// Кнопка добавить в избранное
+        // Кнопка добавить в избранное
         binding.btnInFavorite.setOnClickListener {
             playerViewModel.toggleFavorite()
         }
@@ -59,11 +132,29 @@ class PlayerFragment : Fragment() {
         playerViewModel.observeAddInFavorite().observe(viewLifecycleOwner) { inFavorite ->
             setInFavoriteImage(inFavorite)
         }
+
+        binding.ibAddToPlaylist.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.newPlaylistButton.setOnClickListener {
+            // Навигируемся на следующий экран
+            findNavController().navigate(
+                R.id.action_playerFragment_to_createPlaylistFragment,
+            )
+        }
+
     }
     override fun onPause() {
         super.onPause()
 
         playerViewModel.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isClickAllowed = true
+        playerViewModel.onResume()
     }
 
     override fun onDestroy() {
@@ -86,6 +177,19 @@ class PlayerFragment : Fragment() {
             TypedValue.COMPLEX_UNIT_DIP,
             CORNERS_ANGLE,
             context.resources.displayMetrics).toInt()
+    }
+
+    // Задержка между кликами
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
     }
 
     private fun render(state: PlayerFragmentState) {
@@ -163,7 +267,6 @@ class PlayerFragment : Fragment() {
         enablePlayPause(true)
     }
 
-
     private fun setTrackName(trackName: String) {
         binding.tvTrackName.text = trackName
     }
@@ -228,13 +331,11 @@ class PlayerFragment : Fragment() {
         private const val CORNERS_ANGLE = 8.0F
         private const val TIME_FORMAT = "m:ss"
         private const val DEFAULT_TIME = "0:00"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
 
         const val ARGS_TRACK = "TRACK"
 
         fun createArgs(track: Track): Bundle =
             bundleOf(ARGS_TRACK to track)
-
-        // Тег для использования во FragmentManager
-        const val TAG = "PlayerFragment"
     }
 }

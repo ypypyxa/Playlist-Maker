@@ -1,13 +1,15 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.media.favorites.domain.db.FavoritesInteractor
+import com.example.playlistmaker.media.favorites.domain.api.FavoritesInteractor
 import com.example.playlistmaker.media.favorites.domain.impl.FavoritesInteractorImpl
+import com.example.playlistmaker.common.domain.api.PlaylistInteractor
+import com.example.playlistmaker.common.domain.impl.PlaylistsInteractorImpl
 import com.example.playlistmaker.player.domain.Impl.MediaPlayerInteractorImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
-import com.example.playlistmaker.search.domain.api.HistoryInteractor
-import com.example.playlistmaker.search.domain.api.TracksInteractor
-import com.example.playlistmaker.search.domain.impl.HistoryInteractorImpl
-import com.example.playlistmaker.search.domain.impl.TracksInteractorImpl
+import com.example.playlistmaker.common.domain.api.HistoryInteractor
+import com.example.playlistmaker.search.domain.api.SearchInteractor
+import com.example.playlistmaker.common.domain.impl.HistoryInteractorImpl
+import com.example.playlistmaker.search.domain.impl.SearchInteractorImpl
 import com.example.playlistmaker.settings.domain.api.SettingsInteractor
 import com.example.playlistmaker.settings.domain.api.SharingInteractor
 import com.example.playlistmaker.settings.domain.impl.SettingsInteractorImpl
@@ -16,8 +18,8 @@ import org.koin.dsl.module
 
 val interactorModule = module {
 
-    single<TracksInteractor> {
-        TracksInteractorImpl(get())
+    single<SearchInteractor> {
+        SearchInteractorImpl(get())
     }
 
     factory<MediaPlayerInteractor> {
@@ -38,5 +40,9 @@ val interactorModule = module {
 
     single<FavoritesInteractor> {
         FavoritesInteractorImpl(get())
+    }
+
+    single<PlaylistInteractor> {
+        PlaylistsInteractorImpl(get())
     }
 }

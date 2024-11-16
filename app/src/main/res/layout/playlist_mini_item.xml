@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/playlistLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="13dp"
+    android:layout_marginEnd="12dp"
+    android:foreground="?attr/selectableItemBackground" >
+
+    <ImageView
+        android:id="@+id/playlistImageMini"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_placeholder_45x45"
+        tools:ignore="ImageContrastCheck"
+        android:contentDescription="@string/placeholder" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingVertical="14dp"
+        android:paddingHorizontal="8dp">
+
+        <TextView style="@style/nameFieldOnItemsPrimaryStyle"
+            android:id="@+id/playlistNameMini"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textColor="?attr/colorOnPrimary"
+            tools:text="@string/playlist_name"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView style="@style/descriptionOnItemsSecondaryStyle"
+                android:id="@+id/tracksCountMini"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:ignore="TextContrastCheck"
+                tools:text="@string/playlist_description" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

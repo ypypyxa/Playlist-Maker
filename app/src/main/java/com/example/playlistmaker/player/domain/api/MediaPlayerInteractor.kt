@@ -9,4 +9,7 @@ interface MediaPlayerInteractor {
     fun release()
     fun getCurrentPosition(): String
     fun getPlayerState(): PlayerState
+
+    fun getCurrentPositionMillis(): Int
+    fun seekTo(position: Int)
 }

@@ -5,7 +5,7 @@ import com.example.playlistmaker.search.data.dto.TracksSearchResponse
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.Resource
 import com.example.playlistmaker.R
-import com.example.playlistmaker.media.favorites.data.db.FavoritesDatabase
+import com.example.playlistmaker.common.data.db.database.FavoritesDatabase
 import com.example.playlistmaker.common.data.converters.TrackDbConvertor
 import com.example.playlistmaker.common.domain.models.Track
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
-class TracksRepositoryImpl(
+class SearchRepositoryImpl(
     private val networkClient: NetworkClient,
     private val favorites: FavoritesDatabase,
     private val trackDbConvertor: TrackDbConvertor

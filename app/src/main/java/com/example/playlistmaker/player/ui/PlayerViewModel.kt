@@ -1,19 +1,20 @@
 package com.example.playlistmaker.player.ui
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
-import com.example.playlistmaker.media.favorites.domain.db.FavoritesInteractor
+import com.example.playlistmaker.common.domain.models.Playlist
+import com.example.playlistmaker.media.favorites.domain.api.FavoritesInteractor
 import com.example.playlistmaker.player.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.player.ui.model.PlayerFragmentState
 import com.example.playlistmaker.common.domain.models.Track
-import com.example.playlistmaker.search.domain.api.HistoryInteractor
+import com.example.playlistmaker.common.domain.api.HistoryInteractor
 import com.example.playlistmaker.common.utils.SingleLiveEvent
+import com.example.playlistmaker.common.domain.api.PlaylistInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -24,6 +25,7 @@ import java.util.Locale
 class PlayerViewModel(
     private val historyInteractor: HistoryInteractor,
     private val favoritesInteractor: FavoritesInteractor,
+    private val playlistInteractor: PlaylistInteractor,
     private val mediaPlayer: MediaPlayerInteractor,
     private val application: Application
 ) : AndroidViewModel(application) {
@@ -38,6 +40,8 @@ class PlayerViewModel(
 
     private var timerJob: Job? = null
 
+    private var currentPosition: Int = 0
+
     private val playerLiveData = MutableLiveData<PlayerFragmentState>()
     fun observeState(): LiveData<PlayerFragmentState> = playerLiveData
 
@@ -46,6 +50,15 @@ class PlayerViewModel(
 
     private val addInFavorite = SingleLiveEvent<Boolean>()
     fun observeAddInFavorite(): LiveData<Boolean> = addInFavorite
+
+    private val _alpha = MutableLiveData<Float>()
+    val alpha: LiveData<Float> get() = _alpha
+
+    private val playlists = MutableLiveData<List<Playlist>>()
+    fun observePlaylists(): LiveData<List<Playlist>> = playlists
+
+    private val showAddToPlaylistResult = SingleLiveEvent<String>()
+    fun observeAddToPlaylistResult(): LiveData<String> = showAddToPlaylistResult
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
@@ -68,9 +81,6 @@ class PlayerViewModel(
 
     fun onCreate(receivedTrack: Track) {
         this.track = receivedTrack
-
-// Лучшего места что бы сохранить трек в историю поиска я пока не нашел...
-        historyListUpdate()
 
         artworkUrl512 = track.artworkUrl100.replaceAfterLast(DELIMITER, "$BIG_SIZE.jpg")
 
@@ -96,7 +106,22 @@ class PlayerViewModel(
         preparePlayer()
     }
 
+    fun onResume() {
+        if (playerState == PlayerState.STATE_PAUSED) {
+            renderState(
+                PlayerFragmentState.Pause(true)
+            )
+            renderState(
+                PlayerFragmentState.UpdateTimer(
+                    SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
+                        .format(currentPosition)
+                )
+            )
+        }
+    }
+
     fun onPause() {
+        currentPosition = mediaPlayer.getCurrentPositionMillis()
         pausePlayer()
         timerJob?.cancel()
     }
@@ -104,32 +129,6 @@ class PlayerViewModel(
     fun onDestroy() {
         timerJob?.cancel()
         mediaPlayer.release()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        stopPlayer()
-    }
-
-    private fun historyListUpdate() {
-        val historyTracks = historyInteractor.loadTracks()
-        var index: Int? = null
-
-        if (historyTracks.isEmpty()) {
-            historyTracks.add(0, track)
-        } else {
-            for (i in 0 .. historyTracks.size-1) {
-                if (historyTracks[i].trackId == track.trackId) {
-                    index = i
-                }
-            }
-            if (index != null) { historyTracks.remove(historyTracks[index]) }
-            historyTracks.add(0, track)
-        }
-        if (historyTracks.size > HISTORY_MAX_SIZE) {
-            historyTracks.removeAt(HISTORY_MAX_SIZE)
-        }
-        historyInteractor.saveTracks(historyTracks)
     }
 
     private fun renderState(state: PlayerFragmentState) {
@@ -156,7 +155,7 @@ class PlayerViewModel(
             }
             addInFavorite.postValue(true)
         }
-        historyListUpdate()
+        historyInteractor.updateHistoryList(track)
     }
 
     fun playbackControl() {
@@ -194,6 +193,10 @@ class PlayerViewModel(
     }
 
     private fun startPlayer() {
+        if (currentPosition > 0) {
+            mediaPlayer.seekTo(currentPosition)
+        }
+
         mediaPlayer.start()
         renderState(
             PlayerFragmentState.Play(true)
@@ -203,6 +206,7 @@ class PlayerViewModel(
     }
 
     private fun pausePlayer() {
+        currentPosition = mediaPlayer.getCurrentPositionMillis()
         mediaPlayer.pause()
         renderState(
             PlayerFragmentState.Pause(true)
@@ -212,9 +216,13 @@ class PlayerViewModel(
     }
 
     private fun stopPlayer() {
+        currentPosition = 0
+        mediaPlayer.release()
+
         renderState(
             PlayerFragmentState.Stop(true)
         )
+        preparePlayer()
         playerState = PlayerState.STATE_PREPARED
         timerJob?.cancel()
     }
@@ -225,11 +233,41 @@ class PlayerViewModel(
         return calendar.get(Calendar.YEAR).toString()
     }
 
+    fun updateAlpha(slideOffset: Float) {
+        val maxAlpha = 3f // Максимальное значение альфы (менее прозрачное)
+        val adjustedAlpha = ((slideOffset + 1) / 2) * maxAlpha
+        _alpha.value = adjustedAlpha
+    }
+
+    fun updateList() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect() {
+                playlists.postValue(it)
+            }
+        }
+    }
+
+    fun addToPlaylist(playlist: Playlist) {
+        val trackExists = playlist.tracks.any { it.trackId == track.trackId }
+        if (trackExists) {
+            // Трек уже есть в плейлисте
+            val message = getApplication<Application>().getString(R.string.already_added)
+            showAddToPlaylistResult.postValue("$message ${playlist.playlistName}")
+        } else {
+            viewModelScope.launch {
+                // Добавляем трек в плейлист
+                val message = getApplication<Application>().getString(R.string.added_to_playlist)
+                playlistInteractor.addTrackToPlaylist(playlist.playlistId, track)
+                showAddToPlaylistResult.postValue("$message ${playlist.playlistName}")
+            }
+        }
+    }
+
     companion object {
         private const val BIG_SIZE = "512x512"
         private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         private const val DELIMITER = '/'
         private const val DELAY = 300L
-        private const val HISTORY_MAX_SIZE = 10
+        private const val TIME_FORMAT = "m:ss"
     }
 }

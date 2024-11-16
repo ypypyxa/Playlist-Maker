@@ -1,8 +1,8 @@
-package com.example.playlistmaker.search.domain.impl
+package com.example.playlistmaker.common.domain.impl
 
 import com.example.playlistmaker.common.domain.models.Track
-import com.example.playlistmaker.search.domain.api.HistoryInteractor
-import com.example.playlistmaker.search.domain.api.HistoryRepository
+import com.example.playlistmaker.common.domain.api.HistoryInteractor
+import com.example.playlistmaker.common.domain.api.HistoryRepository
 
 class HistoryInteractorImpl(private val historyRepository: HistoryRepository): HistoryInteractor {
     override fun saveTracks(tracks: ArrayList<Track>) {
@@ -11,7 +11,10 @@ class HistoryInteractorImpl(private val historyRepository: HistoryRepository): H
     override fun loadTracks(): ArrayList<Track> {
         return historyRepository.loadTrack()
     }
-    override fun clearTracks() {
+    override fun clearHistory() {
         historyRepository.clearHistory()
+    }
+    override fun updateHistoryList(track: Track) {
+        historyRepository.updateHistoryList(track)
     }
 }

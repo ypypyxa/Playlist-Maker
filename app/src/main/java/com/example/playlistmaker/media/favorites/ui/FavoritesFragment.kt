@@ -92,12 +92,12 @@ class FavoritesFragment : Fragment() {
         trackList.gone()
     }
 
-    private fun showContent(movies: List<Track>) {
+    private fun showContent(tracks: List<Track>) {
         trackList.show()
         placeholder.gone()
 
         adapter?.trackList?.clear()
-        adapter?.trackList?.addAll(movies)
+        adapter?.trackList?.addAll(tracks)
         adapter?.notifyDataSetChanged()
     }
 

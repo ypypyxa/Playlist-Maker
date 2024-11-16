@@ -1,15 +1,18 @@
 package com.example.playlistmaker.di
 
 import android.content.Context.MODE_PRIVATE
+import com.example.playlistmaker.common.data.converters.PlaylistDbConverter
 import com.example.playlistmaker.media.favorites.data.FavoritesRepositoryImpl
-import com.example.playlistmaker.media.favorites.domain.FavoritesRepository
+import com.example.playlistmaker.media.favorites.domain.api.FavoritesRepository
 import com.example.playlistmaker.common.data.converters.TrackDbConvertor
+import com.example.playlistmaker.common.data.PlaylistRepositoryImpl
+import com.example.playlistmaker.common.domain.api.PlaylistsRepository
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.MediaPlayerRepository
-import com.example.playlistmaker.search.data.HistoryRepositoryImpl
-import com.example.playlistmaker.search.data.HistoryRepositoryImpl.Companion.HISTORY
-import com.example.playlistmaker.search.data.TracksRepositoryImpl
-import com.example.playlistmaker.search.domain.api.HistoryRepository
+import com.example.playlistmaker.common.data.HistoryRepositoryImpl
+import com.example.playlistmaker.common.data.HistoryRepositoryImpl.Companion.HISTORY
+import com.example.playlistmaker.search.data.SearchRepositoryImpl
+import com.example.playlistmaker.common.domain.api.HistoryRepository
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.data.SharingRepositoryImpl
@@ -22,7 +25,7 @@ import org.koin.dsl.module
 val repositoryModule = module {
 
     single<TracksRepository> {
-        TracksRepositoryImpl(get(), get(), get())
+        SearchRepositoryImpl(get(), get(), get())
     }
 
     factory<MediaPlayerRepository> {
@@ -42,8 +45,12 @@ val repositoryModule = module {
     }
 
     factory { TrackDbConvertor() }
-
     single<FavoritesRepository> {
         FavoritesRepositoryImpl(get(), get())
+    }
+
+    factory { PlaylistDbConverter() }
+    single<PlaylistsRepository> {
+        PlaylistRepositoryImpl(get(), get())
     }
 }

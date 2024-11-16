@@ -1,8 +1,8 @@
 package com.example.playlistmaker.di
 
-import android.content.Context
 import androidx.room.Room
-import com.example.playlistmaker.media.favorites.data.db.FavoritesDatabase
+import com.example.playlistmaker.common.data.db.database.FavoritesDatabase
+import com.example.playlistmaker.common.data.db.database.PlaylistsDatabase
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.network.MusicApi
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -38,6 +38,11 @@ val dataModule = module {
 
     single {
         Room.databaseBuilder(androidContext(), FavoritesDatabase::class.java, "favorites.db")
+            .build()
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), PlaylistsDatabase::class.java, "playlists.db")
             .build()
     }
 }

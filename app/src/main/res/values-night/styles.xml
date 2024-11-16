@@ -114,7 +114,7 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="tvTrackPrimaryStyle">
+    <style name="nameFieldOnItemsPrimaryStyle">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textFontWeight">400</item>
@@ -122,7 +122,7 @@
         <item name="android:ellipsize">marquee</item>
     </style>
 
-    <style name="tvTrackSecondaryStyle">
+    <style name="descriptionOnItemsSecondaryStyle">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
         <item name="android:textFontWeight">400</item>

@@ -28,4 +28,12 @@ class MediaPlayerInteractorImpl(private val mediaPlayerRepository: MediaPlayerRe
     override fun getPlayerState(): PlayerState {
         return mediaPlayerRepository.getPlayerState()
     }
+
+    override fun seekTo(position: Int) {
+        mediaPlayerRepository.seekTo(position)
+    }
+
+    override fun getCurrentPositionMillis(): Int {
+        return mediaPlayerRepository.getCurrentPositionMillis()
+    }
 }

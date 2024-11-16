@@ -30,6 +30,9 @@ class RootActivity : AppCompatActivity() {
                 R.id.playerFragment -> {
                     bottomNavigationView.visibility = View.GONE
                 }
+                R.id.createPlaylistFragment -> {
+                    bottomNavigationView.visibility = View.GONE
+                }
                 else -> {
                     bottomNavigationView.visibility = View.VISIBLE
                 }

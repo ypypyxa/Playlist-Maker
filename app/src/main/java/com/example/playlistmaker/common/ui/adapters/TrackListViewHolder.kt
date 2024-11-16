@@ -13,12 +13,12 @@ import com.example.playlistmaker.common.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+class TrackListViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
-    private val trackName: TextView = itemView.findViewById(R.id.tvTrackName)
-    private val artistName: TextView = itemView.findViewById(R.id.tvArtistName)
-    private val trackTime: TextView = itemView.findViewById(R.id.tvTrackTime)
-    private val trackImage: ImageView = itemView.findViewById(R.id.ivTrackImage)
+    private val trackName: TextView = view.findViewById(R.id.tvTrackName)
+    private val artistName: TextView = view.findViewById(R.id.tvArtistName)
+    private val trackTime: TextView = view.findViewById(R.id.tvTrackTime)
+    private val trackImage: ImageView = view.findViewById(R.id.ivTrackImage)
 
     fun bind(model: Track) {
         trackName.text = model.trackName

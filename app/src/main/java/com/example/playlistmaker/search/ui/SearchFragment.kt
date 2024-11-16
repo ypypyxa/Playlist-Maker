@@ -24,6 +24,8 @@ class SearchFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchBinding
 
+    private val searchViewModel by viewModel<SearchViewModel>()
+
     private var isClickAllowed = true
 
     private var searchEditWatcher: TextWatcher? = null
@@ -32,6 +34,9 @@ class SearchFragment : Fragment() {
     private val trackListAdapter = TrackListAdapter { item ->
         // Нажатие на итем
         if (clickDebounce()) {
+            // Сохраняем трек в историю поиска
+            searchViewModel.historyListUpdate(item)
+
             // Навигируемся на следующий экран
             findNavController().navigate(
                 R.id.action_searchFragment_to_playerFragment,
@@ -39,8 +44,6 @@ class SearchFragment : Fragment() {
             )
         }
     }
-
-    private val searchViewModel by viewModel<SearchViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
