@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media.playlists.ui
+package com.example.playlistmaker.media.create.ui
 
 import android.Manifest
 import android.content.Intent

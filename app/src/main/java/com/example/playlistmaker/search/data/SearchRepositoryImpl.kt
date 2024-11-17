@@ -53,7 +53,7 @@ class SearchRepositoryImpl(
                                 trackId,
                                 trackName,
                                 artistName,
-                                trackTimeMillis,
+                                trackTimeMillis.toLong(),
                                 artworkUrl100,
                                 collectionName,
                                 releaseDate,

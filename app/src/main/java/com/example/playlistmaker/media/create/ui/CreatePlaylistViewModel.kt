@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media.playlists.ui
+package com.example.playlistmaker.media.create.ui
 
 import android.app.Application
 import android.graphics.Bitmap
@@ -53,7 +53,7 @@ class CreatePlaylistViewModel(
 
             BitmapFactory
                 .decodeStream(inputStream)
-                .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+                .compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
 
             editedUri = file.toUri()
         }

@@ -4,7 +4,6 @@
     <string name="media">Media library</string>
     <string name="settings">Settings</string>
     <string name="dark_theme">Dark theme</string>
-    <string name="share">Share the app</string>
     <string name="support">Write to support</string>
     <string name="user_agreement">User agreement</string>
     <string name="back">Back</string>
@@ -54,4 +53,8 @@
     <string name="tracks">tracks</string>
     <string name="track">track</string>
     <string name="alt_tracks">tracks</string>
+    <string name="share_app">Share the app</string>
+    <string name="share">Share</string>
+    <string name="edit_playlist">Edit information</string>
+    <string name="delete_playlist">Delete a playlist</string>
 </resources>

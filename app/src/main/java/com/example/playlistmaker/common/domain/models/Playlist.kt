@@ -1,6 +1,7 @@
 package com.example.playlistmaker.common.domain.models
 
 import android.net.Uri
+import java.io.Serializable
 
 data class Playlist(
     val playlistId: Long,               // ID плейлиста
@@ -9,4 +10,4 @@ data class Playlist(
     val artworkUri: Uri,                // Путь к файлу изображения для обложки
     val tracks: List<Track>,            // Список идентификаторов треков
     val tracksCount: Int                // Количество треков
-)
+) : Serializable
