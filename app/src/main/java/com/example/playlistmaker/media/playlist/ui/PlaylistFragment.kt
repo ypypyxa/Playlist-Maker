@@ -1,10 +1,13 @@
 package com.example.playlistmaker.media.playlist.ui
 
 import android.content.Context
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -47,6 +50,8 @@ class PlaylistFragment : Fragment() {
     private lateinit var trackListAdapter: TrackListAdapter
     private lateinit var extendedBottomSheet: BottomSheetBehavior<LinearLayout>
 
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentPlaylistBinding.inflate(inflater, container, false)
         return binding.root
@@ -56,6 +61,39 @@ class PlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         playlist = arguments?.getSerializable(ARGS_PLAYLIST) as Playlist
+
+        // Инициализация BottomSheetBehavior
+        val bottomSheet = view.findViewById<LinearLayout>(R.id.bottomSheet)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+
+        // Получаем невидимый View
+        val sharebutton = view.findViewById<ImageView>(R.id.shareButton)
+
+///////////////////////////////вынести в функцию/////////////////////////////////////////////////////
+
+        // Используем ViewTreeObserver для получения позиции positionMarker
+        sharebutton.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                // Получаем Y-координату positionMarker относительно экрана
+                val location = IntArray(2)
+                sharebutton.getLocationOnScreen(location)
+                val positionMarkerY = location[1]// + sharebutton.height
+
+                // Получаем высоту экрана
+                val screenHeight = requireView().height //Resources.getSystem().displayMetrics.heightPixels
+
+                // Вычисляем высоту BottomSheet
+                val bottomSheetPeekHeight = screenHeight - positionMarkerY
+
+                // Устанавливаем peekHeight
+                bottomSheetBehavior.peekHeight = bottomSheetPeekHeight
+
+                // Удаляем слушатель, чтобы предотвратить повторные вызовы
+                sharebutton.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
         extendedBottomSheet = BottomSheetBehavior.from(binding.extendedMenuBottomSheet)
         extendedBottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
