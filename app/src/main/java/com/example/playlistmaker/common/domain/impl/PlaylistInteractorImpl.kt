@@ -3,23 +3,27 @@ package com.example.playlistmaker.common.domain.impl
 import com.example.playlistmaker.common.domain.models.Playlist
 import com.example.playlistmaker.common.domain.models.Track
 import com.example.playlistmaker.common.domain.api.PlaylistInteractor
-import com.example.playlistmaker.common.domain.api.PlaylistsRepository
+import com.example.playlistmaker.common.domain.api.PlaylistRepository
 import kotlinx.coroutines.flow.Flow
 
-class PlaylistsInteractorImpl(private val playlistsRepository: PlaylistsRepository):
+class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository):
     PlaylistInteractor {
     override fun getPlaylists(): Flow<List<Playlist>> {
-        return playlistsRepository.getPlaylists()
+        return playlistRepository.getPlaylists()
     }
 
     override suspend fun addPlaylist(playlist: Playlist) {
-        playlistsRepository.addPlaylist(playlist)
+        playlistRepository.addPlaylist(playlist)
     }
     override suspend fun deletePlaylist(playlist: Playlist) {
-        playlistsRepository.deletePlaylist(playlist)
+        playlistRepository.deletePlaylist(playlist)
     }
 
     override suspend fun addTrackToPlaylist(playlistId: Long, track: Track) {
-        playlistsRepository.addTrackToPlaylist(playlistId, track)
+        playlistRepository.addTrackToPlaylist(playlistId, track)
+    }
+
+    override suspend fun deleteTrackFromPlaylist(playlistId: Long, track: Track) {
+        playlistRepository.deleteTrackFromPlaylist(playlistId, track)
     }
 }
