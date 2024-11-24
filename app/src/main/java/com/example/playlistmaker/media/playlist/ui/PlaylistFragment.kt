@@ -20,6 +20,7 @@ import com.example.playlistmaker.common.domain.models.Playlist
 import com.example.playlistmaker.common.domain.models.Track
 import com.example.playlistmaker.common.utils.DurationUtils
 import com.example.playlistmaker.common.utils.TrackWordUtils
+import com.example.playlistmaker.common.utils.show
 import com.example.playlistmaker.databinding.FragmentPlaylistBinding
 import com.example.playlistmaker.media.edit.ui.EditPlaylistFragment
 import com.example.playlistmaker.media.playlist.ui.model.PlaylistFragmentState
@@ -213,7 +214,7 @@ class PlaylistFragment : Fragment() {
 
     private fun setTracksCount(count: Int) {
         binding.tracksCountPlaylist.text = TrackWordUtils(requireContext()).getTrackWord(count)
-        binding.extendedMenuPlaylistName.text = TrackWordUtils(requireContext()).getTrackWord(count)
+        binding.extendedMenuTracksCount.text = TrackWordUtils(requireContext()).getTrackWord(count)
     }
 
     private fun sharePlaylist() {
