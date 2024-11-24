@@ -17,7 +17,7 @@ class PlaylistDbConverter {
             playlistEntity.playlistId,
             playlistEntity.playlistName,
             playlistEntity.playlistDescription,
-            playlistEntity.artworkUri.toUri(),
+            playlistEntity.artworkUri,
             tracksGson.fromJson(playlistEntity.tracks, type),
             playlistEntity.tracksCount
         )
@@ -28,7 +28,7 @@ class PlaylistDbConverter {
             playlist.playlistId,
             playlist.playlistName,
             playlist.playlistDescription,
-            playlist.artworkUri.toString(),
+            playlist.artworkUri,
             tracksGson.toJson(playlist.tracks),
             playlist.tracksCount
         )

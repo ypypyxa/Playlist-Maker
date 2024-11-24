@@ -147,7 +147,7 @@
         android:background="@drawable/bottomsheet_background"
         android:orientation="vertical"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="100dp"
+        app:behavior_peekHeight="1dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <ImageView
@@ -176,7 +176,7 @@
         android:background="@drawable/bottomsheet_background"
         android:orientation="vertical"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="100dp"
+        app:behavior_peekHeight="300dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <ImageView
@@ -191,7 +191,7 @@
             android:layout_height="60dp">
 
             <ImageView
-                android:id="@+id/albumCoverImage"
+                android:id="@+id/extendedMenuPlaylistCover"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_gravity="center_vertical"
@@ -199,7 +199,7 @@
                 tools:src="@drawable/ic_placeholder_45x45" />
 
             <TextView
-                android:id="@+id/trackName"
+                android:id="@+id/extendedMenuPlaylistName"
                 android:textColor="?attr/colorOnPrimary"
                 android:fontFamily="@font/ys_display_regular"
                 android:textSize="16sp"
@@ -215,6 +215,7 @@
                 tools:text="@string/playlist" />
 
             <TextView
+                android:id="@+id/extendedMenuTracksCount"
                 android:layout_width="wrap_content"
                 android:gravity="center_vertical"
                 android:fontFamily="@font/ys_display_regular"
@@ -228,7 +229,7 @@
         </FrameLayout>
 
         <TextView
-            android:id="@+id/sharePlaylistFrameButton"
+            android:id="@+id/extendedMenuShareButton"
             android:textColor="?attr/colorOnPrimary"
             android:fontFamily="@font/ys_display_regular"
             android:textSize="16sp"
@@ -237,7 +238,6 @@
             android:gravity="center_vertical"
             android:paddingStart="16dp"
             android:text="@string/share" />
-
 
         <TextView
             android:id="@+id/editPlaylistFrameButton"
@@ -251,7 +251,7 @@
             android:text="@string/edit_playlist" />
 
         <TextView
-            android:id="@+id/deletePlaylistFrameButton"
+            android:id="@+id/extendedMenuDeleteButton"
             android:textColor="?attr/colorOnPrimary"
             android:fontFamily="@font/ys_display_regular"
             android:textSize="16sp"

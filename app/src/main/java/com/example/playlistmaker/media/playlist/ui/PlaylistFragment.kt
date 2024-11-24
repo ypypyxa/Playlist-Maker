@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -41,6 +43,7 @@ class PlaylistFragment : Fragment() {
     private lateinit var extendedBottomSheet: BottomSheetBehavior<LinearLayout>
 
     private lateinit var tracksBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var shareButton: ImageView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentPlaylistBinding.inflate(inflater, container, false)
@@ -52,10 +55,34 @@ class PlaylistFragment : Fragment() {
 
         playlist = arguments?.getSerializable(ARGS_PLAYLIST) as Playlist
 
+        shareButton = binding.shareButton
+
         setTracksBehaviorHeight()
 
         extendedBottomSheet = BottomSheetBehavior.from(binding.extendedMenuBottomSheet)
         extendedBottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
+
+        extendedBottomSheet.peekHeight = (resources.displayMetrics.heightPixels * 2) / 3
+
+        extendedBottomSheet.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+
+//                        overlay.visibility = View.GONE
+                    }
+                    else -> {
+//                        overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+//                playerViewModel.updateAlpha(slideOffset)
+            }
+        })
 
         trackListAdapter = TracksOnPlaylistAdapter(
             onItemClickListener = { item ->
@@ -69,7 +96,7 @@ class PlaylistFragment : Fragment() {
             },
             onItemLongClickListener = { item ->
                 // Долгое нажатие на элемент
-                showDeleteConfirmationDialog(item)
+                showDeleteTrackConfirmationDialog(item)
             }
         )
 
@@ -104,20 +131,32 @@ class PlaylistFragment : Fragment() {
         binding.backButton.setOnClickListener() {
             findNavController().popBackStack()
         }
+
+        shareButton.setOnClickListener {
+            sharePlaylist()
+        }
+
+        binding.extendedMenu.setOnClickListener {
+            extendedBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+        binding.extendedMenuShareButton.setOnClickListener {
+            sharePlaylist()
+        }
+        binding.extendedMenuDeleteButton.setOnClickListener {
+            showDeletePlaylistConfirmationDialog()
+        }
     }
 
     private fun setTracksBehaviorHeight() {
         val bottomSheet = binding.bottomSheet
         tracksBehavior = BottomSheetBehavior.from(bottomSheet)
 
-        val sharebutton = binding.shareButton
-
         // Используем ViewTreeObserver для получения позиции positionMarker
-        sharebutton.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        shareButton.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 // Получаем Y-координату positionMarker относительно экрана
                 val location = IntArray(2)
-                sharebutton.getLocationOnScreen(location)
+                shareButton.getLocationOnScreen(location)
                 val positionMarkerY = location[1] + 16
 
                 // Получаем высоту экрана
@@ -130,25 +169,53 @@ class PlaylistFragment : Fragment() {
                 tracksBehavior.peekHeight = bottomSheetPeekHeight
 
                 // Удаляем слушатель, чтобы предотвратить повторные вызовы
-                sharebutton.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                shareButton.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
     }
 
-    private fun setTrackImage(artworkUrl512: String) {
+    private fun setPlaylistImage(artworkUrl512: String) {
         Glide.with(this)
             .load(artworkUrl512)
             .placeholder(R.drawable.ic_placeholder_45x45)
             .fitCenter()
             .into(binding.playlistCover)
+        Glide.with(this)
+            .load(artworkUrl512)
+            .placeholder(R.drawable.ic_placeholder_45x45)
+            .fitCenter()
+            .into(binding.extendedMenuPlaylistCover)
+    }
+
+    private fun setPlaylistName(name: String) {
+        binding.playlistName.text = name
+        binding.extendedMenuPlaylistName.text = name
+    }
+
+    private fun setTracksCount(count: Int) {
+        binding.tracksCountPlaylist.text = TrackWordUtils(requireContext()).getTrackWord(count)
+        binding.extendedMenuPlaylistName.text = TrackWordUtils(requireContext()).getTrackWord(count)
+    }
+
+    private fun sharePlaylist() {
+        if (playlist.tracks.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.no_tracks_to_share),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            val shareText = playlistViewModel.buildShareText(playlist)
+            playlistViewModel.sharePlaylist(shareText)
+        }
     }
 
     private fun showContent() {
-        setTrackImage(playlist.artworkUri.toString())
-        binding.playlistName.text = playlist.playlistName
+        setPlaylistImage(playlist.artworkUri)
+        setPlaylistName(playlist.playlistName)
+        setTracksCount(playlist.tracksCount)
         binding.playlistDescription.text = playlist.playlistDescription
         binding.playlistDuration.text = DurationUtils.getTotalMinutes(playlist.tracks)
-        binding.tracksCountPlaylist.text = TrackWordUtils(requireContext()).getTrackWord(playlist.tracksCount)
 
         trackListAdapter.trackList.clear()
         trackListAdapter.trackList.addAll(playlist.tracks)
@@ -156,8 +223,8 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun refreshContent(playlist: Playlist) {
-        setTrackImage(playlist.artworkUri.toString())
-        binding.playlistName.text = playlist.playlistName
+        setPlaylistImage(playlist.artworkUri)
+        setPlaylistName(playlist.playlistName)
         binding.playlistDescription.text = playlist.playlistDescription
         binding.playlistDuration.text = DurationUtils.getTotalMinutes(playlist.tracks)
         binding.tracksCountPlaylist.text = TrackWordUtils(requireContext()).getTrackWord(playlist.tracksCount)
@@ -167,14 +234,40 @@ class PlaylistFragment : Fragment() {
         trackListAdapter.notifyDataSetChanged()
     }
 
-    fun showDeleteConfirmationDialog(track: Track) {
+    private fun showDeleteTrackConfirmationDialog(track: Track) {
         MaterialAlertDialogBuilder(requireContext(), R.style.alertStyle)
-            .setTitle("Удалить трек")
-            .setMessage("Вы действительно хотите удалить трек \"${track.trackName}\"?")
-            .setNegativeButton("Отмена") { dialog, _ -> dialog.dismiss() }
-            .setPositiveButton("Удалить") { dialog, _ ->
+            .setTitle(requireContext().getString(R.string.delete_a_track))
+            .setMessage("${
+                requireContext().getString(R.string.do_you_really_want_to_delete_a_track)
+            } \"${track.trackName}\"?")
+            .setNegativeButton(requireContext().getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(requireContext().getString(R.string.delete)) { dialog, _ ->
                 deleteTrack(track)
                 dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showDeletePlaylistConfirmationDialog() {
+        extendedBottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
+
+        MaterialAlertDialogBuilder(requireContext(), R.style.alertStyle)
+            .setTitle(requireContext().getString(R.string.delete_a_track))
+            .setMessage("${
+                requireContext().getString(R.string.do_you_want_to_delete_a_playlist)
+            } \"${playlist.playlistName}\"?")
+            .setNegativeButton(requireContext().getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(requireContext().getString(R.string.yes)) { dialog, _ ->
+                playlistViewModel.deletePlaylist(playlist)
+                dialog.dismiss()
+                Toast.makeText(
+                    requireContext(),
+                    "${requireContext().getString(R.string.playlist)}" +
+                            " ${playlist.playlistName}" +
+                            " ${requireContext().getString(R.string.deleted)}.",
+                    Toast.LENGTH_SHORT)
+                    .show()
+                findNavController().popBackStack()
             }
             .show()
     }

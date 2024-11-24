@@ -64,7 +64,7 @@ class CreatePlaylistViewModel(
             playlistId = 0,
             playlistName = editedName,
             playlistDescription = editedDescription,
-            artworkUri = editedUri,
+            artworkUri = editedUri.toString(),
             tracks = emptyList(),
             tracksCount = 0
         )
