@@ -68,4 +68,13 @@ class PlaylistRepositoryImpl(
         val updatedPlaylistEntity = playlistDbConverter.convert(updatedPlaylist)
         playlistsDatabase.playlistDao().updatePlaylist(updatedPlaylistEntity)
     }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        // Конвертируем обновленный плейлист в сущность базы данных
+        val updatedPlaylistEntity = playlistDbConverter.convert(playlist)
+
+        // Обновляем плейлист в базе данных
+        playlistsDatabase.playlistDao().updatePlaylist(updatedPlaylistEntity)
+    }
+
 }

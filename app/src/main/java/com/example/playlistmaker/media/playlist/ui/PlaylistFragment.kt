@@ -21,6 +21,7 @@ import com.example.playlistmaker.common.domain.models.Track
 import com.example.playlistmaker.common.utils.DurationUtils
 import com.example.playlistmaker.common.utils.TrackWordUtils
 import com.example.playlistmaker.databinding.FragmentPlaylistBinding
+import com.example.playlistmaker.media.edit.ui.EditPlaylistFragment
 import com.example.playlistmaker.media.playlist.ui.model.PlaylistFragmentState
 import com.example.playlistmaker.player.ui.PlayerFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -54,6 +55,10 @@ class PlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         playlist = arguments?.getSerializable(ARGS_PLAYLIST) as Playlist
+        parentFragmentManager.setFragmentResultListener("playlistUpdated", viewLifecycleOwner) { key, bundle ->
+            val playlistId = bundle.getLong("playlistId")
+            playlistViewModel.refreshPlaylist(playlistId)
+        }
 
         shareButton = binding.shareButton
 
@@ -112,6 +117,14 @@ class PlaylistFragment : Fragment() {
         playlistViewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
+
+        if (playlist.tracks.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.no_tracks),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     override fun onResume() {
@@ -144,6 +157,12 @@ class PlaylistFragment : Fragment() {
         }
         binding.extendedMenuDeleteButton.setOnClickListener {
             showDeletePlaylistConfirmationDialog()
+        }
+        binding.extendedMenuEditButton.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_playlistFragment_to_editPlaylistFragment,
+                EditPlaylistFragment.createArgs(playlist)
+            )
         }
     }
 
@@ -232,6 +251,7 @@ class PlaylistFragment : Fragment() {
         trackListAdapter.trackList.clear()
         trackListAdapter.trackList.addAll(playlist.tracks)
         trackListAdapter.notifyDataSetChanged()
+        this.playlist = playlist
     }
 
     private fun showDeleteTrackConfirmationDialog(track: Track) {

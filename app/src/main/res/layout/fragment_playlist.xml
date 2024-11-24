@@ -240,7 +240,7 @@
             android:text="@string/share" />
 
         <TextView
-            android:id="@+id/editPlaylistFrameButton"
+            android:id="@+id/extendedMenuEditButton"
             android:textColor="?attr/colorOnPrimary"
             android:fontFamily="@font/ys_display_regular"
             android:textSize="16sp"

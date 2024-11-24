@@ -91,16 +91,16 @@ class PlaylistViewModel(
         }
     }
 
-    private suspend fun refreshPlaylist(playlistId: Long) {
-        // Получаем обновленный плейлист из базы данных
-        val updatedPlaylist = playlistInteractor.getPlaylists()
-            .firstOrNull()
-            ?.find { it.playlistId == playlistId }
+    fun refreshPlaylist(playlistId: Long) {
+        viewModelScope.launch {
+            // Получаем обновленный плейлист
+            val updatedPlaylist = playlistInteractor.getPlaylists()
+                .firstOrNull()
+                ?.find { it.playlistId == playlistId }
 
-        if (updatedPlaylist != null) {
-            val playlist = updatedPlaylist
-            // Обновляем состояние
-            renderState(PlaylistFragmentState.RefreshContent(playlist))
+            if (updatedPlaylist != null) {
+                renderState(PlaylistFragmentState.RefreshContent(updatedPlaylist))
+            }
         }
     }
 
