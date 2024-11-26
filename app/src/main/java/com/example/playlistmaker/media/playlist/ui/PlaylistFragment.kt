@@ -76,7 +76,6 @@ class PlaylistFragment : Fragment() {
 
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-
 //                        overlay.visibility = View.GONE
                     }
                     else -> {
@@ -154,9 +153,11 @@ class PlaylistFragment : Fragment() {
             extendedBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
         }
         binding.extendedMenuShareButton.setOnClickListener {
+            extendedBottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
             sharePlaylist()
         }
         binding.extendedMenuDeleteButton.setOnClickListener {
+            extendedBottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
             showDeletePlaylistConfirmationDialog()
         }
         binding.extendedMenuEditButton.setOnClickListener {
@@ -238,31 +239,29 @@ class PlaylistFragment : Fragment() {
         binding.playlistDuration.text = DurationUtils.getTotalMinutes(playlist.tracks)
 
         trackListAdapter.trackList.clear()
-        trackListAdapter.trackList.addAll(playlist.tracks)
+        trackListAdapter.trackList.addAll(playlist.tracks.reversed())
         trackListAdapter.notifyDataSetChanged()
     }
 
-    private fun refreshContent(playlist: Playlist) {
+    private fun refreshContent(updatedPlaylist: Playlist) {
+        playlist = updatedPlaylist
         setPlaylistImage(playlist.artworkUri)
         setPlaylistName(playlist.playlistName)
+        setTracksCount(playlist.tracksCount)
         binding.playlistDescription.text = playlist.playlistDescription
         binding.playlistDuration.text = DurationUtils.getTotalMinutes(playlist.tracks)
-        binding.tracksCountPlaylist.text = TrackWordUtils(requireContext()).getTrackWord(playlist.tracksCount)
 
         trackListAdapter.trackList.clear()
-        trackListAdapter.trackList.addAll(playlist.tracks)
+        trackListAdapter.trackList.addAll(playlist.tracks.reversed())
         trackListAdapter.notifyDataSetChanged()
-        this.playlist = playlist
     }
 
     private fun showDeleteTrackConfirmationDialog(track: Track) {
         MaterialAlertDialogBuilder(requireContext(), R.style.alertStyle)
-            .setTitle(requireContext().getString(R.string.delete_a_track))
-            .setMessage("${
-                requireContext().getString(R.string.do_you_really_want_to_delete_a_track)
-            } \"${track.trackName}\"?")
-            .setNegativeButton(requireContext().getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-            .setPositiveButton(requireContext().getString(R.string.delete)) { dialog, _ ->
+//            .setTitle(requireContext().getString(R.string.delete_a_track))
+            .setMessage(requireContext().getString(R.string.do_you_want_to_delete_a_track))
+            .setNegativeButton(requireContext().getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(requireContext().getString(R.string.yes)) { dialog, _ ->
                 deleteTrack(track)
                 dialog.dismiss()
             }
@@ -273,10 +272,8 @@ class PlaylistFragment : Fragment() {
         extendedBottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
 
         MaterialAlertDialogBuilder(requireContext(), R.style.alertStyle)
-            .setTitle(requireContext().getString(R.string.delete_a_track))
-            .setMessage("${
-                requireContext().getString(R.string.do_you_want_to_delete_a_playlist)
-            } \"${playlist.playlistName}\"?")
+            .setTitle(requireContext().getString(R.string.delete_playlist))
+            .setMessage(requireContext().getString(R.string.do_you_want_to_delete_a_playlist))
             .setNegativeButton(requireContext().getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
             .setPositiveButton(requireContext().getString(R.string.yes)) { dialog, _ ->
                 playlistViewModel.deletePlaylist(playlist)

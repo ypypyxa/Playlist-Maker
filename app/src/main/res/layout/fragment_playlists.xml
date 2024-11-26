@@ -15,7 +15,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="24dp"
         android:backgroundTint="?attr/colorOnPrimary"
-        android:text="@string/add_playlist"
+        android:text="@string/new_playlist"
         android:textColor="?attr/colorPrimary"
         android:textSize="14sp"
         android:textAllCaps="false"

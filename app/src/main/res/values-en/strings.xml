@@ -29,7 +29,6 @@
     <string name="player_error">Player Error</string>
     <string name="empty_track_url">There is no song file</string>
     <string name="empty_library">Your media library is empty</string>
-    <string name="add_playlist">New playlist</string>
     <string name="empty_playlists">You haven\'t created any playlists</string>
     <string name="favorites_tracks">Favorites tracks</string>
     <string name="playlists">Playlists</string>
@@ -59,8 +58,8 @@
     <string name="delete_playlist">Delete a playlist</string>
     <string name="no_tracks_to_share">There is no tracklist to share in this playlist.</string>
     <string name="delete_a_track">Delete a track?</string>
-    <string name="do_you_really_want_to_delete_a_track">Do you really want to delete a track</string>
     <string name="delete">Delete</string>
+    <string name="do_you_want_to_delete_a_track">Do you really want to delete a track</string>
     <string name="share_playlist_via">Share playlist via</string>
     <string name="do_you_want_to_delete_a_playlist">Do you want to delete a playlist?</string>
     <string name="yes">Yes</string>
