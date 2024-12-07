@@ -65,7 +65,7 @@
     <string name="deleted">удален</string>
     <string name="no_tracks_to_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
     <string name="no_tracks">В этом плейлисте нет списка треков</string>
-    <string name="delete_a_track">Удалить трек?</string>
+    <string name="delete_a_track">Удалить трек</string>
     <string name="do_you_want_to_delete_a_track">Хотите удалить трек?</string>
     <string name="share_playlist_via">Поделиться плейлистом через</string>
     <string name="do_you_want_to_delete_a_playlist">Хотите удалить плейлист?</string>

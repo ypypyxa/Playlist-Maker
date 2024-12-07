@@ -57,7 +57,7 @@
     <string name="edit_playlist">Edit information</string>
     <string name="delete_playlist">Delete a playlist</string>
     <string name="no_tracks_to_share">There is no tracklist to share in this playlist.</string>
-    <string name="delete_a_track">Delete a track?</string>
+    <string name="delete_a_track">Delete a track</string>
     <string name="delete">Delete</string>
     <string name="do_you_want_to_delete_a_track">Do you really want to delete a track</string>
     <string name="share_playlist_via">Share playlist via</string>
