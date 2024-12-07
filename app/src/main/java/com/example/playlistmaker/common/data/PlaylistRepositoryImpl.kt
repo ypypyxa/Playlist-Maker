@@ -4,7 +4,7 @@ import com.example.playlistmaker.common.data.converters.PlaylistDbConverter
 import com.example.playlistmaker.common.data.db.database.PlaylistsDatabase
 import com.example.playlistmaker.common.domain.models.Playlist
 import com.example.playlistmaker.common.domain.models.Track
-import com.example.playlistmaker.common.domain.api.PlaylistsRepository
+import com.example.playlistmaker.common.domain.api.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 
 class PlaylistRepositoryImpl(
     private val playlistsDatabase: PlaylistsDatabase,
-    private val playlistDbConverter: PlaylistDbConverter) : PlaylistsRepository {
+    private val playlistDbConverter: PlaylistDbConverter) : PlaylistRepository {
 
     override fun getPlaylists(): Flow<List<Playlist>> =
         playlistsDatabase.playlistDao().getPlaylists()
@@ -48,4 +48,33 @@ class PlaylistRepositoryImpl(
         val updatedPlaylistEntity = playlistDbConverter.convert(updatedPlaylist)
         playlistsDatabase.playlistDao().updatePlaylist(updatedPlaylistEntity)
     }
+
+    override suspend fun deleteTrackFromPlaylist(playlistId: Long, track: Track) {
+        // Получаем текущий плейлист из базы данных
+        val playlistEntity = playlistsDatabase.playlistDao().getPlaylistById(playlistId)
+        val playlist = playlistDbConverter.convert(playlistEntity)
+
+        // Удаляем трек из списка треков
+        val updatedTracks = playlist.tracks.toMutableList().apply { remove(track) }
+        val updatedTracksCount = updatedTracks.size
+
+        // Создаем обновленный плейлист
+        val updatedPlaylist = playlist.copy(
+            tracks = updatedTracks,
+            tracksCount = updatedTracksCount
+        )
+
+        // Конвертируем обратно в сущность и обновляем плейлист в базе данных
+        val updatedPlaylistEntity = playlistDbConverter.convert(updatedPlaylist)
+        playlistsDatabase.playlistDao().updatePlaylist(updatedPlaylistEntity)
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        // Конвертируем обновленный плейлист в сущность базы данных
+        val updatedPlaylistEntity = playlistDbConverter.convert(playlist)
+
+        // Обновляем плейлист в базе данных
+        playlistsDatabase.playlistDao().updatePlaylist(updatedPlaylistEntity)
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media.playlists.ui
+package com.example.playlistmaker.media.edit.ui
 
 import android.Manifest
 import android.content.Intent
@@ -10,38 +10,40 @@ import android.text.Editable
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 import android.text.TextWatcher
-import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
-import android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+import android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
+import com.example.playlistmaker.common.domain.models.Playlist
+import com.example.playlistmaker.databinding.FragmentEditPlaylistBinding
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CreatePlaylistFragment : Fragment() {
+class EditPlaylistFragment : Fragment() {
 
-    private val viewModel by viewModel<CreatePlaylistViewModel>()
+    private val viewModel by viewModel<EditPlaylistViewModel>()
 
-    private lateinit var binding: FragmentCreatePlaylistBinding
+    private lateinit var binding: FragmentEditPlaylistBinding
 
     private lateinit var backButton: ImageButton
-    private lateinit var createButton: MaterialButton
+    private lateinit var editButton: MaterialButton
     private lateinit var playlistNameInputLayout: TextInputLayout
     private lateinit var descriptionInputLayout: TextInputLayout
     private lateinit var playlistNameEditText: TextInputEditText
@@ -49,15 +51,18 @@ class CreatePlaylistFragment : Fragment() {
     private lateinit var playlistImage: ShapeableImageView
     private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var oldPlaylist: Playlist
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ) : View? {
-        binding = FragmentCreatePlaylistBinding.inflate(inflater, container, false)
+        binding = FragmentEditPlaylistBinding.inflate(inflater, container, false)
+
+        oldPlaylist = arguments?.getSerializable(ARGS_EDIT_PLAYLIST) as Playlist
 
         backButton = binding.backButton
-        createButton = binding.createButton
+        editButton = binding.editButton
         playlistImage = binding.dottedPlaceholder
 
 
@@ -74,6 +79,7 @@ class CreatePlaylistFragment : Fragment() {
 
         setupListeners()
         observeViewModel()
+        viewModel.initPlaylist(oldPlaylist)
 
         return binding.root
     }
@@ -100,6 +106,8 @@ class CreatePlaylistFragment : Fragment() {
                 showPermissionDeniedDialog()
             }
         }
+
+        render()
     }
 
     private fun setupListeners() {
@@ -130,13 +138,17 @@ class CreatePlaylistFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        createButton.setOnClickListener {
-            viewModel.createNewPlaylist()
+        editButton.setOnClickListener {
+            parentFragmentManager.setFragmentResult(
+                "playlistUpdated",
+                bundleOf("playlistId" to oldPlaylist.playlistId)
+            )
+            viewModel.updatePlaylist(oldPlaylist)
             Toast.makeText(
                 requireContext(),
                 "${requireContext().getString(R.string.playlist)}" +
-                    " ${playlistNameEditText.text}" +
-                    " ${requireContext().getString(R.string.created)}.",
+                        " ${playlistNameEditText.text}" +
+                        " ${requireContext().getString(R.string.edited)}.",
                 Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
         }
@@ -161,6 +173,17 @@ class CreatePlaylistFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun render() {
+        binding.nameEdit.setText(oldPlaylist.playlistName)
+        viewModel.setPlaylistName(oldPlaylist.playlistName)
+        binding.descriptionEdit.setText(oldPlaylist.playlistDescription)
+        viewModel.setPlaylistDescription(oldPlaylist.playlistDescription)
+        if (oldPlaylist.artworkUri != "0") {
+            playlistImage.setImageURI(oldPlaylist.artworkUri.toUri())
+            viewModel.setPlaylistUri(oldPlaylist.artworkUri.toUri())
+        }
     }
 
     private fun requestPhotoPermission() {
@@ -204,8 +227,15 @@ class CreatePlaylistFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.isCreateButtonEnabled.observe(viewLifecycleOwner, Observer { isEnabled ->
-            createButton.isEnabled = isEnabled
+        viewModel.isEditButtonEnabled.observe(viewLifecycleOwner, Observer { isEnabled ->
+            editButton.isEnabled = isEnabled
         })
+    }
+
+    companion object {
+        const val ARGS_EDIT_PLAYLIST = "EDIT_PLAYLIST"
+
+        fun createArgs(playlist: Playlist): Bundle =
+            bundleOf(ARGS_EDIT_PLAYLIST to playlist)
     }
 }

@@ -6,19 +6,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.domain.models.Playlist
 
-class PlaylistAdapter() : RecyclerView.Adapter<PlaylistViewHolder>() {
-//class PlaylistAdapter(private val onItemClickListener: (Playlist) -> Unit) : RecyclerView.Adapter<PlaylistViewHolder>() {
+class PlaylistsAdapter(private val onItemClickListener: (Playlist) -> Unit) : RecyclerView.Adapter<PlaylistsViewHolder>() {
 
         var playlists: MutableList<Playlist> = mutableListOf()
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistsViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.playlist_item, parent, false)
-            return PlaylistViewHolder(view)
+            return PlaylistsViewHolder(view)
         }
 
-        override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: PlaylistsViewHolder, position: Int) {
             holder.bind(playlists[position])
-//            holder.itemView.setOnClickListener { onItemClickListener(playlists[holder.adapterPosition]) }
+            holder.itemView.setOnClickListener { onItemClickListener(playlists[holder.adapterPosition]) }
         }
 
         override fun getItemCount(): Int {

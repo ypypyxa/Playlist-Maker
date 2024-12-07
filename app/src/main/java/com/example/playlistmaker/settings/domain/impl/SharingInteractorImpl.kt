@@ -33,4 +33,8 @@ class SharingInteractorImpl(
     private fun getTermsLink(): String {
         return sharingRepository.getTermsLink()
     }
+
+    override fun sharePlaylist(playlist: String) {
+        externalNavigator.shareLink(playlist)
+    }
 }

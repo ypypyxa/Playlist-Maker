@@ -38,12 +38,12 @@
     <FrameLayout style="@style/SettingsMenuItemStyle">
 
         <TextView style="@style/SettingsMenuTextStyle"
-            android:text="@string/share"/>
+            android:text="@string/share_app"/>
 
         <ImageButton style="@style/SettingsMenuButtonStyle"
             tools:ignore="DuplicateSpeakableTextCheck"
             android:id="@+id/shareButton"
-            android:contentDescription="@string/share"
+            android:contentDescription="@string/share_app"
             android:src="@drawable/ic_share_24x24"/>
     </FrameLayout>
 

@@ -7,15 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.domain.models.Playlist
 import com.example.playlistmaker.common.utils.gone
 import com.example.playlistmaker.common.utils.show
-import com.example.playlistmaker.media.playlists.ui.adapter.PlaylistAdapter
-import com.example.playlistmaker.media.playlists.ui.model.PlaylistFragmentState
+import com.example.playlistmaker.media.playlist.ui.PlaylistFragment
+import com.example.playlistmaker.media.playlists.ui.adapter.PlaylistsAdapter
+import com.example.playlistmaker.media.playlists.ui.model.PlaylistsFragmentState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PlaylistsFragment : Fragment() {
 
@@ -23,7 +28,9 @@ class PlaylistsFragment : Fragment() {
 
     private lateinit var binding: FragmentPlaylistsBinding
 
-    private lateinit var adapter: PlaylistAdapter
+    private var isClickAllowed = true
+
+    private lateinit var adapter: PlaylistsAdapter
     private lateinit var playlistsView : RecyclerView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) : View? {
@@ -34,18 +41,16 @@ class PlaylistsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = PlaylistAdapter()
-/*        adapter = TrackListAdapter { item ->
+        adapter = PlaylistsAdapter { item ->
             // Нажатие на итем
             if (clickDebounce()) {
                 // Навигируемся на следующий экран
                 findNavController().navigate(
-                    R.id.action_libraryFragment_to_playerFragment,
-                    PlayerFragment.createArgs(item)
+                    R.id.action_libraryFragment_to_playlistFragment,
+                    PlaylistFragment.createArgs(item)
                 )
             }
         }
-*/
         playlistsView = binding.playlistRecyclerView
         playlistsView.layoutManager = GridLayoutManager(requireContext(), /*Количество столбцов*/ 2) //ориентация по умолчанию — вертикальная
         playlistsView.adapter = adapter
@@ -62,10 +67,16 @@ class PlaylistsFragment : Fragment() {
         }
     }
 
-    private fun render(state: PlaylistFragmentState) {
+    override fun onResume() {
+        super.onResume()
+
+        isClickAllowed = true
+    }
+
+    private fun render(state: PlaylistsFragmentState) {
         when (state) {
-            is PlaylistFragmentState.Content -> showContent(state.playlists)
-            is PlaylistFragmentState.Empty -> showEmpty()
+            is PlaylistsFragmentState.Content -> showContent(state.playlists)
+            is PlaylistsFragmentState.Empty -> showEmpty()
         }
     }
 
@@ -83,12 +94,25 @@ class PlaylistsFragment : Fragment() {
         adapter?.notifyDataSetChanged()
     }
 
+    // Задержка между кликами
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
     companion object {
 
-        fun newInstance() = PlaylistsFragment().apply {
-            arguments = Bundle().apply {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
 
-            }
+        fun newInstance() = PlaylistsFragment().apply {
+            arguments = Bundle().apply {}
         }
     }
 }
